@@ -1,0 +1,195 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ modalHeader }}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+    <form [formGroup]="pesqAvForm">
+
+        <div class="col-sm-12 row div-form-princ">
+
+
+
+            <div class="col-sm-12 col-12 div-form-group">
+                <div class="form-group">
+                    <label  for="id" >Nome</label>
+                    <input type="text" class="form-control" id="idNomeItem" (keydown.enter)="onPesquisa()"
+                        formControlName="nome">
+                </div>
+            </div>
+
+
+            <div class="col-12" *ngIf="flgPesquisando === 1">
+                <span class="fa fa-refresh fa-spin fa-fw span-pesq"></span><span class="span-pesq">Pesquisando
+                    Aguarde...</span>
+            </div>
+            <br *ngIf="flgPesquisando === 1">
+
+            <div class="col-6 div-form-group d-grid">
+                <button type="button" class="btn btn-outline-dark butao-acao" (click)="onLimpa()">
+                    <span class="fa fa-eraser span-bt span-btn2">Limpar</span>
+                </button>
+            </div>
+
+            <div class="col-6 div-form-group d-grid">
+                <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                    <span class="fa fa-search span-bt span-btn2">Pesquisar</span>
+                </button>
+            </div>
+
+        </div>
+
+
+    </form>
+
+    <br *ngIf="itens.length > 0">
+    <hr *ngIf="itens.length > 0">
+    <br *ngIf="itens.length > 0">
+
+
+
+    <div *ngFor="let itn of itens" class="col-12">
+
+        <div class="row div-block-cli">
+
+            <div class="col-3 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label  for="id"  class="label-titulo">ID</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.id}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-9 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label for="id"  class="label-titulo">NOME</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.nome}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label for="id"  class="label-titulo">Agrupamentos</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <select class="form-control" [(ngModel)]="itn.unidade">
+                            <option *ngFor="let ag of itn.agrupamentos" [ngValue]="ag">{{ag.item_unidade_nome}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 div-block-in" *ngIf="itn.estoque_venda !== null && !isUndefined(itn.estoque_venda.length) && itn.estoque_venda.length > 0">
+                <div class="row alx-item" *ngFor="let ev of itn.estoque_venda" [ngClass]="ev.flg_indisponivel === 1 ? 'item-indisponivel' : 'item-disponivel'">
+
+                    <div class="col-6 div-block-in">
+                        <div class="form-group div-form-group">
+                            <!-- <div class="div-label-titulo">
+                                <label class="label-titulo">ESTOQUES ALMOXARIFADO</label>
+                            </div> -->
+                            <div class="input-group div-input-group">
+                                <span>{{ev.estoque_nome}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3 div-block-in">
+                        <div class="form-group div-form-group">
+                            <!-- <div class="div-label-titulo">
+                                <label class="label-titulo">Preço</label>
+                            </div> -->
+                            <div class="input-group div-input-group">
+                                <span>Prç: {{ev.preco_atual * itn.unidade.item_unidade_fator | number:'1.2-2':'pt-BR'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3 div-block-in">
+                        <div class="form-group div-form-group">
+                            <!-- <div class="div-label-titulo">
+                                <label class="label-titulo">Qtd Disp</label>
+                            </div> -->
+                            <div class="input-group div-input-group">
+                                <span>Qtd: {{ev.qtd_disponivel / itn.unidade.item_unidade_fator |
+                                    number:'1.0-0':'pt-BR'}}</span>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+<!-- 
+            <div class="col-3 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label class="label-titulo">Qtd Est</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.qtd_saldo | number:'1.0-0':'pt-BR'}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label class="label-titulo">Qtd Comp</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.qtd_comprometido | number:'1.0-0':'pt-BR'}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label class="label-titulo">Qtd Disp</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.qtd_disponivel / itn.unidade.item_unidade_fator |
+                            number:'1.0-0':'pt-BR'}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3 div-block-in">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label class="label-titulo">Preço</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.preco * itn.unidade.item_unidade_fator | number:'1.2-2':'pt-BR'}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 div-block-in" *ngIf="itn.flg_indisponivel == 1">
+                <div class="form-group div-form-group">
+                    <div class="div-label-titulo">
+                        <label class="label-titulo">STATUS</label>
+                    </div>
+                    <div class="input-group div-input-group">
+                        <span>{{itn.msg_status}}</span>
+                    </div>
+                </div>
+            </div> -->
+
+
+            <div class="col-12 div-block-in d-grid">
+                <button class="btn btn-block btn-primary" (click)="activeModal.close(itn)">SELECIONE</button>
+            </div>
+        </div>
+        <br>
+        <hr>
+        <br>
+    </div>
+</div>

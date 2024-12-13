@@ -1,0 +1,64 @@
+.page-header-compact {
+    .page-header-content {
+        padding: 0;
+        .page-header-title {
+            font-size: 1rem;
+            .page-header-icon {
+                .feather {
+                    height: 1rem;
+                    width: 1rem;
+                }
+            }
+        }
+    }
+}
+
+
+
+.page-header {
+    .page-header-content {
+        padding-top: 1.2rem;
+        padding-bottom: 1rem;
+
+        .page-header-title {
+            line-height: normal;
+            font-size: 1.3rem;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+
+            .page-header-icon {
+                margin-right: 0.5rem;
+                display: inline-flex;
+
+                .feather {
+                    height: 1.75rem;
+                    width: 1.75rem;
+                }
+            }
+        }
+
+        // Base styling for the page header subtitle
+        .page-header-subtitle {
+            font-size: 1.15rem;
+            margin-top: 0.25rem;
+        }
+    }
+
+    .page-header-search {
+        .input-group-joined {
+            border-color: transparent;
+
+            .form-control {
+                height: 4rem;
+                font-size: 1.25rem;
+            }
+
+            // &:focus-within {
+            //     box-shadow: $input-focus-box-shadow;
+            //     border-color: $input-focus-border-color;
+            // }
+        }
+    }
+}

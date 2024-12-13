@@ -1,0 +1,829 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Itens'" [picon]="'fa-th'" [heading]="'Item Precificação'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="margin-padding-0">
+
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <div class="row">
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idCodItem">Item ID</label>
+
+
+                                <div class="input-group" ngbTooltip="Digite o Codigo do Item">
+                                    <input type="number" class="form-control" id="idCodItem" name="nameCodItem"
+                                        [(ngModel)]="itemProcura!.id" (keydown.Tab)="selectedItemId(itemProcura!.id)"
+                                        (keydown.enter)="selectedItemId(itemProcura!.id)"
+                                        [disabled]="item !== null && !isUndefined(item) && item.id !== null && item.id > 0">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" (click)="selectedItemId(itemProcura!.id)"
+                                            [disabled]="item !== null && !isUndefined(item) && item.id !== null && item.id > 0" type="button"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-sm-8 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="typeaheadItem">Item Nome</label>
+                                <input id="typeaheadItem" [ngbTypeahead]="searchItem" [(ngModel)]="itemProcura!.nome"
+                                    [resultTemplate]="rt" (selectItem)="selectedItem($event)" name="typeaheadItem"
+                                    type="text" class="form-control" [class.is-invalid]="searchFailedItem"
+                                    placeholder="Busca de Item"
+                                    [disabled]="item !== null && !isUndefined(item) && item.id !== null && item.id > 0" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5 d-grid"
+                            *ngIf="item !== null && !isUndefined(item) && item.id !== null && item.id > 0">
+                            <div class="form-group">
+                                <label for="typeaheadItem">Ação</label>
+                                <div class="d-grid">
+                                    <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                        (click)="onLimpa()">
+                                        <span class="fa fa-eraser span-bt-icon span-acao"></span><span
+                                            class="span-bt-text">Limpar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5" *ngIf="searchingItem || searchFailedItem">
+                            <div class="form-group">
+                                <label for="id">Status</label><br>
+                                <span class="col-sm-2 col-form-label" *ngIf="searchingItem">procurando...</span>
+                                <span class="col-sm-2 col-form-label" *ngIf="searchFailedItem">Não encontrado</span>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div *ngIf="item === null || isUndefined(item) || item.id === null" class="aling-center text-center">
+                        <h5 style="padding-top: 200px;padding-bottom: 200px;">Busque o item</h5>
+                    </div>
+                    <div *ngIf="item !== null && !isUndefined(item) && item.id !== null && item.id > 0">
+
+                        <div class="div-tabs">
+
+                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+
+                                <li [ngbNavItem]="1">
+                                    <a ngbNavLink>Preço por Almoxarifado</a>
+                                    <ng-template ngbNavContent>
+
+                                        <br>
+                                        <form [formGroup]="precoAlx">
+                                            <div class="row">
+
+
+                                                <div class="col-sm-3 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idVlrOriginal">Valor Unitário</label>
+                                                        <input type="number"
+                                                            [ngClass]="{'is-invalid': submitted && f['vlr'].errors}"
+                                                            class="form-control" id="idVlrOriginal"
+                                                            formControlName="vlr">
+                                                        <div *ngIf="submitted && f['vlr'].errors" class="invalid-feedback">
+                                                            <div *ngIf="f['vlr'].errors['required']">Digite o valor
+                                                            </div>
+                                                            <div *ngIf="f['vlr'].errors['min']">Valor deve ser acima de 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-7 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idEstAlx">Estoque Almoxarifado</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o almoxarifado"
+                                                            [ngClass]="{'is-invalid': submitted && f['estoqueAlmoxarifadoId'].errors}"
+                                                            formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let ealxv of almoxarifados"
+                                                                [ngValue]="ealxv.id">{{ealxv.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submitted && f['estoqueAlmoxarifadoId'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="f['estoqueAlmoxarifadoId'].errors['required']">
+                                                                Selecione
+                                                                um
+                                                                estoque
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Ação</label>
+                                                        <div class="d-grid">
+                                                            <button class="btn btn-block butao-acao btn-primary"
+                                                                (click)="onAddPrecoAlx()">
+                                                                <span class="fa fa-save span-bt-icon"></span><span
+                                                                    class="span-bt-text">Adicionar</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+
+                                                <div class="col-sm-4 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Agrupamentos</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o agrupamento para calcular"
+                                                            formControlName="agrupamento">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let un of item.itemUnidadeDTOs"
+                                                                [ngValue]="un.id">{{un.nome}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Preço Calculado Automático</label>
+                                                        <span class="form-control span-disable" name="nmPrecoCalculado"
+                                                            id="idPrecoCalculado">{{getPrecoCalculadoAutomatico() |
+                                                            number:'1.2-2':'pt-BR'}}</span>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </form>
+
+                                        <hr>
+
+                                        <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                            [rows]="itemAlxPrecos" [columnMode]="ColumnMode.standard"
+                                            [headerHeight]="35" [footerHeight]="50" rowHeight="auto" [limit]="50"
+                                            [selected]="selectedItemPreco" [selectionType]="selectionTypeSingle">
+
+                                            <ngx-datatable-column name="RM" [width]="40">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    <button type="button" class="btn btn-danger botao-acao-item"
+                                                        (click)="removeItemPreco(row)">
+                                                        <span class="fa fa-trash span-btn-excluir"></span>
+                                                    </button>
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ID" prop="id"
+                                                [width]="50"></ngx-datatable-column>
+                                            <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+                                            <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+                                            <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                                                [width]="140"></ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ESTOQUE" prop="estoqueAlmoxarifadoDTO.nome"
+                                                [width]="500">
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="VALOR UN" prop="vlr" [width]="100">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value | number:'1.2-2':'pt-BR'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+
+
+
+                                        </ngx-datatable>
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="2">
+                                    <a ngbNavLink>Descontos por Almoxarifado</a>
+                                    <ng-template ngbNavContent>
+
+                                        <br>
+                                        <form [formGroup]="descontoAlx">
+                                            <div class="row">
+
+
+                                                <div class="col-sm-4 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idEstAlx">Estoque Almoxarifado</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o almoxarifado"
+                                                            [ngClass]="{'is-invalid': submittedDesconto && fd['estoqueAlmoxarifadoId'].errors}"
+                                                            formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let ealxv of almoxarifados"
+                                                                [ngValue]="ealxv.id">{{ealxv.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submittedDesconto && fd['estoqueAlmoxarifadoId'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fd['estoqueAlmoxarifadoId'].errors['required']">
+                                                                Selecione
+                                                                um
+                                                                estoque
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Agrupamentos</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o agrupamento para calcular"
+                                                            [ngClass]="{'is-invalid': submittedDesconto && fd['agrupamento'].errors}"
+                                                            formControlName="agrupamento">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let un of item.itemUnidadeDTOs"
+                                                                [ngValue]="un.id">{{un.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submittedDesconto && fd['agrupamento'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fd['agrupamento'].errors['required']">Selecione
+                                                                um
+                                                                agrupamento
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idVlrOriginal">Qtd</label>
+                                                        <input type="number"
+                                                            [ngClass]="{'is-invalid': submittedDesconto && fd['qtd'].errors}"
+                                                            class="form-control" id="idVlrOriginal"
+                                                            formControlName="qtd">
+                                                        <div *ngIf="submittedDesconto && fd['qtd'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fd['qtd'].errors['required']">Digite a qtd
+                                                            </div>
+                                                            <div *ngIf="fd['qtd'].errors['min']">A qtd deve ser acima de 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idDtHrValidade">Dta/Hr Validade</label>
+                                                        <input type="datetime-local"
+                                                            [ngClass]="{'is-invalid': submittedDesconto && fd['dtaValidade'].errors}"
+                                                            class="form-control" id="idDtHrValidade"
+                                                            formControlName="dtaValidade">
+                                                        <div *ngIf="submittedDesconto && fd['dtaValidade'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fd['dtaValidade'].errors['required']">Digite a Dt/Hr de Validade
+                                                            </div>
+                                                           
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Qtd UN Calculado Automático</label>
+                                                        <span class="form-control span-disable" name="nmQTDUNCalculado"
+                                                            id="idQTDUNCalculado">{{getQtdUnCalculadoAutomatico()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr UN Atual por Alx</label>
+                                                        <span class="form-control span-disable">{{getVlrUnAlx()}}</span>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr AG Atual por Alx</label>
+                                                        <span class="form-control span-disable">{{getVlrAGAlx()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id" >Vlr Desconto</label>
+                                                        <input type="number"
+                                                            class="form-control"
+                                                            #vlrDesc (keyup)="onKeyVlrDesc(vlrDesc.value)"
+                                                            formControlName="vlrDesc">
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idVlrOriginal">Perc Max Desconto</label>
+                                                        <input type="number"
+                                                            [ngClass]="{'is-invalid': submittedDesconto && fd['percDesc'].errors}"
+                                                            class="form-control" formControlName="percDesc">
+                                                        <div *ngIf="submittedDesconto && fd['percDesc'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fd['percDesc'].errors['required']">Digite o percentual
+                                                            </div>
+                                                            <div *ngIf="fd['percDesc'].errors['min']">O percentual deve ser
+                                                                acima
+                                                                de 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr Desc UN por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrDescUnAlx()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr Desc AG por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrDescAgAlx()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+
+
+
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Ação</label>
+                                                        <div class="d-grid">
+                                                            <button class="btn btn-block butao-acao btn-primary"
+                                                                (click)="onAddDescontoAlx()">
+                                                                <span class="fa fa-save span-bt-icon"></span><span
+                                                                    class="span-bt-text">Adicionar</span>
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+
+
+
+
+                                        </form>
+
+                                        <hr>
+
+                                        <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                            [rows]="itemAlxDescontos" [columnMode]="ColumnMode.standard"
+                                            [headerHeight]="35" [footerHeight]="50" rowHeight="auto" [limit]="50"
+                                            [selected]="selectedItemDesconto" [selectionType]="selectionTypeSingle">
+
+                                            <ngx-datatable-column name="RM" [width]="40">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    <button type="button" class="btn btn-danger botao-acao-item"
+                                                        (click)="removeItemDesconto(row)">
+                                                        <span class="fa fa-trash span-btn-excluir"></span>
+                                                    </button>
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ID" prop="id"
+                                                [width]="50"></ngx-datatable-column>
+                                            <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+                                            <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+                                            <ngx-datatable-column name="DATA VALIDADE" prop="dtaValidade" [width]="170">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+                                            
+                                            <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                                                [width]="140"></ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ESTOQUE" prop="estoqueAlmoxarifadoDTO.nome"
+                                                [width]="500">
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="AGRUPAMENTO" prop="itemUnidadeDTO.nome"
+                                                [width]="300">
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="QTD" prop="qtd" [width]="100">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="QTD CONVERTIDO" prop="qtdConvertido"
+                                                [width]="120">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PERC DESCONTO" prop="percDesc" [width]="130">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PRÉVIA DE PREÇO AG" [width]="200">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    {{getVlrAGTabela(row) | number:'1.2-4':'pt-BR'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PRÉVIA DE DESCONTO AG" [width]="200">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    {{getVlrDescAGTabela(row) | number:'1.2-4':'pt-BR'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+
+
+
+
+
+                                        </ngx-datatable>
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="3">
+                                    <a ngbNavLink>Descontos por Representante</a>
+                                    <ng-template ngbNavContent>
+
+                                        <br>
+                                        <form [formGroup]="descontoVendAlx">
+                                            <div class="row">
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idEstAlx">Estoque Almoxarifado</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o almoxarifado"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['estoqueAlmoxarifadoId'].errors}"
+                                                            formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let ealxv of almoxarifados"
+                                                                [ngValue]="ealxv.id">{{ealxv.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submittedDescontoVend && fdv['estoqueAlmoxarifadoId'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['estoqueAlmoxarifadoId'].errors['required']">
+                                                                Selecione
+                                                                um
+                                                                estoque
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idEstAlx">Representantes</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o representante"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['vendedorId'].errors}"
+                                                            formControlName="vendedorId" id="idEstAlx">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let vend of vendedores" [ngValue]="vend.id">
+                                                                {{vend.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submittedDescontoVend && fdv['vendedorId'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['vendedorId'].errors['required']">Selecione
+                                                                um
+                                                                representante
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Agrupamentos</label>
+                                                        <select class="form-control"
+                                                            ngbTooltip="Selecione o agrupamento para calcular"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['agrupamento'].errors}"
+                                                            formControlName="agrupamento">
+                                                            <option [ngValue]="null">SELECIONE</option>
+                                                            <option *ngFor="let un of item.itemUnidadeDTOs"
+                                                                [ngValue]="un.id">{{un.nome}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="submittedDescontoVend && fdv['agrupamento'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['agrupamento'].errors['required']">Selecione
+                                                                um
+                                                                agrupamento
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idVlrOriginal">Qtd</label>
+                                                        <input type="number"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['qtd'].errors}"
+                                                            class="form-control" id="idVlrOriginal"
+                                                            formControlName="qtd">
+                                                        <div *ngIf="submittedDescontoVend && fdv['qtd'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['qtd'].errors['required']">Digite a qtd
+                                                            </div>
+                                                            <div *ngIf="fdv['qtd'].errors['min']">A qtd deve ser acima de 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idDtHrValidadeVendedor">Dta/Hr Validade</label>
+                                                        <input type="datetime-local"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['dtaValidade'].errors}"
+                                                            class="form-control" id="idDtHrValidadeVendedor"
+                                                            formControlName="dtaValidade">
+                                                        <div *ngIf="submittedDescontoVend && fdv['dtaValidade'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['dtaValidade'].errors['required']">Digite a Dt/Hr de Validade
+                                                            </div>
+                                                           
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Qtd UN Calculado Automático</label>
+                                                        <span class="form-control span-disable" name="nmQTDUNCalculado"
+                                                            id="idQTDUNCalculado">{{getQtdUnCalculadoAutomaticoVend()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr UN Atual por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrUnAlxVend()}}</span>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr AG Atual por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrAGAlxVend()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idVlrOriginal">Perc Max Desconto</label>
+                                                        <input type="number"
+                                                            [ngClass]="{'is-invalid': submittedDescontoVend && fdv['percDesc'].errors}"
+                                                            class="form-control" formControlName="percDesc">
+                                                        <div *ngIf="submittedDescontoVend && fdv['percDesc'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="fdv['percDesc'].errors['required']">Digite o
+                                                                percentual
+                                                            </div>
+                                                            <div *ngIf="fdv['percDesc'].errors['min']">O percentual deve ser
+                                                                acima
+                                                                de 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr Desc UN por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrDescUnAlxVend()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Vlr Desc AG por Alx</label>
+                                                        <span
+                                                            class="form-control span-disable">{{getVlrDescAgAlxVend()}}</span>
+
+                                                    </div>
+                                                </div>
+
+
+
+
+
+
+
+                                                <div class="col-sm-2 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="id">Ação</label>
+                                                        <div class="d-grid">
+                                                            <button class="btn btn-block butao-acao btn-primary"
+                                                                (click)="onAddDescontoVendAlx()">
+                                                                <span class="fa fa-save span-bt-icon"></span><span
+                                                                    class="span-bt-text">Adicionar</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+
+
+
+
+                                        </form>
+
+                                        <hr>
+
+                                        <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                            [rows]="itemAlxVendDescontos" [columnMode]="ColumnMode.standard"
+                                            [headerHeight]="35" [footerHeight]="50" rowHeight="auto" [limit]="50"
+                                            [selected]="selectedItemVendDesconto" [selectionType]="selectionTypeSingle"
+                                            [sorts]="[{ prop: 'estoqueAlmoxarifadoDTO.nome', dir: 'asc' }, { prop: 'vendedorId', dir: 'asc' }]">
+
+                                            <ngx-datatable-column name="RM" [width]="40">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    <button type="button" class="btn btn-danger botao-acao-item"
+                                                        (click)="removeItemVendDesconto(row)">
+                                                        <span class="fa fa-trash span-btn-excluir"></span>
+                                                    </button>
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ID" prop="id"
+                                                [width]="50"></ngx-datatable-column>
+                                            <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+                                            <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+                                            <ngx-datatable-column name="DATA VALIDADE" prop="dtaValidade" [width]="170">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                                                [width]="140"></ngx-datatable-column>
+
+                                            <ngx-datatable-column name="ESTOQUE" prop="estoqueAlmoxarifadoDTO.nome"
+                                                [width]="500">
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="AGRUPAMENTO" prop="itemUnidadeDTO.nome"
+                                                [width]="300">
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="REPRESENTANTE" prop="vendedorId" [width]="500">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ getVendedorNome(value) }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="QTD" prop="qtd" [width]="100">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="QTD CONVERTIDO" prop="qtdConvertido"
+                                                [width]="120">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PERC DESCONTO" prop="percDesc" [width]="130">
+                                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                                    {{ value }}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PRÉVIA DE PREÇO AG" [width]="200">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    {{getVlrAGTabela(row) | number:'1.2-4':'pt-BR'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+                                            <ngx-datatable-column name="PRÉVIA DE DESCONTO AG" [width]="200">
+                                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                                    {{getVlrDescAGTabela(row) | number:'1.2-4':'pt-BR'}}
+                                                </ng-template>
+                                            </ngx-datatable-column>
+
+
+
+
+
+
+                                        </ngx-datatable>
+
+                                    </ng-template>
+                                </li>
+                            </ul>
+
+
+
+                            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>

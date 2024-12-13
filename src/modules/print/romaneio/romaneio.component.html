@@ -1,0 +1,369 @@
+<div class="div-print-content">
+
+
+  <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+    type="ball-spin-clockwise">
+    <p style="font-size: 20px; color: white">Processando, Aguarde...</p>
+  </ngx-spinner>
+
+  <div *ngIf="pr === null || isUndefined(pr) || pr.id === null || pr.id === 'erro'">
+    <h3>Impressão foi acionada fora de um contexto da aplicação, não existe nada aqui para imprimir, feche esta janela
+    </h3>
+  </div>
+  <div class="div-print-principal" *ngIf="pr !== null && !isUndefined(pr) && pr.id === 'rota-v1-romaneio' && pr.data !== null"
+    style="margin-bottom: 30px;">
+
+    <br>
+    <br>
+    <div class="col-12 text-align-center-titulo">
+      <p>ROMANEIO ID : {{pr.data.id}} | STATUS: {{pr.data.indStatus === 'F' ? 'FECHADO' : 'ABERTO'}}</p>
+    </div>
+
+    <div class="col-12 div-margin-padding-0">
+
+
+      <div class="row">
+        <div class="col-12" style="border: 1px solid black;">MOTORISTA:
+          {{pr.data.motoristaDTO !== null && pr.data.motoristaDTO.nome !== null ? pr.data.motoristaDTO.nome:''}}</div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-12" style="border: 1px solid black;">VEICULO:
+          {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.nome !== null ? pr.data.veiculoDTO.nome:''}} -
+          {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.placa !== null ? pr.data.veiculoDTO.placa:''}} -
+          {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.marca !== null ? pr.data.veiculoDTO.marca:''}}</div>
+      </div>
+
+
+
+      <div class="row">
+        <div class="col-12" style="border: 1px solid black;">ALMOXARIFADO:
+          {{pr.data.estoqueAlmoxarifadoNome !== null ? pr.data.estoqueAlmoxarifadoNome:''}}</div>
+      </div>
+
+
+
+      <div class="row" style="border: 1px solid black;">
+
+        <div class="col-6">DTA ENTREGA: {{pr.data.dtaEntrega | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+        <div class="col-6">DTA CAIXA: {{pr.data.dtaCaixa | amDateFormat:'DD/MM/YYYY'}}</div>
+
+      </div>
+
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-4">DTA SAIDA:</div>
+        <div class="col-4">HRA SAIDA:</div>
+        <div class="col-4">HRA CHEGADA:</div>
+      </div>
+
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-4">DTA INCLUSÃO: {{pr.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+        <div class="col-4">USUÁRIO INCLUSÃO: {{pr.data.usuarioInclusao}}</div>
+        <div class="col-4">DTA IMPRESSÃO: {{dataImpressao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+      </div>
+
+    </div>
+
+
+    <div class="col-12 text-align-center-div-titulo">
+      <p style="margin: 0px;">AGRUPAMENTOS</p>
+    </div>
+    <div class="col-12">
+      <div class="row">
+        <div class="col-sm-2 col-2 div-block-center" *ngFor="let ag of pr.agrupamentos"> {{ag.qtd}} -
+          {{ag.nome}}
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="col-12 text-align-center-div-titulo">
+      <p style="margin: 0px;">ITENS</p>
+    </div>
+
+    <table class="table table-sm table-valores">
+      <thead>
+        <tr>
+          <th>NF</th>
+          <th>Id</th>
+          <th>St</th>
+          <th>Cliente</th>
+          <th>Endereço-Bairro-Cidade</th>
+          <th>Condição</th>
+
+          <th>Valor Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let vd of pr.data.vendas.vendas">
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{vd.nf === null ? '':vd.nf}}</td>
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{vd.id}}</td>
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{vd.vendaStatusAtualDTO.vendaStatusLabelDTO.sigla}}</td>
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{vd.clienteDTO.nome}}</td>
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{getEnderecoBairroCidade(vd)}}</td>
+          <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px; color: black;">
+            {{vd.condicaoPagamentoDTO.nome}}</td>
+
+
+          <td class="align-right td-mod">{{vd.vlrTotal | number:'1.2-2':'pt-BR'}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <div class="col-12 text-align-center-div-titulo">
+      <p style="margin: 0px;">CONDIÇÕES</p>
+    </div>
+    <div class="col-12">
+      <div class="row">
+        <div class="col-sm-3 col-3 div-block-center" *ngFor="let cv of pr.condicoes"> {{cv.nome}} -
+          {{cv.vlr | number:'1.2-2':'pt-BR'}}
+        </div>
+      </div>
+    </div>
+
+
+
+    <br>
+
+    <div class="row" style="border: 1px solid black;">
+      <div class="col-4">TOTAL DA ENTREGA: <span>{{getValorTotalVendas() |
+          number:'1.2-2':'pt-BR'}}
+        </span></div>
+      <div class="col-4">QTD PEDIDOS: {{pr.qtdVendas}}</div>
+      <div class="col-4">QTD CLIENTES: {{pr.qtdClientesVendas}}</div>
+    </div>
+
+    <div class="row" style="border: 1px solid black;">
+      <div class="col-4">PARA TROCO OU DESPESA: {{pr.data.vlrTrocoDespesa | number:'1.2-2':'pt-BR'}}</div>
+      <div class="col-4">DIÁRIA: {{pr.data.vlrDiaria | number:'1.2-2':'pt-BR'}}</div>
+      <div class="col-4">D. ACESSÓRIA: {{pr.data.vlrAcessoria | number:'1.2-2':'pt-BR'}}</div>
+    </div>
+
+    <div class="row" style="border: 1px solid black;">
+      <div class="col-6">AVARIA(MANUAL):</div>
+      <div class="col-6">DEVOLUÇÃO(MANUAL):</div>
+    </div>
+
+
+
+
+
+
+  </div>
+
+
+  <div class="div-print-principal" *ngIf="pr !== null && !isUndefined(pr) && pr.id === 'rota-v1-rota' && pr.data !== null">
+
+    <div class="col-12 text-align-center-titulo" style="margin-top: 30px;margin-bottom: 30px;">
+      <p>ROMANEIO CARREGAMENTO ID : {{pr.data.id}} | STATUS: {{pr.data.indStatus === 'F' ? 'FECHADO' : 'ABERTO'}}<span
+          *ngIf="pr.data.movimentoId !== null && pr.data.movimentoId > 0">MOVIMENTO ID: {{pr.data.movimentoId}}</span>
+      </p>
+    </div>
+
+    <div class="col-12 div-margin-padding-0">
+      <!--
+      <hr>
+
+      <div class="row">
+        <div class="col-12">MOTORISTA: {{pr.data.motoristaDTO != null && pr.data.motoristaDTO.nome != null ? pr.data.motoristaDTO.nome:''}}</div>
+      </div>
+    -->
+
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-12">VEICULO: {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.nome !== null ?
+          pr.data.veiculoDTO.nome:''}} - {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.placa !== null ?
+          pr.data.veiculoDTO.placa:''}} - {{pr.data.veiculoDTO !== null && pr.data.veiculoDTO.marca !== null ?
+          pr.data.veiculoDTO.marca:''}}</div>
+      </div>
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-12">CONFERENTE: </div>
+      </div>
+
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-12">ALMOXARIFADO:
+          {{pr.data.estoqueAlmoxarifadoNome !== null ? pr.data.estoqueAlmoxarifadoNome:''}}</div>
+      </div>
+
+
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-4">DTA INCLUSÃO: {{pr.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+        <div class="col-4">USUÁRIO INCLUSÃO: {{pr.data.usuarioInclusao}}</div>
+        <div class="col-4">DTA IMPRESSÃO: {{dataImpressao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+      </div>
+
+      <div class="row" style="border: 1px solid black;">
+        <div class="col-6">QTD PEDIDOS: {{pr.qtdVendas}}</div>
+        <div class="col-6">QTD CLIENTES: {{pr.qtdClientesVendas}}</div>
+      </div>
+
+
+
+    </div>
+
+
+    <!--
+    <br>
+
+
+    <div class="col-12 text-align-center-div-titulo">
+      <p>AGRUPAMENTOS</p>
+    </div>
+    <div class="col-sm-12 row">
+      <div class="col-sm-2 col-2 div-block-center" *ngFor="let ag of pr.agrupamentos"> {{ag.qtd}} -
+        {{ag.nome}}
+      </div>
+    </div>
+    <br>
+    <hr>
+  -->
+    <br>
+    <div class="col-12 text-align-center-div-titulo">
+
+      <div class="row" style="margin: 0px;padding: 0px;">
+
+        <div class="col-6 text-end" style="margin: 0px;padding: 0px;">
+          <fieldset class="form-group" style="margin-bottom: 10px;">
+            <label class="radio-inline rinline" style="padding-right: 10px;">
+              <input type="radio" [(ngModel)]="versaoImpressao" name="nameOptRdEntrega" id="IdOptRdEntrega1"
+                [value]="1">1 Versão
+            </label>
+            <label class="radio-inline rinline" style="padding-right: 10px;">
+              <input type="radio" [(ngModel)]="versaoImpressao" name="nameOptRdEntrega" id="IdOptRdEntrega2"
+                [value]="2">2 Versão
+            </label>
+            <label class="radio-inline rinline" style="padding-right: 10px;">
+              <input type="radio" [(ngModel)]="versaoImpressao" name="nameOptRdEntrega" id="IdOptRdEntrega3"
+                [value]="3">3 Versão
+            </label>
+          </fieldset>
+        </div>
+        <div class="col-6 text-start" style="margin: 0px;padding: 0px;">
+          <button (click)="imprimirPagina()" style="margin-left: 10px;">Imprimir</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="versaoImpressao === 1" style="margin: 0px; padding: 0px;">
+
+      <table class="table table-sm table-valores">
+        <thead>
+          <tr>
+            <th>QTD</th>
+            <th>DESCRIÇÃO</th>
+            <th>AGRUPAMENTO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ag of agVenda">
+            <td class="align-left td-mod">{{ag.qtd}}</td>
+            <td class="align-left td-mod">{{ag.item}}</td>
+            <td class="align-left td-mod">{{ag.unidade}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="(versaoImpressao === 2 || versaoImpressao === 3)" style="margin: 0px; padding: 0px;">
+
+      <div style="margin: 0px; padding: 0px;" *ngIf="versaoImpressao === 3">
+
+        <div class="col-12 text-align-center-div-titulo" style="margin-top: 20px;">
+          <p>CLIENTES</p>
+        </div>
+
+
+        <table class="table table-sm table-valores">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOME</th>
+              <th>FANTASIA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cl of clientes">
+              <td class="align-left td-mod">{{cl.id}}</td>
+              <td class="align-left td-mod">{{cl.nome}}</td>
+              <td class="align-left td-mod">{{cl.fantasia}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin: 0px; padding: 0px;" *ngFor="let sp of separadores">
+
+        <div class="col-12 text-align-center-div-titulo" style="margin-top: 20px;">
+          <p>{{sp.nome}} | ROMANEIO ID: {{pr.data.id}}<span *ngIf="getPlacaVeiculo().length > 1"> | PLACA: {{getPlacaVeiculo()}}</span></p>
+        </div>
+
+        <table class="table table-sm table-valores">
+          <thead>
+            <tr>
+              <th>QTD</th>
+              <th>DESCRIÇÃO</th>
+              <th>AGRUPAMENTO</th>
+              <th>RUA</th>
+              <th>PREDIO</th>
+              <th>NIVEL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ag of sp.agrupamentos">
+              <td class="align-left td-mod">{{ag.qtd}}</td>
+              <td class="align-left td-mod">{{ag.item}}</td>
+              <td class="align-left td-mod">{{ag.unidade}}</td>
+              <td class="align-left td-mod">{{ag.rua}}</td>
+              <td class="align-left td-mod">{{ag.predio}}</td>
+              <td class="align-left td-mod">{{ag.nivel}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-12 text-align-center-div-titulo" style="margin-top: 20px;">
+        <p>CIDADE-BAIRRO DE ENTREGA | ROMANEIO ID: {{pr.data.id}}</p>
+      </div>
+
+      <table class="table table-sm table-valores" style="margin-top: 20px;">
+        <thead>
+          <tr>
+            <th>CIDADE</th>
+            <th>BAIRRO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cd of cidadeBairros">
+            <td class="align-left td-mod">{{cd.cidade}}</td>
+            <td class="align-left td-mod">{{cd.bairro}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    </div>
+
+
+
+  </div>
+
+
+</div>

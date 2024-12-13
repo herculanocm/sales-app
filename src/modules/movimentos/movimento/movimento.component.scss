@@ -1,0 +1,77 @@
+button {
+    border: 1px solid #ced4da;
+}
+
+.accordion-header {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.125);
+    background-color: #f7f7f7;
+}
+
+.accordion-body {
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.125);
+}
+
+.style3 {
+    border-top: 1px dashed #8c8b8b;
+}
+
+.spin-upload-image {
+    font-size: 28px;
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.div-table {
+    padding-top: 10px;
+}
+
+.span-midle {
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+}
+
+.span-button-print {
+    padding: 0;
+    margin: 0;
+}
+
+.span-disable {
+    background-color: #E9ECEF;
+}
+
+.chbox {
+    margin-left: 20px;
+}
+
+.rinline {
+    margin-left: 20px;
+}
+
+:host ::ng-deep .datatable-body-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;
+}
+
+:host ::ng-deep .datatable-header-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;
+}
+
+.span-acao2 {
+    font-size: 1.2em;
+}
+
+.card-header {
+    background-color: white;
+}
+
+.card-body {
+    background-color: white;
+}

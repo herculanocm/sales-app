@@ -1,0 +1,78 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Configurações'" [picon]="'fa-cogs'" [heading]="'SMS'"
+        [icon]="'fa-th-list'"></app-page-header>
+
+
+    <div class="card">
+        <div class="row">
+            <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                type="ball-spin-clockwise">
+                <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+            </ngx-spinner>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button class="btn btn-block butao-acao btn-primary" (click)="onSend()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">Send SMS</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-outline-dark butao-acao" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Clear</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+
+                        <form [formGroup]="smsForm">
+                            <div class="row">
+
+                                <div class="col-sm-4 col-12 padding-5">
+                                    <div class="form-group">
+                                        <label for="idphoneTo">To Number</label>
+
+                                        <input type="text" class="form-control" id="idphoneTo"
+                                            [ngClass]="{'is-invalid': submitted && f.phoneTo.errors}"
+                                            formControlName="phoneTo">
+
+                                        <div *ngIf="submitted && f.phoneTo.errors" class="invalid-feedback">
+                                            <div *ngIf="f.phoneTo.errors['required']">Fone é obrigatorio
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 padding-5">
+                                    <div class="form-group">
+                                        <label for="idsmsText">SMS Text</label>
+                                        <textarea class="form-control" formControlName="smsText"
+                                            [ngClass]="{'is-invalid': submitted && f.smsText.errors}"
+                                            id="idsmsText"></textarea>
+                                        <div *ngIf="submitted && f.smsText.errors" class="invalid-feedback">
+                                            <div *ngIf="f.smsText.errors['required']">Texto é obrigatorio
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,175 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Movimentos'" [picon]="'fa-retweet'" [heading]="'Auditoria Item'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-12 d-grid" *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" ngbTooltip="Download CSV"
+                                (click)="onDownloadCSV()">
+                                <span class="fa fa-download span-acao"></span> Download CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <div class="form-group row">
+                        <label for="idInputDtaInicial" class="col-sm-2 col-form-label col-12">Dta Inicial</label>
+                        <div class="col-sm-4 col-12 padding-0">
+                            <input type="date" class="form-control" id="idInputDtaInicial" name="nameInputDtaInicial"
+                                [(ngModel)]="procuraAuditoria.dtaInicial" />
+                        </div>
+                        <label for="idInputDtaFinal" class="col-sm-2 col-form-label col-12">Dta Final</label>
+                        <div class="col-sm-4 col-12 padding-0">
+                            <input type="date" class="form-control" id="idInputDtaFinal" name="nameInputDtaFinal"
+                                [(ngModel)]="procuraAuditoria.dtaFinal" />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group row">
+                        <label for="almoxarifadoId" class="col-sm-2 col-form-label col-12">Almoxarifado</label>
+                        <div class="col-sm-8 col-12 padding-0">
+
+                            <select class="form-control" name="almoxarifadoId" id="almoxarifadoName"
+                                [compareWith]="compareAlmoxarifado"
+                                [(ngModel)]="procuraAuditoria.estoqueAlmoxarifadoId">
+                                <option [ngValue]="null">Selecione</option>
+                                <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="movTipoId" class="col-sm-2 col-form-label col-12">Tipo</label>
+                        <div class="col-sm-8 col-12 padding-0">
+
+                            <select class="form-control" name="movTipoName" id="movTipoId"
+                                [compareWith]="compareMovTipo"
+                                [(ngModel)]="procuraAuditoria.movimentoTipoId">
+                                <option [ngValue]="null">Selecione</option>
+                                <option *ngFor="let al of movItens" [ngValue]="al.id">{{al.nome}}</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="typeaheadItem" class="col-sm-2 col-form-label col-12">Item</label>
+                        <div class="col-sm-2 col-3 padding-0">
+                            <input type="number" class="form-control" id="idCodItem" name="nameCodItem"
+                                [(ngModel)]="procuraAuditoria.itemDTO.id"
+                                (keydown.Tab)="selectedItemId(procuraAuditoria.itemDTO.id)"
+                                (keydown.enter)="selectedItemId(procuraAuditoria.itemDTO.id)" />
+                        </div>
+                        <div class="col-sm-6 col-9 padding-0">
+                            <input id="typeaheadItem" [ngbTypeahead]="searchItem"
+                                [(ngModel)]="procuraAuditoria.itemDTO.nome" [resultTemplate]="rt"
+                                (selectItem)="selectedItem($event)" name="typeaheadItem" type="text"
+                                class="form-control" [class.is-invalid]="searchFailedItem" [placement]="'top-left'"
+                                placeholder="Busca de Item" />
+                        </div>
+                        <span class="col-sm-2 col-form-label" *ngIf="searchingItem">procurando...</span>
+                        <span class="col-sm-2 col-form-label" *ngIf="searchFailedItem">Não encontrado</span>
+                    </div>
+
+                    <br *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+                    <hr *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+                    <br *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+
+                    <div *ngIf="movimentoItemAuditoriaDTOs.length > 0" class="col-sm-12">
+                        <ngx-datatable class="material striped" appResizeWatcher [scrollbarH]="true"
+                            [rows]="movimentoItemAuditoriaDTOs" [columnMode]="ColumnMode.standard" [headerHeight]="35"
+                            [footerHeight]="70" rowHeight="auto" [limit]="10" [selectionType]="selectionTypeSingle">
+
+                            <ngx-datatable-column name="ID MOVIMENTO" prop="movimentoId" [width]="120">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="ID" prop="id" [width]="70">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="200">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="USUARIO INCLUSÃO" prop="usuarioInclusao" [width]="150">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="TIPO" prop="movimentoTipoNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD" prop="qtd" [width]="100">
+                            </ngx-datatable-column>
+
+
+                            <ngx-datatable-column name="FATOR" prop="fatorOriginal" [width]="100">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD CONV" prop="qtdConvertido" [width]="150">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD ESTOQUE VALIDO ANTERIOR*" prop="qtdAnteriorEstoqueAtivo" [width]="300">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD ESTOQUE VALIDO ATUAL" prop="qtdEstoqueValidoAtual" [width]="300">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="ALMOXARIFADO" prop="estoqueAlmoxarifadoNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="ORIGEM" prop="movimentoOrigemNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="CONFERENTE" prop="conferenteFuncionarioNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="VEICULO" prop="veiculoNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="MOTORISTA" prop="motoristaFuncionarioNome" [width]="350">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="FORNECEDOR" prop="fornecedorNome" [width]="450">
+                            </ngx-datatable-column>
+
+
+                            <ngx-datatable-column name="CLIENTE" prop="clienteNome" [width]="450">
+                            </ngx-datatable-column>
+
+
+                        </ngx-datatable>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

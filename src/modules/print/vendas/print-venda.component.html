@@ -1,0 +1,348 @@
+<div class="div-print-content">
+  <div *ngIf="pv === null || isUndefined(pv) || pv.id === null || pv.id === 'erro'">
+    <h3>Impressão foi acionada fora de um contexto da aplicação, não existe nada aqui para imprimir, feche esta janela
+    </h3>
+  </div>
+  <div class="div-print-principal" *ngIf="pv !== null && !isUndefined(pv) && pv.id !== null && pv.id !== 'erro' && pv.data !== null && !isUndefined(pv.data) && pv.data.id! > 0">
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 250px">Data Inclusão : <span
+            class="span-data">{{pv.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span></td>
+        <td class="td-cabecalho" style="width: 100px">Status : <span class="span-data"
+            style="font-size: 18px">{{pv.data.vendaStatusAtualDTO.vendaStatusLabelDTO.sigla}}</span></td>
+        <td class="td-cabecalho" style="width: 250px">Impresso em : <span
+            class="span-data">{{dataImpressao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span></td>
+        <td class="td-cabecalho" style="width: 158px">Por : <span class="span-data">{{pv.data.usuarioInclusao}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 70px; text-align: right;padding-right: 5px;">Id Sales:</td>
+        <td style="width: 60px"><span class="span-data">{{pv.data.id}}</span></td>
+        <td style="width: 70px; text-align: right;padding-right: 5px;">Id Totvs:</td>
+        <td style="width: 60px"><span class="span-data">{{pv.data.numPedTotvs !== null && pv.data.numPedTotvs > 0 ? pv.data.numPedTotvs:''}}</span></td>
+        <td style="width: 120px; text-align: right;padding-right: 5px;">Data/Hr Entrega:</td>
+        <td style="width: 190px"><span class="span-data">{{pv.data.dtaEntrega | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span></td>
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Emissão:</td>
+        <td style="width: 180px"><span class="span-data">{{pv.data.dtaEmissao | amDateFormat:'DD/MM/YYYY'}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Cliente:</td>
+        <td style="width: 390px"><span class="span-data">{{pv.data.clienteDTO!.id}} - {{pv.data.clienteDTO!.nome}}</span>
+        </td>
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Cgc/Cpf:</td>
+
+        <td style="width: 180px" *ngIf="pv.data.clienteDTO!.cgc.length === 14">
+          <span class="span-data">{{pv.data.clienteDTO!.cgc | mask: '00.000.000/0000-00'}}</span>
+        </td>
+
+        <td style="width: 180px" *ngIf="pv.data.clienteDTO!.cgc.length !== 14">
+          <span class="span-data">{{pv.data.clienteDTO!.cgc | mask: '000.000.000-00'}}</span>
+        </td>
+
+      </tr>
+
+
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Fantasia:</td>
+        <td style="width: 390px"><span class="span-data">{{pv.data.clienteDTO!.fantasia}}</span></td>
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Condição:</td>
+        <td style="width: 180px"><span class="span-data"
+            style="font-size: 17px">{{pv.data.condicaoPagamentoDTO!.nome}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 490px">
+          <table class="padding-margin-0">
+            <tr class="padding-margin-0">
+              <td style="width: 100px; text-align: right;padding-right: 5px;">RG/IE:</td>
+              <td ><span class="span-data">{{pv.data.clienteDTO!.rgie !== null ? pv.data.clienteDTO!.rgie : ' '}}</span></td>
+            </tr>
+            <tr class="padding-margin-0">
+              <td style="width: 100px; text-align: right;padding-right: 5px;">Endereço:</td>
+            <td style="width: 390px"><span class="span-data">{{pv.data.logradouroEntrega}}, {{pv.data.numEntrega}}
+                {{pv.data.cepEntrega !== null ? ' - ' : ''}} {{pv.data.cepEntrega !== null ? pv.data.cepEntrega : ''}}</span>
+            </td>
+            </tr>
+          </table>
+        </td>
+        <!--
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Endereço:</td>
+        <td style="width: 390px"><span class="span-data">{{pv.data.logradouroEntrega}}, {{pv.data.numEntrega}}
+            {{pv.data.cepEntrega != null ? ' - ' : ''}} {{pv.data.cepEntrega != null ? pv.data.cepEntrega : ''}}</span>
+        </td>
+        -->
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Fone Cli:</td>
+        <td style="width: 180px">
+          <table class="padding-margin-0">
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.telefone1 !== null && pv.data.clienteDTO!.telefone1.length > 0">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Fone1:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.telefone1 | mask: '(00) 0000-00000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.telefone2 !== null && pv.data.clienteDTO!.telefone2.length > 0">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Fone2:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.telefone2 | mask: '(00) 0000-00000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.celular1 !== null && pv.data.clienteDTO!.celular1.length === 10">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Cell1:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.celular1 | mask: '(00) 0000-0000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.celular1 !== null && pv.data.clienteDTO!.celular1.length === 11">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Cell1:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.celular1 | mask: '(00) 0.0000-0000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.celular2 !== null && pv.data.clienteDTO!.celular2.length === 10">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Cell2:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.celular2 | mask: '(00) 0000-0000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.celular2 !== null && pv.data.clienteDTO!.celular2.length === 11">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Cell2:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.celular2 | mask: '(00) 0.0000-0000'}}</span></td>
+            </tr>
+            <tr class="padding-margin-0"
+              *ngIf="pv.data.clienteDTO!.idAux !== null && pv.data.clienteDTO!.idAux > 0">
+              <td style="width: 50px; text-align: right;padding-right: 5px;">Id Win:</td>
+              <td><span class="span-data">{{pv.data.clienteDTO!.idAux}}</span></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Cidade:</td>
+        <td style="width: 390px"><span class="span-data">{{pv.data.municipioEntrega}} - {{pv.data.estadoEntrega}}</span>
+        </td>
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Bairro:</td>
+        <td style="width: 180px"><span class="span-data">{{pv.data.bairroEntrega}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Representante:</td>
+        <td style="width: 390px"><span class="span-data">{{pv.data.vendedorDTO!.id}} -
+            {{pv.data.vendedorDTO!.nome}}</span></td>
+
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Fone Rep:</td>
+
+        <td style="width: 180px" *ngIf="pv.data.vendedorDTO!.celular1 === null">
+          <span class="span-data"></span>
+        </td>
+
+        <td style="width: 180px"
+          *ngIf="pv.data.vendedorDTO!.celular1 !== null && pv.data.vendedorDTO!.celular1.length === 11">
+          <span class="span-data">{{pv.data.vendedorDTO!.celular1 | mask: '(00) 0.0000-0000'}}</span>
+        </td>
+
+        <td style="width: 180px"
+          *ngIf="pv.data.vendedorDTO!.celular1 !== null && pv.data.vendedorDTO!.celular1.length !== 11">
+          <span class="span-data">{{pv.data.vendedorDTO!.celular1 | mask: '(00) 0000-0000'}}</span>
+        </td>
+
+      </tr>
+    </table>
+
+    
+    <table class="padding-margin-0" *ngIf="pv.data.rotas !== null && !isUndefined(pv.data.rotas) && pv.data.rotas.length > 0">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Motorista:</td>
+        <td style="width: 300px"><span class="span-data">{{pv.data.rotas[0].motorista_nome}}</span></td>
+
+        <td style="width: 80px; text-align: right;padding-right: 5px;">Veiculo:</td>
+
+        <td style="width: 270px">
+          <span class="span-data">{{pv.data.rotas[0].veiculo_nome}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-top: 5px;">
+      <tr class="padding-margin-0">
+        <td style="width: 100px; text-align: right;padding-right: 5px;">Observação:</td>
+        <td style="width: 654px;margin: 0px;padding: 0px">
+          <div style="border: 1px solid #000000;min-height: 30px;margin: 0px;padding: 0px"><span class="span-data">{{pv.data.descricao}}</span>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-top: 5px;">
+      <tr class="padding-margin-0" style="border: 1px solid #000000;">
+
+        <td style="width: 100px;">Confirmado por:</td>
+        <td style="width: 150px"><span
+            class="span-data">{{pv.data.statusConfirmacao !== null ? pv.data.statusConfirmacao.usuarioInclusao:''}}</span>
+        </td>
+
+        <td style="width: 100px;border-left: 1px solid #000000;">Aprovado por:</td>
+        <td style="width: 150px"><span
+            class="span-data">{{pv.data.statusAprovacao !== null ? pv.data.statusAprovacao.usuarioInclusao:''}}</span>
+        </td>
+
+        <td style="width: 100px;border-left: 1px solid #000000;">Faturado por:</td>
+        <td style="width: 154px"><span
+            class="span-data">{{pv.data.statusFaturamento !== null ? pv.data.statusFaturamento.usuarioInclusao:''}}</span>
+        </td>
+
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-top: 5px;margin-right: 0px;" *ngIf="isCancelado()">
+      <tr class="padding-margin-0" style="border: 1px solid #000000;">
+        <th style="width: 302px;padding-left: 5px;border: 1px solid black;">Motivo Cancelamento</th>
+        <th style="width: 450px;padding-left: 5px;border: 1px solid black;">Justificativa Cancelamento</th>
+      </tr>
+      <tr>
+        <td style="border: 1px solid black;padding-left: 5px;">
+          <span>{{pv.data.vendaStatusAtualDTO.vendaStatusMotivoDTO !== null ? pv.data.vendaStatusAtualDTO.vendaStatusMotivoDTO.nome:''}}</span>
+        </td>
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{pv.data.vendaStatusAtualDTO.descricao}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-top: 10px;margin-right: 0px;" *ngIf="isEmissorCheque() === 0">
+      <tr class="padding-margin-0" style="border: 1px solid #000000;">
+
+        <td class="padding-margin-0" style="width: 755px;">Não existe emissor de cheque vinculado ao cliente</td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-top: 5px;margin-right: 0px;" *ngIf="isEmissorCheque() === 1">
+      <tr class="padding-margin-0" style="border: 1px solid #000000;">
+        <th style="width: 450px;padding-left: 5px;border: 1px solid black;">Emissor de Cheque</th>
+        <th style="width: 170px;padding-left: 5px;border: 1px solid black;">CGC</th>
+        <th style="width: 132px;padding-left: 5px;border: 1px solid black;">Fone</th>
+      </tr>
+      <tr *ngFor="let emis of pv.data.clienteDTO!.clienteEmissorDTOs">
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{emis.nome}}</span></td>
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{emis.cgc}}</span></td>
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{emis.fone}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="margin-right: 0px;">
+      <tr class="padding-margin-0" style="border: 1px solid #000000;">
+
+        <td class="padding-margin-0" style="width: 755px;">Almoxarifado: <span class="span-data">{{pv.data.estoqueAlmoxarifadoDTO!.nome}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr>
+        <th style="width: 40px;padding-left: 5px;border: 1px solid black;">QTD</th>
+        <th style="width: 295px;padding-left: 5px;border: 1px solid black;">NOME PRODUTO</th>
+        <th style="width: 110px;padding-left: 5px;border: 1px solid black;">AGRUPAMENTO</th>
+        <th style="width: 80px;padding-left: 5px;border: 1px solid black;">VALOR</th>
+        <th style="width: 50px;padding-left: 5px;border: 1px solid black;">DESC</th>
+        <th style="width: 42px;padding-left: 5px;border: 1px solid black;">UN</th>
+        <th style="width: 55px;padding-left: 5px;border: 1px solid black;">VLR UN</th>
+        <th style="width: 90px;padding-left: 5px;border: 1px solid black;">VLR. TOTAL</th>
+      </tr>
+      <tr *ngFor="let vi of pv.data.vendaItemDTOs">
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{vi.qtd}}</span></td>
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{vi.itemDTO.nome}} {{vi.itemDTO.idAux !== null && vi.itemDTO.idAux > 0 ? (' - ' + vi.itemDTO.idAux) : ''}}</span></td>
+        <td style="border: 1px solid black;padding-left: 5px;"><span>{{vi.itemUnidadeDTO.nome}}</span></td>
+        <td style="border: 1px solid black;padding-right: 5px;text-align: right;"><span
+            class="span-data">{{vi.vlrOrigCalc | number:'1.2-2':'pt-BR' }}</span></td>
+        <td style="border: 1px solid black;padding-right: 5px;text-align: right;"><span
+            class="span-data">{{vi.vlrDesconto | number:'1.2-2':'pt-BR' }}</span></td>
+
+        <td style="border: 1px solid black;padding-right: 5px;text-align: right;"><span
+              class="span-data">{{(vi.vlrUnitario) | number:'1.2-4':'pt-BR' }}</span></td>
+
+        <td style="border: 1px solid black;padding-right: 5px;text-align: right;"><span
+            class="span-data">{{(vi.vlr / vi.qtd) | number:'1.2-4':'pt-BR' }}</span></td>
+        <td style="border: 1px solid black;padding-right: 5px;text-align: right;"><span
+            class="span-data">{{vi.vlr | number:'1.2-2':'pt-BR' }}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0">
+      <tr class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+
+        <td style="width: 125px;text-align: right;padding-right: 5px;">Total Prod Sistema:</td>
+        <td style="width: 125px;text-align: right;padding-right: 5px;"><span class="span-data">=
+            {{getTotalProdutosSistema() | number:'1.2-2':'pt-BR' }}</span></td>
+
+        <td style="width: 125px; text-align: right;padding-right: 5px;">Total Descontos:</td>
+        <td style="width: 125px;text-align: right;padding-right: 5px;"><span class="span-data">-
+            {{pv.data.vlrDescontoProdutos | number:'1.2-2':'pt-BR' }}</span></td>
+
+        <td style="width: 125px; text-align: right;padding-right: 5px;">Total Produtos:</td>
+        <td style="width: 129px;text-align: right;padding-right: 5px;"><span class="span-data">=
+            {{pv.data.vlrProdutos | number:'1.2-2':'pt-BR' }}</span></td>
+
+      </tr>
+    </table>
+    <table class="padding-margin-0" style="margin: 0px;">
+      <tr class="padding-margin-0">
+
+        <td style="width: 50px; text-align: right;padding-right: 5px;">Frete:</td>
+        <td style="width: 60px;text-align: right;padding-right: 5px;"><span class="span-data">+
+            {{pv.data.vlrFrete | number:'1.2-2':'pt-BR' }}</span></td>
+
+
+        <td style="width: 60px; text-align: right;padding-right: 5px;">Despesa Acessória:</td>
+        <td style="width: 60px;text-align: right;padding-right: 5px;"><span class="span-data">+
+            {{pv.data.vlrDespAcessoria | number:'1.2-2':'pt-BR' }}</span></td>
+
+
+        <td style="width: 60px; text-align: right;padding-right: 5px;">Acréscimo Condição:</td>
+        <td style="width: 60px;text-align: right;padding-right: 5px;"><span class="span-data">+
+            {{pv.data.vlrAcrescimoFixoCondicao | number:'1.2-2':'pt-BR' }}</span></td>
+
+            <td style="width: 60px; text-align: right;padding-right: 5px;">Desconto Geral:</td>
+            <td style="width: 60px;text-align: right;padding-right: 5px;"><span class="span-data">-
+                {{pv.data.vlrDescontoGeral | number:'1.2-2':'pt-BR' }}</span></td>
+
+        <td style="width: 125px; text-align: right;padding-right: 5px;"><span style="font-weight: 1000;font-size: 16px">TOTAL:</span></td>
+        <td style="width: 125px;text-align: right;padding-right: 5px;"><span class="span-data"
+            style="font-size: 20px;">{{pv.data.vlrTotal | number:'1.2-2':'pt-BR' }}</span></td>
+
+      </tr>
+    </table>
+
+  </div>
+
+  <div class="div-parcelamento" *ngIf="pv !== null && !isUndefined(pv) && pv.data !== null && !isUndefined(pv.data) && pv.data.id! > 0 && !isUndefined(pv.data.tituloReceberDTO) && pv.data.tituloReceberDTO !== null">
+    <p style="margin-bottom: 0px;">Titulos</p>
+    <table class="padding-margin-0">
+      <tr>
+        <th style="width: 150px;padding-left: 5px;border-top: 1px solid black;">Titulo Receber Id</th>
+        <th style="width: 200px;padding-left: 5px;border-top: 1px solid black;">Emissão</th>
+        <th style="width: 200px;padding-left: 5px;border-top: 1px solid black;">Vencimento</th>
+        <th style="width: 210px;padding-left: 5px;border-top: 1px solid black;">Vlr. Total</th>
+      </tr>
+      <tr>
+        <td style="border-top: 1px solid black;padding-left: 5px;"><span>{{pv.data.tituloReceberDTO.id}}</span></td>
+        <td style="border-top: 1px solid black;padding-left: 5px;">
+          <span>{{pv.data.tituloReceberDTO.dtaEmissao | amDateFormat:'DD/MM/YYYY'}}</span></td>
+        <td style="border-top: 1px solid black;padding-left: 5px;">
+          <span>{{pv.data.tituloReceberDTO.dtaVencimento  | amDateFormat:'DD/MM/YYYY'}}</span></td>
+        <td style="border-top: 1px solid black;padding-left: 5px;">
+          <span>{{pv.data.tituloReceberDTO.vlrTotal  | number:'1.2-2':'pt-BR' }}</span></td>
+      </tr>
+    </table>
+  </div>
+
+
+</div>

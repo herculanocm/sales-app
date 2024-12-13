@@ -1,0 +1,39 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <h4>Ações</h4>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Usuário</th>
+                    <th>Data</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let vsa of versoesList.versoes">
+                    <td class="align-left">
+                        {{vsa.usuario}}</td>
+                    <td class="align-left">
+                        {{vsa.dta | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                    <td class="align-left">
+                        {{vsa.acao}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+
+            <div class="col-12 text-center d-grid">
+                <button class="btn btn-md btn-primary" ngbAutofocus (click)="activeModal.close('default')">OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

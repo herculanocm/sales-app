@@ -1,0 +1,142 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 venda-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Relatório Planilha'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoInicial">Data Emissão Inicial</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoInicial"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoInicial'].errors}"
+                                        formControlName="dtaEmissaoInicial"
+                                        ngbTooltip="Digite a data de Emissão Inicial">
+                                    <div *ngIf="submitted && f['dtaEmissaoInicial'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoInicial'].errors['required']">Data de emissão inicial é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoFinal">Data Emissão Final</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoFinal"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoFinal'].errors}"
+                                        formControlName="dtaEmissaoFinal" ngbTooltip="Digite a data de Emissão Final">
+                                    <div *ngIf="submitted && f['dtaEmissaoFinal'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoFinal'].errors['required']">Data de emissão final é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                       
+
+                            <div class="col-lg-6 col-xl-6 col-sm-6 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectSupervisor">Supervisor</label>
+                                    <select class="form-control" [compareWith]="compareSupervisor"
+                                        [ngClass]="{'is-invalid': submitted && f['supervisor'].errors}"
+                                        formControlName="supervisor" id="idSelectSupervisor">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let vd of supervisoresFiltered" [ngValue]="vd">{{vd.supervisor_nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['supervisor'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['supervisor'].errors['required']">Selecione um Supervisor
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-xl-6 col-sm-6 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectRepresentante">Representante</label>
+                                    <select class="form-control" [compareWith]="compareVendedor"
+                                        [ngClass]="{'is-invalid': submitted && f['vendedor'].errors}"
+                                        formControlName="vendedor" id="idSelectRepresentante">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let vd of getRepresentantesFiltered()" [ngValue]="vd">{{vd.vendedor_nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['vendedor'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vendedor'].errors['required']">Selecione um Representante
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <div class="aling-center text-center">
+                        <h6>Indicadores Quadrante 1 - Gerais</h6>
+                        <p *ngIf="resultQuad1.length === 0">Não existe dados para exibir</p>
+                    </div> 
+                    
+                    <div class="table-responsive" *ngIf="resultQuad1.length > 0">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Cod Ind</th>
+                                    <th scope="col">Nome Ind</th>
+                                    <th scope="col">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rq of resultQuad1">
+                                    <td>{{rq.indicador_quad_1}}</td>
+                                    <td>{{rq.des_ind}}</td>
+                                    <td>{{rq.vlr | number:'1.2-2':'pt-BR'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

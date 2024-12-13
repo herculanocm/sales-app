@@ -1,0 +1,437 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Fornecedores'" [picon]="'fa-suitcase'" [heading]="'Fornecedor'"
+        [icon]="'fa-th-list'"></app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div *ngIf="statusForm === 1 || statusForm === 2" class="row">
+            <div class="col-md-12">
+
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                                <button class="btn btn-block butao-acao"
+                                    [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onCadastra()">
+                                    <span class="fa fa-save span-acao"></span> {{statusForm === 2 ? 'Alterar':'Salvar'}}
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()">
+                                    <span class="fa fa-eraser span-acao"></span> Limpar
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onLeftArray()">
+                                    <span class="fa fa-arrow-circle-left span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao"
+                                    (click)="onRightArray()">
+                                    <span class="fa fa-arrow-circle-right span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onTable()">
+                                    <span class="fa fa-table span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" [disabled]="isValidDelete()"
+                                    class="btn btn-block btn-danger butao-acao" (click)="onDeleta(fornecedor.id)">
+                                    <span class="fa fa-trash span-acao"></span> Deletar
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" class="btn btn-block btn-success butao-acao"
+                                    (click)="onPesquisa()">
+                                    <span class="fa fa-search span-acao"></span> Pesq
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Fornecedor</div>
+                    <div class="card-body">
+
+
+                        <app-fields-erro-directive *ngIf="errorForm !== null"
+                            [servererror]="errorForm">
+                        </app-fields-erro-directive>
+                        <form>
+                            <div class="form-group row">
+                                <label for="inputNome" class="col-sm-2 col-form-label">Id</label>
+                                <div class="col-sm-2">
+                                    <input type="number" class="form-control" name="inputId" [(ngModel)]="fornecedor.id" (keydown.enter)="onPesquisa()"
+                                        [disabled]="statusForm === 2" id="inputId" placeholder="Id">
+                                </div>
+                                <label for="inputNomeFornecedor" class="col-sm-2 col-form-label">Nome</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="inputNomeFornecedor"
+                                        [(ngModel)]="fornecedor.nome" id="inputNomeFornecedor" placeholder="Nome">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputFantasia" class="col-sm-2 col-form-label">Fantasia</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="inputFantasia"
+                                        [(ngModel)]="fornecedor.fantasia" id="inputFantasia" placeholder="fasntasia">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="cpf" class="col-sm-2 col-form-label">CGC</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="cgc"
+                                    [specialCharacters]="[' ', '(', ')', '-', '.', '/']"
+                                    [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="00.000.000/0000-00"
+                                        [(ngModel)]="fornecedor.cgc" id="cgc" placeholder="CGC">
+                                </div>
+
+                            </div>
+                            <div class="form-group row">
+                                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="email" [(ngModel)]="fornecedor.email"
+                                        id="email" placeholder="email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="dtaInclusao" class="col-sm-2 col-form-label">Dta Inclusão</label>
+                                <div class="col-sm-4">
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{fornecedor.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+
+                                </div>
+                                <label for="usuarioInclusao" class="col-sm-2 col-form-label">Usuário Inclusão</label>
+                                <div class="col-sm-4">
+                                    <span class="form-control span-disable" name="nameUsuarioInclusao"
+                                        id="idUsuarioInclusao">{{fornecedor.usuarioInclusao}}</span>
+
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group row">
+                                <label for="fone1" class="col-sm-2 col-form-label">Fone 1</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"
+                                         name="fone1"
+                                         [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00)0000-0000"
+                                        [(ngModel)]="fornecedor.fone1" id="fone1">
+                                </div>
+                                <label for="fone2" class="col-sm-2 col-form-label">Fone 2</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"
+                                         name="fone2"
+                                         [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00)0000-0000"
+                                        [(ngModel)]="fornecedor.fone2" id="fone2">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="celular1" class="col-sm-2 col-form-label">Celular 1</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"
+                                         name="celular1"
+                                         [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00)0.0000-0000"
+                                        [(ngModel)]="fornecedor.celular1" id="celular1">
+                                </div>
+                                <label for="celular2" class="col-sm-2 col-form-label">Celular 2</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control"
+                                        name="celular2"
+                                        [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00)0.0000-0000"
+                                        [(ngModel)]="fornecedor.celular2" id="celular2">
+                                </div>
+                            </div>
+
+                            <br />
+
+
+
+
+                            <div class="div-tabs">
+                                <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+
+                                    <li [ngbNavItem]="1">
+                                        <a ngbNavLink>Grupos</a>
+                                        <ng-template ngbNavContent>
+
+
+
+                                            <br>
+                                            <div class="align-center text-center">
+                                                <h5>Selecione os grupos do fornecedor</h5>
+                                            </div>
+                                            <br>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12 div-info">
+                                                    <span>Selecione um ou mais grupos que o fornecedor faz parte</span>
+                                                </div>
+                                                <label for="typeaheadGrupo"
+                                                    class="col-sm-2 col-form-label">Grupo</label>
+                                                <div class="col-sm-8">
+                                                    <input #vGrupoSelecionado id="typeaheadGrupo" name="typeaheadGrupo"
+                                                        type="text" class="form-control"
+                                                        [class.is-invalid]="searchFailedGrupo"
+                                                        [ngbTypeahead]="searchGrupo" [inputFormatter]="formatterGrupo"
+                                                        [resultTemplate]="rt"
+                                                        (selectItem)="grupoSelecionado($event, vGrupoSelecionado)"
+                                                        placeholder="Busca de Grupos" />
+                                                </div>
+                                                <span class="col-sm-2 col-form-label"
+                                                    *ngIf="searchingGrupo">procurando...</span>
+                                                <span class="col-sm-12 col-form-label" *ngIf="searchFailedGrupo">Não foi
+                                                    encontrado nada</span>
+                                            </div>
+
+                                            <br>
+
+                                            <div *ngIf="fornecedor.fornecedorGrupoDTOs.length > 0"
+                                                class="horizontal-scroll">
+                                                <table class="table table-bordered table-object-selected">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Setor</th>
+                                                            <th>Ações</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let grupoFor of fornecedor.fornecedorGrupoDTOs">
+                                                            <td class="align-left">{{grupoFor.id}}</td>
+                                                            <td class="align-left">{{grupoFor.nome}}</td>
+                                                            <td class="align-center">
+                                                                <button class="btn btn-danger" (click)="removeGrupo(grupoFor.id)" (keydown)="removeGrupo(grupoFor.id)" tabindex="0" >
+                                                                    <fa-icon class="ms-auto" [icon]="['fas', 'trash']"></fa-icon>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </ng-template>
+                                    </li>
+
+                                    <li [ngbNavItem]="2">
+                                        <a ngbNavLink>Endereço</a>
+                                        <ng-template ngbNavContent>
+
+
+
+                                            <br>
+                                            <div class="align-center text-center">
+                                                <h5>Selecione o endereço do fornecedor</h5>
+                                            </div>
+                                            <br>
+
+                                            <div class="form-group row">
+                                                <label for="cep" class="col-sm-2 control-label">Cep</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="cep" name="cep"
+                                                        placeholder="Cep"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.cep"
+                                                        [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="00000-000"
+                                                        (keydown.Tab)="buscaCep()">
+                                                </div>
+                                                <label for="cpostal" class="col-sm-2 control-label">Cod Postal</label>
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="cpostal" name="cpostal"
+                                                        placeholder="Codigo Postal"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.codigoPostal">
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="form-group row">
+
+                                                <label for="logradouro"
+                                                    class="col-sm-2 control-label">Logradouro</label>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="logradouro"
+                                                        name="logradouro" placeholder="Logradouro"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.logradouro">
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="form-group row">
+
+                                                <label for="complemento"
+                                                    class="col-sm-2 control-label">Complemento</label>
+
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="complemento"
+                                                        name="complemento" placeholder="Complemento"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.complemento">
+                                                </div>
+
+                                                <label for="numLogradouro" class="col-sm-2 control-label">Num</label>
+
+                                                <div class="col-sm-2">
+                                                    <input type="number" class="form-control" id="numLogradouro"
+                                                        name="numLogradouro"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.numLogradouro">
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group row">
+
+                                                <label for="bairro" class="col-sm-2 control-label">Bairro</label>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="bairro" name="bairro"
+                                                        placeholder="Bairro"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.bairro">
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group row">
+
+                                                <label for="selectEstados" class="col-sm-2 control-label">UF</label>
+                                                <div class="col-sm-4">
+                                                    <select class="form-control" name="selectEstados" id="selectEstados"
+                                                        (change)="buscaMunicipiosPorEstado(fornecedor.fornecedorEnderecoDTO.municipioDTO.estadoDTO)"
+                                                        [compareWith]="compareEstado"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.municipioDTO.estadoDTO">
+                                                        <option [ngValue]="null">Selecione</option>
+                                                        <option *ngFor="let est of estados" [ngValue]="est">{{est.nome}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-sm-6" *ngIf="flgBuscandoMunicipio === 1">
+                                                    <span class="fa fa-sync-alt fa-spin fa-fw"></span> Buscando Cidades
+                                                    Aguarde...
+                                                </div>
+
+                                                <label for="selectCidades" class="col-sm-2 control-label">Cidade</label>
+                                                <div class="col-sm-4">
+                                                    <select class="form-control" name="selectCidades" id="selectCidades"
+                                                        [compareWith]="compareMunicipio"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.municipioDTO">
+                                                        <option [ngValue]="{id: -1}">Selecione</option>
+                                                        <option *ngFor="let mun of municipios" [ngValue]="mun">
+                                                            {{mun.nome}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="form-group row">
+
+                                                <label for="latitude" class="col-sm-2 control-label">Latitude</label>
+
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="latitude"
+                                                        name="latitude" placeholder="Latitude"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.latitude">
+                                                </div>
+
+                                                <label for="longitude" class="col-sm-2 control-label">Longitude</label>
+
+                                                <div class="col-sm-4">
+                                                    <input type="text" class="form-control" id="longitude"
+                                                        name="longitude"
+                                                        [(ngModel)]="fornecedor.fornecedorEnderecoDTO.longitude"
+                                                        placeholder="Longitude">
+                                                </div>
+
+                                            </div>
+
+                                        </ng-template>
+                                    </li>
+                                </ul>
+                                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="id" class="col-sm-2 col-form-label">Status</label>
+                                <fieldset>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadiosStatus" [value]="true"
+                                                [(ngModel)]="fornecedor.status"> Ativo
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadiosStatus" [value]="false"
+                                                [(ngModel)]="fornecedor.status"> Bloqueado
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="statusForm === 3">
+            <div class="card bg-light mb-3">
+                <div class="card-header">Ações</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" (click)="voltar()">
+                                <span class="fa fa-arrow-left span-acao"></span> Voltar
+                            </button>
+                        </div>
+
+                        <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" [disabled]="selected.length === 0"
+                                (click)="editando()">
+                                <span class="fa fa-edit span-acao"></span> Editar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <ngx-datatable class="material striped" [scrollbarH]="true" [rows]="pageFornecedor.content" appResizeWatcher
+                [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                [selected]="selected" [selectionType]="selectionTypeSingle" (activate)="onActivate($event)" [externalPaging]="true"
+                [count]="pageFornecedor.totalElements" [offset]="pageFornecedor.pageable.pageNumber"
+                [limit]="pageFornecedor.size" (page)='setPage($event)'>
+                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                <ngx-datatable-column name="NOME" prop="nome" [width]="400"></ngx-datatable-column>
+                <ngx-datatable-column name="CGC" prop="cgc" [width]="170"></ngx-datatable-column>
+                <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                    [width]="170"></ngx-datatable-column>
+                <ngx-datatable-column name="EMAIL" prop="email" [width]="250"></ngx-datatable-column>
+                <ngx-datatable-column name="STATUS" prop="status" [width]="70">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value === true ? 'Ativo':'Desativado'}}
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

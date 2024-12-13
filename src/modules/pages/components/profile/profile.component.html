@@ -1,0 +1,159 @@
+<app-head-compact title="Account Settings - Profile" icon="user"></app-head-compact><!-- Main page content-->
+
+
+
+<div class="container-xl px-4 mt-n10">
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">Perfil</div>
+        <div class="card-body">
+
+
+
+            <form (ngSubmit)="onCadastra()">
+
+
+                <div class="form-group row">
+
+                    <label for="inputNome" class="col-sm-2 col-form-label">Id</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" name="inputId" id="inputId"
+                            [(ngModel)]="userProfile.id" disabled>
+                    </div>
+
+                    <label for="inputNome" class="col-sm-2 col-form-label">Username</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" name="inputUsername" id="inputUsername"
+                            [(ngModel)]="userProfile.login" placeholder="Username" disabled>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="inputNome" class="col-sm-2 col-form-label">Primeiro Nome</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="inputFirtName" id="inputFirtName"
+                            [(ngModel)]="userProfile.firstName" placeholder="Primeiro Nome">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="inputNome" class="col-sm-2 col-form-label">Segundo Nome</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="inputLastName" id="inputLastName"
+                            [(ngModel)]="userProfile.lastName" placeholder="Segundo Nome">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="inputNome" class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="inputEmail" id="inputEmail"
+                            [(ngModel)]="userProfile.email" placeholder="Email">
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-lg-3 col-xl-3 col-12 d-grid">
+                        <button type="submit" class="btn btn-block btn-warning">
+                            <span class="fa fa-floppy-o"></span> Alterar Perfil
+                        </button>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">Alteração de Senha</div>
+        <div class="card-body">
+
+            <form role="form" [formGroup]="changeForm">
+                <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                    type="ball-spin-clockwise">
+                    <p style="font-size: 20px; color: white">Trocando a senha, Aguarde...</p>
+                </ngx-spinner>
+                <div class="form-content">
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg"
+                            [ngClass]="{'is-invalid': submitted && f['password'].errors}" id="idPassword"
+                            formControlName="password" placeholder="Nova Senha">
+                        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                            <div *ngIf="f['password'].errors['required']">Digite o Password
+                            </div>
+                            <div *ngIf="f['password'].errors['minlength']">Valor deve ter no minimo 8 caracteres
+                            </div>
+                            <div *ngIf="f['password'].errors['maxlength']">Valor deve ter no máximo 12 caracteres
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg"
+                            [ngClass]="{'is-invalid': isPassword2Error()}" id="idPassword2"
+                            formControlName="password2" placeholder="Repita a Nova Senha">
+                        <div *ngIf="isPassword2Error()" class="invalid-feedback">
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['required']">Repita o Password
+                            </div>
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['minlength']">Valor deve ter no minimo 8 caracteres
+                            </div>
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['maxlength']">Valor deve ter no máximo 12 caracteres
+                            </div>
+                            <div *ngIf="isPasswordMismatch()">As senhas devem ser iguais
+                            </div>
+                            <div *ngIf="isPasswordMisformat()">Escolha uma senha que contenha entre 8 e 12 caracteres, sendo números e letras com
+                                pelo menos um caractere especial ex: (&#64;#$%&*)
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+
+
+
+            <!-- <div class="form-group row">
+                <label for="senhaNova" class="col-sm-3 col-form-label">Nova Senha</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" name="senhaNova" id="senhaNova"
+                        [(ngModel)]="userProfile.senhaNova" (keydown.enter)="onKeydownAlteraSenha()"
+                        placeholder="Nova Senha">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="senhaNova2" class="col-sm-3 col-form-label">Repita Nova Senha</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" name="senhaNova2" id="senhaNova2"
+                        [(ngModel)]="userProfile.senhaNova2" (keydown.enter)="onKeydownAlteraSenha()"
+                        placeholder="Repita Nova Senha">
+                </div>
+            </div> -->
+
+            <hr>
+
+            <div class="row">
+                <div class="col-lg-3 col-xl-3 col-12 d-grid">
+                    <button class="btn btn-block btn-warning" (click)="onChagePass()">
+                        <span class="fa fa-floppy-o"></span> Alterar Senha
+                    </button>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-12 d-grid">
+                    <button class="btn btn-outline-dark" (click)="limparSenha()">
+                        <span class="fa fa-eraser"></span> Limpar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

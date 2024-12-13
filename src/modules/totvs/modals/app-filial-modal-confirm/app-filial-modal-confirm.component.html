@@ -1,0 +1,46 @@
+<div>
+    <div class="modal-header">
+        <span>{{ modalHeader }}</span>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>{{ modalContent }}</p>
+
+        <form [formGroup]="pedidoForm" (ngSubmit)="envio()">
+
+            <div class="col-12 padding-5">
+                <div class="form-group">
+                    <label for="idFilial">Filiais</label>
+                    <select class="form-control" #condicaoPagId [ngClass]="{'is-invalid': submitted && f.filial.errors}"
+                        [compareWith]="compareFilial" id="idFilial" formControlName="filial">
+                        <option [ngValue]="null">SELECIONE</option>
+                        <option *ngFor="let cd of filiais" [ngValue]="cd">{{cd.codigo}}-{{cd.razaosocial}}
+                        </option>
+                    </select>
+                    <div *ngIf="submitted && f.filial.errors" class="invalid-feedback">
+                        <div *ngIf="f.filial.errors['required']">Selecione uma Filial</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-danger"
+                        (click)="envio()">{{confirmLabel}}</button>
+                </div>
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-primary" ngbAutofocus
+                        (click)="activeModal.close('Não')">{{defaultLabel}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

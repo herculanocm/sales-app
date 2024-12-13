@@ -1,0 +1,65 @@
+<div>
+    <div class="modal-header">
+        <span>Consulta</span>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <form [formGroup]="alertForm">
+            <div class="row">
+                <div class="col-8 padding-5">
+                    <div class="form-group">
+                        <label for="idEstAlx">Estoque Almoxarifado</label>
+                        <select class="form-control" ngbTooltip="Selecione o almoxarifado"
+                            [ngClass]="{'is-invalid': submitted && f['alx'].errors}" formControlName="alx"
+                            id="idEstAlx">
+                            <option [ngValue]="null">SELECIONE</option>
+                            <option *ngFor="let ealxv of estoqueAlmoxarifados" [ngValue]="ealxv.id">{{ealxv.nome}}
+                            </option>
+                        </select>
+                        <div *ngIf="submitted && f['alx'].errors" class="invalid-feedback">
+                            <div *ngIf="f['alx'].errors['required']">Selecione um
+                                estoque
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4 padding-5">
+                    <div class="form-group">
+                        <label for="idIptDtaCaixa">Data Ref</label>
+                        <input type="date" class="form-control" formControlName="dtaRef"
+                            [ngClass]="{'is-invalid': submitted && f['dtaRef'].errors}"
+                            ngbTooltip="Digite a data de refência do Caixa">
+                        <div *ngIf="submitted && f['dtaRef'].errors" class="invalid-feedback">
+                            <div *ngIf="f['dtaRef'].errors['required']">Data de refência
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4 padding-5" *ngIf="tipo==='vendas'">
+                    <div class="form-group">
+                        <label for="idUsuarioCaixa">Usuário Caixa</label>
+                        <input type="text" class="form-control" formControlName="usuarioCaixa" id="idUsuarioCaixa">
+                    </div>
+                </div>
+
+            </div>
+        </form>
+        <br>
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+                <div class="col-12">
+                    <div class="col-6 div-mobile-buttons d-grid">
+                        <button class="btn btn-block butao-acao btn-primary" (click)="buscar()">
+                            <span class="fa fa-search span-bt-icon span-acao"></span><span
+                                class="span-bt-text">Buscar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

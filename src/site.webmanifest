@@ -1,0 +1,11 @@
+{
+    "short_name": "Sales",
+    "name": "Sales - Serra Dourada ",
+    "icons": [{
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }],
+    "background_color": "#222",
+    "theme_color": "#222"
+  }

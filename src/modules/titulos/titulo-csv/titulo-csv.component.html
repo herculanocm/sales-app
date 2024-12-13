@@ -1,0 +1,277 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Titulos'" [picon]="'fa-money'" [heading]="'Baixa por CSV'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="margin-padding-0">
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <div class="row">
+
+                        <div ngbAccordion>
+                            <div ngbAccordionItem [collapsed]="true">
+                                <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton>CAMPOS DE PESQUISA ADICIONAIS</button>
+                                </h2>
+              
+                                <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody>
+                                        <ng-template >
+
+                                            <div class="col-12"
+                                                style="margin-bottom: 0px; background-color: rgba(179, 179, 179, 0.558);">
+                                                <div class="col-12" style="margin-bottom: 0px;">
+                                                    <p>A imagem abaixo é um exemplo do padrão necessário para upload de arquivo,
+                                                        neste padrão independe da instituição bancária</p>
+                                                    <ol class="list-group list-group-numbered">
+                                                        <li class="list-group-item">Nome Pagador - Campo apenas para uso
+                                                            descritivo</li>
+                                                        <li class="list-group-item">Seu Número - Campo apenas para uso
+                                                            descritivo</li>
+                                                        <li class="list-group-item">Nosso Número - Atenção Campo utilizado para
+                                                            encontrar o titulo no Winthor</li>
+                                                        <li class="list-group-item">Data de Vencimento - Campo apenas para uso
+                                                            descritivo</li>
+                                                        <li class="list-group-item">Valor - Campo apenas para uso descritivo
+                                                        </li>
+                                                        <li class="list-group-item">Valor Pgto - Atenção campo utilizado para
+                                                            baixar no sales</li>
+                                                        <li class="list-group-item">Data Pgto - Atenção campo utilizado para
+                                                            baixar no sales</li>
+                                                    </ol>
+        
+        
+        
+        
+                                                </div>
+        
+                                                <div class="col-12" style="margin-bottom: 0px;">
+                                                    <img src="../../../assets/img/illustrations/planilha.png"
+                                                        class="rounded mx-auto d-block img-fluid" alt="Exemplo">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    
+
+                        <div class="col-12">
+                            <br>
+                            <hr>
+                            <br>
+                        </div>
+
+
+
+                        <div class="col-sm-10 col-12" style="margin-bottom: 0px;">
+                            <label for="formFile" class="form-label">Arquivo CSV para baixa de titulos</label>
+                            <input class="form-control" style="padding: 10px;" type="file" id="formFile"
+                                #fileImportInput (change)="fileChangeListener($event)" accept=".csv">
+                        </div>
+
+
+                        <div class="col-sm-2 col-12" style="margin-bottom: 0px;">
+                            <label for="formFile" class="form-label">Ação</label><br>
+
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary btn-table" style="padding: 5px;"
+                                    (click)="limparFile()">
+                                    <span class="fa fa-eraser span-bt-icon"></span><span
+                                        class="span-bt-text">Limpar</span> </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <br>
+                    <hr>
+                    <br>
+
+                    <div class="col-12" style="margin: 0px; padding: 0px" *ngIf="csvRecords.length > 0">
+
+                        <div class="card bg-light mb-3">
+                            <div class="card-body padding-5">
+                                <div class="row">
+                                    <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" ngbTooltip="Baixa todos os Titulos selecionados"
+                                            class="btn btn-block btn-default butao-acao"
+                                            (click)="onBaixarSelecionados()">
+                                            <span class="fa fa-exclamation-triangle span-bt-icon"></span><span
+                                                class="span-bt-text">Baixar
+                                                Selecionados</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" ngbTooltip="Busca todos os titulos por Nosso Número"
+                                            class="btn btn-block btn-default butao-acao"
+                                            (click)="onBuscaTituloSalesWinthor()">
+                                            <span class="fa fa-search span-bt-icon"></span><span
+                                                class="span-bt-text">Busca Titulos
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                                        <button type="button"
+                                            ngbTooltip="Seleciona todos os titulos para baixar no lote"
+                                            class="btn btn-block btn-default butao-acao" (click)="onSelecionaTodos()">
+                                            <span class="fa fa-thumb-tack span-bt-icon"></span><span
+                                                class="span-bt-text">Seleciona
+                                                Todos
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" ngbTooltip="Download da tabela no formato CSV"
+                                            class="btn btn-block btn-default butao-acao" (click)="geraCSV()">
+                                            <span class="fa fa-download span-bt-icon"></span><span
+                                                class="span-bt-text">Download CSV
+                                            </span>
+                                        </button>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ngx-datatable class="material" [scrollbarH]="true" [rows]="csvRecords" appResizeWatcher
+                        [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                        [rowClass]="getRowClass" [selected]="selected" [selectionType]="selectionTypeSingle"
+                        [limit]="10" >
+
+                        <ngx-datatable-column name="Linha" prop="rowNum" [width]="50"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Baixar" [width]="70">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div style="padding: 0px; margin: 0px; text-align: center;">
+                                    <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                                        style="padding: 0px;margin: 0px" [(ngModel)]="row.indBaixar"
+                                        [disabled]="isDisableRow(row)">
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Baixado Sales" [width]="120">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div style="padding: 0px; margin: 0px; text-align: center;">
+                                    <span class="fa span-bt-icon"
+                                        [ngClass]="{'fa-check': row.indStatusSales === 'F', 'fa-times': row.indStatusSales !== 'F'}"></span>
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Baixado Winthor" [width]="120">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div style="padding: 0px; margin: 0px; text-align: center;">
+                                    <span class="fa span-bt-icon"
+                                        [ngClass]="{'fa-check': row.flpago === 1, 'fa-times': row.flpago !== 1}"></span>
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Exc" [width]="50">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div class="d-grid" style="padding: 0px; margin: 0px; text-align: center; ">
+                                    <button type="button" class="btn btn-danger btn-table" (click)="deleteRow(row)">
+                                        <span class="fa fa-trash"></span><span class="span-table"></span></button>
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Pagador Planilha" prop="pagadorPlan"
+                            [width]="450"></ngx-datatable-column>
+                        <ngx-datatable-column name="Seu Número Planilha" prop="seuNumeroPlan"
+                            [width]="160"></ngx-datatable-column>
+                        <ngx-datatable-column name="Nosso Número Planilha" prop="nossoNumeroPlan"
+                            [width]="160"></ngx-datatable-column>
+
+
+
+                        <ngx-datatable-column name="Dta Venc Planilha" prop="dataVencimentoPlan" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Valor Planilha" prop="valorTituloPlan" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | number:'1.2-2':'pt-BR'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Valor Pgto Planilha" prop="valorTituloPgtoPlan" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | number:'1.2-2':'pt-BR'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+                        <ngx-datatable-column name="Dta Pgto Planilha" prop="dataPagamentoPlan" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="NossoNumBcoWinthor" prop="nossonumbcoWinthor"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="NossoPedWinthor" prop="numpedWinthor"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="NumTransVendaWinthor" prop="numtransvendaWinthor"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="VendaIdSales" prop="vendaIdSales"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="TituloIdSales" prop="tituloIdSales"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="IndStatusSales" prop="indStatusCompletoSales"
+                            [width]="160"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="DtaVencimentoSales" prop="dtaVencimentoSales" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="VlrTotalSales" prop="vlrTotalSales" [width]="130">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | number:'1.2-2':'pt-BR'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+
+
+                    </ngx-datatable>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

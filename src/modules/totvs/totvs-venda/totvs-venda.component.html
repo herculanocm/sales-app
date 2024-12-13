@@ -1,0 +1,354 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' TOTVS Integração'" [picon]="'fa-plug'"
+        [heading]="'Integração Sales e Totvs - Vendas'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+
+    <div class="card col-md-12">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+                <div class="row">
+                    <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                        <button type="button" class="btn btn-outline-dark butao-acao"
+                            ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                            <span class="fa fa-eraser span-acao"></span> Limpar
+                        </button>
+                    </div>
+                    <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                        <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                            <span class="fa fa-search span-acao"></span> Pesquisar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+
+
+                <form [formGroup]="pesqForm">
+
+                    <div class="row">
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idDtaEmissao">Data Emissão Venda</label>
+                                <input type="date" [ngClass]="{'is-invalid': submitted && f['dtaEmissao'].errors}"
+                                    class="form-control" id="idDtaEmissao" name="nmDtaEmissao"
+                                    (keydown.enter)="onPesquisa()" formControlName="dtaEmissao"
+                                    ngbTooltip="Busca de pela data de emissão">
+                                <div *ngIf="submitted && f['dtaEmissao'].errors" class="invalid-feedback">
+                                    <div *ngIf="f['dtaEmissao'].errors['required']">Selecione a data de Emissão
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idNgSelect">Status Venda</label>
+                                <ng-select class="select-custom" [multiple]="true"
+                                    [ngClass]="{'is-invalid': submitted && f['statusVenda'].errors}"
+                                    style="margin-top: 0px;padding-top: 0px;" [items]="vendaStatusLabels"
+                                    bindLabel="label" [closeOnSelect]="true" id="idNgSelect" [searchable]="true"
+                                    [compareWith]="compareStatus" formControlName="statusVenda">
+                                </ng-select>
+                                <div *ngIf="submitted && f['statusVenda'].errors" class="invalid-feedback">
+                                    <div *ngIf="f['statusVenda'].errors['required']">Selecione o Status da Venda
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idTransferido">Status Tranferido</label>
+                                <select class="form-control" id="idTransferido" formControlName="transferido">
+                                    <option value="T">TODOS</option>
+                                    <option value="S">TRANSFERIDO</option>
+                                    <option value="N">N TRANSFERIDO</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idOrigemSales">Origem Sales</label>
+                                <select class="form-control" id="idOrigemSales" formControlName="origem">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option value="prevenda">PREVENDA</option>
+                                    <option value="cupom">CUPOM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idInputCodCli">Cod Cliente</label>
+                                <div class="input-group" ngbTooltip="Digite o Codigo do Cliente">
+                                    <input type="number" class="form-control" id="idInputCodCli"
+                                        formControlName="clienteId" (keydown.Tab)="findClienteById()"
+                                        (keydown.enter)="findClienteById()">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" (click)="findClienteById()" type="button"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="typeaheadCliente">Nome Cliente</label>
+                                <input id="typeaheadCliente" type="text" class="form-control"
+                                    [class.is-invalid]="searchFailedCliente" formControlName="clienteDTO"
+                                    [ngbTypeahead]="searchCliente" (selectItem)="typeaHeadSelectCliente($event)"
+                                    [inputFormatter]="formatterCliente" [resultTemplate]="rt" [placement]="'top-left'"
+                                    placeholder="Busca Nome do Cliente">
+                                <span class="col-sm-2 col-form-label" *ngIf="searchingCliente">procurando...</span>
+                                <span class="col-sm-12 col-form-label" *ngIf="searchFailedCliente">Não
+                                    foi
+                                    encontrado nada</span>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idInputVendaId">Pre Venda</label>
+                                <div class="input-group">
+                                    <input type="number" ngbTooltip="Precione enter para pesquisar" class="form-control"
+                                        id="idInputVendaId" #preVenda (keydown.enter)="onPesquisa()"
+                                        formControlName="vendaId">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idSelectRepresentante">Vendedor</label>
+                                <select class="form-control" [compareWith]="compareVendedor"
+                                    formControlName="vendedorId" id="idSelectRepresentante">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let vd of vendedores" [ngValue]="vd.id">{{vd.nome}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idAlmoxarifadoOrigem">Almoxarifado de Origem</label>
+                                <select class="form-control"
+                                    [compareWith]="compareAlmoxarifado" id="idAlmoxarifadoOrigem" formControlName="estoqueAlmoxarifadoId">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let cd of almoxarifados" [ngValue]="cd.id">{{cd.nome}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr>
+                    <div class="div-warning">
+                        <p class="p-warning">Atenção para o campo de filial abaixo!</p>
+                    </div>
+                    <hr>
+
+                    <div class="row">
+
+                    <div class="col-xl-8 col-sm-8 col-12 padding-5">
+                        <div class="form-group">
+                            <label for="idFilial">Filial para transferência</label>
+                            <select class="form-control" #filialTransferencia
+                                [ngClass]="{'is-invalid': submitted && f['filial'].errors}"
+                                [compareWith]="compareFilial" id="idFilial" formControlName="filial">
+                                <option [ngValue]="null">SELECIONE</option>
+                                <option *ngFor="let cd of filiais" [ngValue]="cd.codigo">{{cd.codigo}} -
+                                    {{cd.razaosocial}}
+                                </option>
+                            </select>
+                            <div *ngIf="submitted && f['filial'].errors" class="invalid-feedback">
+                                <div *ngIf="f['filial'].errors['required']">Selecione uma Filial</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-sm-4 col-12 padding-5">
+                        <div class="form-group">
+                            <label for="idDestinoFinal">Destino da transferência</label>
+                            <select class="form-control" #destinoTransferencia
+                                [ngClass]="{'is-invalid': submitted && f['destinoTipo'].errors}"
+                                [compareWith]="compareFilial" id="idDestinoFinal" formControlName="destinoTipo">
+                                <option [ngValue]="null">SELECIONE</option>
+                                <option [ngValue]="'prevenda'">PreVenda</option>
+                                <option [ngValue]="'cupom'">Cupom</option>
+                            </select>
+                            <div *ngIf="submitted && f['destinoTipo'].errors" class="invalid-feedback">
+                                <div *ngIf="f['destinoTipo'].errors['required']">Selecione um destino</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                </form>
+
+
+                <!--
+                <div class="col-lg-2 col-6 div-mobile-buttons">
+                    <button type="button" class="btn btn-block btn-danger butao-acao" (click)="updateItens()">
+                        <span class="fa fa-bolt span-bt-icon"></span><span class="span-bt-text">Atualizar
+                            Itens</span>
+                    </button>
+                </div>
+            -->
+
+
+
+
+
+
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body padding-5">
+
+                <div *ngIf="vendaIntTotvs === null || vendaIntTotvs.length === 0" class="form-group row div-view">
+                    <div class="col-12 text-center">
+                        <h5 style="padding-top: 100px;padding-bottom: 100px;">Busque as vendas</h5>
+                    </div>
+                </div>
+
+
+
+                <div *ngIf="vendaIntTotvs !== null && vendaIntTotvs.length > 0">
+
+                    <div class="col-12" style="margin: 0px; padding: 0px">
+
+                        <div class="card bg-light mb-3">
+                            <div class="card-body padding-5">
+                                <div class="row">
+
+                                    <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" class="btn btn-outline-dark butao-acao"
+                                            (click)="onTransferirSelecionados()">
+                                            <span class="fa fa-exclamation-triangle span-bt-icon"></span><span
+                                                class="span-bt-text">Transferir
+                                                Selecionados</span>
+                                        </button>
+                                    </div>
+
+
+
+                                    <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" class="btn btn-outline-dark butao-acao"
+                                            (click)="onSelecionaTodos()">
+                                            <span class="fa fa-thumb-tack span-bt-icon"></span><span
+                                                class="span-bt-text">Seleciona Todos
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                        <button type="button" class="btn btn-outline-dark butao-acao"
+                                            (click)="onDesSelecionaTodos()">
+                                            <span class="fa fa-thumb-tack span-bt-icon"></span><span
+                                                class="span-bt-text">Desmarcar Todos
+                                            </span>
+                                        </button>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+
+                        <ngx-datatable class="material" #table [scrollbarH]="true" [rows]="vendaIntTotvs"
+                            appResizeWatcher [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70"
+                            rowHeight="auto" [sorts]="[{ prop: 'id', dir: 'asc' }]" [selected]="selected"
+                            [selectionType]="selectionTypeSingle" [limit]="20" [rowClass]="getRowClass">
+
+                            <ngx-datatable-column name="TRANSF" [width]="80">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <div style="padding: 0px; margin: 0px; text-align: center;">
+                                        <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                                            style="padding: 0px;margin: 0px" [(ngModel)]="row.acaoTransf">
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="NUMPED" prop="numPedTotvs" [width]="130"></ngx-datatable-column>
+                            <ngx-datatable-column name="NUMNF" prop="numnf" [width]="130"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="FILIAL TOTVS" prop="filialTotvs"
+                                [width]="100"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="DATA TRANSF" prop="dtaTransfTotvs" [width]="180">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="USUARIO TRANSF" prop="usuarioTransfTotvs"
+                                [width]="180"></ngx-datatable-column>
+
+                                <ngx-datatable-column name="DESTINO TOTVS" prop="destinoTipoTotvs"
+                                [width]="130"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="ID" prop="id" [width]="130"></ngx-datatable-column>
+                            <ngx-datatable-column name="ORIGEM SALES" prop="origem" [width]="130"></ngx-datatable-column>
+                            <ngx-datatable-column name="STATUS" prop="statusLabel" [width]="320"></ngx-datatable-column>
+                            <ngx-datatable-column name="ALMOXARIFADO" prop="estoqueAlmoxarifadoNome"
+                                [width]="400"></ngx-datatable-column>
+                            <ngx-datatable-column name="CONDIÇÃO" prop="condicaoPagamentoNome"
+                                [width]="300"></ngx-datatable-column>
+                            <ngx-datatable-column name="CLIENTE" prop="clienteNome"
+                                [width]="450"></ngx-datatable-column>
+                            <ngx-datatable-column name="VENDEDOR" prop="vendedorNome"
+                                [width]="400"></ngx-datatable-column>
+
+
+                            <ngx-datatable-column name="VALOR TOTAL" prop="valTotal" [width]="130">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+
+                        </ngx-datatable>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,153 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Movimentos'" [picon]="'fa-retweet'" [heading]="'Ajuste Médias'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page movimento-div-principal">
+
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="row">
+            <div class="col-md-12">
+
+
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                                <button class="btn btn-block btn-primary butao-acao" (click)="onPesquisa()">
+                                    <span class="fa fa-search span-acao"></span> Buscar
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()">
+                                    <span class="fa fa-eraser span-acao"></span> Limpar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Ajuste</div>
+                    <div class="card-body">
+
+                        <form>
+
+                            <div class="form-group row">
+                                <label for="idAnoMes" class="col-sm-2 col-form-label">Ano/Mês Pesquisa</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" id="idAnoMes" name="nmAnoMes"
+                                        (keydown.enter)="onPesquisa()" [(ngModel)]="anoMes"
+                                        ngbTooltip="Digite o numero do ano/mês no formato YYYYMM">
+                                </div>
+                                <label for="id" class="col-sm-6 col-form-label">Formato YYYYMM ex: 202005 para maio/2020</label>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="almoxarifadoIdEnt" class="col-sm-2 col-form-label">Almoxarifado
+                                    Entrada</label>
+                                <div class="col-sm-10">
+
+                                    <select class="form-control" name="almoxarifadoNmEnt" id="almoxarifadoIdEnt"
+                                        [compareWith]="compareAlmoxarifado" [(ngModel)]="alxEntrada">
+                                        <option [ngValue]="null">Selecione</option>
+                                        <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="almoxarifadoIdSai" class="col-sm-2 col-form-label">Almoxarifado
+                                    Saída</label>
+                                <div class="col-sm-10">
+
+                                    <select class="form-control" name="almoxarifadoNmSai" id="almoxarifadoIdSai"
+                                        [compareWith]="compareAlmoxarifado" [(ngModel)]="alxSaida">
+                                        <option [ngValue]="null">Selecione</option>
+                                        <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                        </form>
+
+                        <hr *ngIf="medias.length > 0">
+
+                        <div class="row" *ngIf="medias.length > 0">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">ENTRADA TOTAL
+                                        </p>
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">
+                                            {{getValorEntradaTotal() | number:'1.2-2':'pt-BR'}}</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">SAÍDA TOTAL</p>
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">
+                                            {{getValorSaidaTotal() | number:'1.2-2':'pt-BR'}}</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">LC BRUTO TOTAL
+                                        </p>
+                                        <p style="text-align: center;font-weight: bold;font-size: 20px;">
+                                            {{getValorBrutoTotal() | number:'1.2-2':'pt-BR'}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr *ngIf="medias.length > 0">
+
+                        <div *ngIf="medias.length > 0">
+                            <table class="table table-bordered table_custom">
+                                <thead>
+                                    <tr style="background-color: white;font-size: 12px;">
+                                        <th>Id</th>
+                                        <th>Nome</th>
+                                        <th>Vlr Saída</th>
+                                        <th>Qtd Saída</th>
+                                        <th>Médio Saída</th>
+                                        <th>Qtd Entrada</th>
+                                        <th>Médio Entrada</th>
+                                        <th>Sub Entrada</th>
+                                        <th>Dif</th>
+                                        <th>Lc Bruto</th>
+                                        <th>% Lc</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="tr-backg" *ngFor="let mm of medias" [ngClass]="diff(mm) <= 0 ? 'dif':''">
+                                        <td>{{mm.item_id}}</td>
+                                        <td>{{mm.item_nome}}</td>
+                                        <td>{{mm.vlr_total_saida | number:'1.0-0':'pt-BR'}}</td>
+                                        <td>{{mm.qtd_total_saida | number:'1.0-0':'pt-BR'}}</td>
+                                        <td>{{mm.vlr_medio_unitario_saida | number:'1.2-2':'pt-BR'}}</td>
+                                        <td>{{mm.qtd_total_entrada | number:'1.0-0':'pt-BR'}}</td>
+                                        <td>{{mm.vlr_medio_unitario_entrada | number:'1.2-2':'pt-BR'}}</td>
+                                        <td>
+                                            <input type="number" class="form-control" (blur)="atualizaValor(mm)"
+                                                [(ngModel)]="mm.vlr_sub_entrada" />
+                                        </td>
+                                        <td>{{diff(mm) | number:'1.2-2':'pt-BR'}}</td>
+                                        <td>{{getLcBruto(mm) | number:'1.2-2':'pt-BR'}}</td>
+                                        <td>{{((getLcBruto(mm) / mm.vlr_total_saida) * 100) | number:'1.2-2':'pt-BR'}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

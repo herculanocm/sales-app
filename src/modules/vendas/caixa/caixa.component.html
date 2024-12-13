@@ -1,0 +1,826 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+<ng-template #rtFantasia let-r="result" let-t="term">
+    {{ r.fantasia}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Caixa'" [icon]="'fa-gavel'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div *ngIf="statusForm === 1 || statusForm === 2" class="margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button class="btn btn-block butao-acao"
+                                [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onCadastra()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">{{statusForm ===
+                                    2 ?
+                                    'Alterar' : 'Salvar'}}</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onLeftArray()">
+                                <span class="fa fa-arrow-circle-left span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onRightArray()">
+                                <span class="fa fa-arrow-circle-right span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onTable()">
+                                <span class="fa fa-table span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-danger butao-acao" (click)="onDeleta()">
+                                <span class="fa fa-trash span-bt-icon"></span><span class="span-bt-text">Deletar</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-bt-icon"></span><span
+                                    class="span-bt-text">Pesquisar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" *ngIf="statusForm === 2">
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-12 text-align-center-div">
+                            <h3>Caixa</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" *ngIf="statusForm === 2">
+                <div class="card-body card-buttons">
+                    <div class="row">
+
+
+                        <div class="col-sm-2 col-6 div-mobile-buttons d-grid">
+                            <button class="btn btn-block butao-acao btn-outline-dark" (click)="openPrintPage()">
+                                <span class="fa fa-print span-bt-icon"></span><span
+                                    class="span-bt-text">Impressão</span>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="caixaForm">
+
+                        <div ngbAccordion>
+                            <div ngbAccordionItem [collapsed]="true">
+                                <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton>CAMPOS DE PESQUISA ADICIONAIS</button>
+                                </h2>
+              
+                                <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody>
+                                        <ng-template >
+
+                                            <div class="row">
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaInclusaoInicial">Data Inclusão Inicial</label>
+                                                        <input type="date" class="form-control" id="idInputDtaInclusaoInicial"
+                                                            name="nmInputDtaInclusaoInicial"
+                                                            ngbTooltip="Busca de pela data de inclusão, data inicial"
+                                                            [(ngModel)]="caixaPesquisaDTO.dtaInicialPesquisa"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaInclusaoFinal">Data Inclusão Final</label>
+                                                        <input type="date" class="form-control" id="idInputDtaInclusaoFinal"
+                                                            name="nmInputDtaInclusaoFinal"
+                                                            ngbTooltip="Busca de pela data de inclusão, data final"
+                                                            [(ngModel)]="caixaPesquisaDTO.dtaFinalPesquisa"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                            </div>
+        
+                                        </ng-template>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <hr>
+
+                        <div class="row">
+
+
+                            <div class="col-sm-2 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idRomaneioCaixa">ID Romaneio</label>
+                                    <div class="input-group" ngbTooltip="Pesquisa por ID do romaneio">
+                                        <input type="number" class="form-control" id="idRomaneioCaixa" formControlName="romaneioId"
+                                            (keydown.Tab)="onPesquisaCaixaByRomaneioId()" (keydown.enter)="onPesquisaCaixaByRomaneioId()"
+                                            pattern="\d*" inputmode="numeric">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary" (click)="onPesquisaCaixaByRomaneioId()"
+                                                type="button"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+
+
+
+                        <div class="row">
+
+                            <!-- <div class="col-sm-2 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idRota">Id</label>
+                                    <input type="number" class="form-control" id="idRota" formControlName="id"
+                                        (keydown.enter)="onPesquisa()">
+                                </div>
+                            </div> -->
+
+                            <div class="col-sm-2 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idCaixa">ID Caixa</label>
+                                    <div class="input-group" ngbTooltip="Digite o ID do Caixa">
+                                        <input type="number" class="form-control" id="idCaixa" formControlName="id"
+                                            (keydown.Tab)="onPesquisaById()" (keydown.enter)="onPesquisaById()"
+                                            pattern="\d*" inputmode="numeric">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary" (click)="onPesquisaById()"
+                                                type="button"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-4 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idIptDtaCaixa">Data Refêrencia</label>
+                                    <input type="date" class="form-control" formControlName="dtaReferencia" #dataRefId
+                                        (keydown.enter)="onPesquisa()"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaReferencia'].errors}"
+                                        ngbTooltip="Digite a data de refência do Caixa">
+                                    <div *ngIf="submitted && f['dtaReferencia'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaReferencia'].errors['required']">Data de refência do caixa
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Data/hr Inclusão</label>
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{caixaDTO.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Usuário Inclusão</label>
+                                    <span class="form-control span-disable" name="nameUserInclusao"
+                                        id="idUserInclusao">{{caixaDTO.usuarioInclusao}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Data/hr Ult. Alteração</label>
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{caixaDTO.dtaUltAlteracao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Usuário Ult. Alteração</label>
+                                    <span class="form-control span-disable" name="nameUserInclusao"
+                                        id="idUserInclusao">{{caixaDTO.usuarioUltAlteracao}}</span>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="nameInputDescricaof">Descrição</label>
+                                    <textarea class="form-control" formControlName="descricao"
+                                        id="nameInputDescricaof"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="col-12 padding-5">
+
+                            <div ngbAccordion>
+                                <div ngbAccordionItem [collapsed]="false">
+                                    <h2 ngbAccordionHeader>
+                                        <button ngbAccordionButton>MOVIMENTOS DE CAIXA</button>
+                                    </h2>
+                  
+                                    <div ngbAccordionCollapse>
+                                        <div ngbAccordionBody>
+                                            <ng-template>
+
+                                                <div class="col-12 margin-padding-0" formGroupName="mov">
+                                                    <div class="row">
+        
+        
+        
+                                                        <div class="col-sm-2 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idTipoEntSaida">Tipo</label>
+                                                                <select class="form-control"
+                                                                    (change)="onChangeTipoEntSaida($event)"
+                                                                    formControlName="movTipoSigla" id="idTipoEntSaida">
+                                                                    <option value="E" selected>ENTRADA</option>
+                                                                    <option value="S">SAIDA</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-3 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idSubTipoEntSaida">Subtipo</label>
+                                                                <select class="form-control"
+                                                                    (change)="onChangeSubTipoEntSaida($event)"
+                                                                    formControlName="movSubTipoSigla" id="idSubTipoEntSaida">
+                                                                    <option [ngValue]="null">SELECIONE</option>
+                                                                    <option *ngFor="let csa of caixaSubTiposFilter"
+                                                                        [ngValue]="csa">
+                                                                        {{csa.nome}}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-4 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idCaixaTipoMov">Movimento</label>
+                                                                <select class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['caixaTipoMovDTO'].errors}"
+                                                                    formControlName="caixaTipoMovDTO" id="idCaixaTipoMov">
+                                                                    <option [ngValue]="null">SELECIONE</option>
+                                                                    <option *ngFor="let cta of caixaTipoMovDTOsFilter"
+                                                                        [ngValue]="cta">{{cta.nome}}
+                                                                    </option>
+                                                                </select>
+        
+                                                                <div *ngIf="submittedMov && m['caixaTipoMovDTO'].errors"
+                                                                    class="invalid-feedback">
+                                                                    <div *ngIf="m['caixaTipoMovDTO'].errors['required']">
+                                                                        Selecione um
+                                                                        movimento
+                                                                    </div>
+                                                                </div>
+        
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-3 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idUsuarioCaixa">Usuário</label>
+                                                                <select class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['usuarioCaixa'].errors}"
+                                                                    formControlName="usuarioCaixa" id="idUsuarioCaixa">
+                                                                    <option [ngValue]="null">SELECIONE</option>
+                                                                    <option *ngFor="let cta of usuarios"
+                                                                        [ngValue]="cta.login">{{cta.login}}
+                                                                    </option>
+                                                                </select>
+        
+                                                                <div *ngIf="submittedMov && m['usuarioCaixa'].errors"
+                                                                    class="invalid-feedback">
+                                                                    <div *ngIf="m['usuarioCaixa'].errors['required']">
+                                                                        Selecione um
+                                                                        usuário
+                                                                    </div>
+                                                                </div>
+        
+                                                            </div>
+                                                        </div>
+        
+                                                    </div>
+        
+        
+                                                    <div class="row">
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idVlr">Dinheiro</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrDinheiro'].errors}"
+                                                                    id="idVlr" formControlName="vlrDinheiro">
+                                                            </div>
+                                                        </div>
+        
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idBoleto">Boleto</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrBoleto'].errors}"
+                                                                    id="idBoleto" formControlName="vlrBoleto">
+                                                            </div>
+                                                        </div>
+        
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idCheque">Cheque</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrCheque'].errors}"
+                                                                    id="idCheque" formControlName="vlrCheque">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idCartao">Cartão</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrCartao'].errors}"
+                                                                    id="idCartao" formControlName="vlrCartao">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idPix">Pix</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrPix'].errors}"
+                                                                    id="idPix" formControlName="vlrPix">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idNota">Nota</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrNota'].errors}"
+                                                                    id="idNota" formControlName="vlrNota">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idBoni">Bonificação</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrBonificacao'].errors}"
+                                                                    id="idBoni" formControlName="vlrBonificacao">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idTroca">Troca</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrTroca'].errors}"
+                                                                    id="idTroca" formControlName="vlrTroca">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idOutros">Outros</label>
+                                                                <input type="number" class="form-control"
+                                                                    [ngClass]="{'is-invalid': submittedMov && m['vlrOutros'].errors}"
+                                                                    id="idOutros" formControlName="vlrOutros">
+                                                            </div>
+                                                        </div>
+        
+        
+                                                        <div class="col-sm-1 col-6 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idQtd">Qtd</label>
+                                                                <input type="number" class="form-control" id="idQtd"
+                                                                    formControlName="qtd">
+        
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-1 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idAtivo">Ativo?</label>
+                                                                <select class="form-control" formControlName="ativo"
+                                                                    id="idAtivo">
+                                                                    <option value="true" selected>ATIVO</option>
+                                                                    <option value="false">DESATIVADO</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="id">Data Ref</label>
+                                                                <input type="date" class="form-control" formControlName="dtaRef"
+                                                                    ngbTooltip="Data de refência do movimento">
+                                                            </div>
+                                                        </div>
+        
+                                                        <div class="col-sm-2 col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="idSomatoria">Soma</label>
+                                                                <span class="form-control span-disable" name="nameSomatoria"
+                                                                    id="idSomatoria">{{getAggrFieldsFromForm() | number:'1.2-2':'pt-BR'}}</span>
+                                                            </div>
+                                                        </div>
+        
+        
+        
+        
+                                                    </div>
+        
+                                                    <div class="row">
+                                                        <div class="col-12 padding-5">
+                                                            <div class="form-group">
+                                                                <label for="nameInputDescricao">Descrição</label>
+                                                                <textarea class="form-control" formControlName="descricao"
+                                                                    id="nameInputDescricao"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+        
+                                                                <div class="col-sm-2 col-6 div-mobile-buttons d-grid">
+                                                                    <button type="button" class="btn btn-block btn-primary"
+                                                                        (click)="addMovimento()" style="margin: 0px;">
+                                                                        <span class="fa fa-plus span-bt-icon"></span>Add
+                                                                    </button>
+                                                                </div>
+        
+                                                                <div class="col-sm-2 col-6 div-mobile-buttons d-grid">
+                                                                    <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                                                        (click)="formClearValues()" style="margin: 0px;">
+                                                                        <span class="fa fa-eraser span-bt-icon"></span>Limpar
+                                                                    </button>
+                                                                </div>
+                                                   
+                                                    </div>
+                                                </div>
+        
+                                                <hr>
+        
+                                                <div class="col-12 text-align-center-div-titulo">
+                                                    <p>TOTAIS POR CONDIÇÃO - ATIVOS</p>
+                                                </div>
+                                                <div class="row">
+        
+                                                    <div class="table-responsive ">
+                                                        <table class="table table-sm table-striped table-bordered">
+        
+        
+                                                            <thead>
+                                                                <tr>
+        
+                                                                    <th>Condição</th>
+                                                                    <th>Entrada</th>
+                                                                    <th>Saída</th>
+                                                                    <th>Dif</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let cr of caixaResultado">
+        
+                                                                    <td class="align-left">{{cr.condicao}}</td>
+                                                                    <td class="align-left">{{cr.vlrEntrada |
+                                                                        number:'1.2-2':'pt-BR'}}</td>
+                                                                    <td class="align-left">{{cr.vlrSaida |
+                                                                        number:'1.2-2':'pt-BR'}}
+                                                                    </td>
+                                                                    <td class="align-left">{{cr.vlrDif |
+                                                                        number:'1.2-2':'pt-BR'}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+        
+                                                    <div class="table-responsive ">
+                                                        <table class="table table-sm table-striped table-bordered">
+        
+                                                            <thead>
+                                                                <tr>
+        
+                                                                    <th>Resumo</th>
+                                                                    <th>Soma Entrada</th>
+                                                                    <th>Soma Saída</th>
+                                                                    <th>Soma Dif</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+        
+                                                                    <td class="align-left">TOTAIS POR CONDIÇÃO</td>
+                                                                    <td class="align-left">{{getValorTotalEntrada() |
+                                                                        number:'1.2-2':'pt-BR'}}</td>
+                                                                    <td class="align-left">{{getValorTotalSaida() |
+                                                                        number:'1.2-2':'pt-BR'}}</td>
+                                                                    <td class="align-left">{{getValorTotalDif() |
+                                                                        number:'1.2-2':'pt-BR'}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+        
+                                                    <div class="table-responsive ">
+                                                        <table class="table table-sm table-striped table-bordered">
+        
+                                                            <thead>
+                                                                <tr>
+        
+                                                                    <th>Validação</th>
+                                                                    <th>Valor</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+        
+                                                                    <td class="align-left">Soma de todos os cheque recebidos por romaneioId</td>
+                                                                    <td class="align-left">{{getTotalVlrChequeByCaixaTable() |
+                                                                        number:'1.2-2':'pt-BR'}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+        
+                                                </div>
+        
+                                                <hr>
+        
+                                                <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                                    [rows]="caixaMovDTOs" [columnMode]="ColumnMode.standard" [headerHeight]="35"
+                                                    [footerHeight]="60" (activate)="onActivateMovs($event)"
+                                                    [sorts]="[{prop: 'ordem', dir: 'asc'}]" [selected]="selectedMovs"
+                                                    rowHeight="auto" [selectionType]="selectionTypeSingle" [limit]="200">
+        
+                                                    <ngx-datatable-column name="RM" [width]="40">
+                                                        <ng-template let-row="row" ngx-datatable-cell-template>
+                                                            <button type="button" class="btn btn-danger botao-acao-item"
+                                                                (click)="onRemoveMovimento(row)">
+                                                                <span class="fa fa-trash span-btn-excluir"></span>
+                                                            </button>
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="TIPO"
+                                                        prop="caixaTipoMovDTO.caixaSubTipoMovDTO.sigla" [width]="100">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value === 'E' ? 'ENTRADA' : 'SAIDA'}}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="SUBTIPO"
+                                                        prop="caixaTipoMovDTO.caixaSubTipoMovDTO.nome" [width]="200">
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="MOVIMENTO" prop="caixaTipoMovDTO.nome"
+                                                        [width]="250"></ngx-datatable-column>
+        
+                                                        <ngx-datatable-column name="USUÁRIO CAIXA" prop="usuarioCaixa"
+                                                        [width]="250"></ngx-datatable-column>
+        
+        
+                                                    <ngx-datatable-column name="VLR DINHEIRO" prop="vlrDinheiro" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="VLR BOLETO" prop="vlrBoleto" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="VLR CHEQUE" prop="vlrCheque" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="VLR CARTÃO" prop="vlrCartao" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="VLR PIX" prop="vlrPix" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="VLR NOTA" prop="vlrNota" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="VLR BONIFICAÇÃO" prop="vlrBonificacao"
+                                                        [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="VLR TROCA" prop="vlrTroca" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="VLR OUTROS" prop="vlrOutros" [width]="150">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | number:'1.2-2':'pt-BR' }}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+        
+                                                    <ngx-datatable-column name="QTD" prop="qtd" [width]="100">
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="ATIVO" prop="ativo" [width]="100">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value === true ? 'ATIVO' : 'DESATIVADO'}}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="DATA REF" prop="dtaRef" [width]="170">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | amDateFormat:'DD/MM/YYYY'}}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+        
+                                                    <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                                                        <ng-template let-value="value" ngx-datatable-cell-template>
+                                                            {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                        </ng-template>
+                                                    </ngx-datatable-column>
+                                                    <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                                                        [width]="140">
+                                                    </ngx-datatable-column>
+        
+                                                </ngx-datatable>
+        
+        
+        
+                                            </ng-template>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </form>
+
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div *ngIf="statusForm === 3">
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-header">Ações</div>
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" (click)="voltar()">
+                                <span class="fa fa-arrow-left span-acao"></span> Voltar
+                            </button>
+                        </div>
+
+                        <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao"
+                                [disabled]="selected.length === 0" (click)="editando()">
+                                <span class="fa fa-edit span-acao"></span> Editar
+                            </button>
+                        </div>
+
+                        <!--
+                        <div class="col-lg-3 col-xl-3">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" (click)="geraCSV()">
+                                <span class="fa"
+                                    [ngClass]="botaoGeraCSV != 'Gerar CSV' ? 'fa-refresh fa-spin fa-fw' : ''"></span>
+                                {{botaoGeraCSV}}
+                            </button>
+                        </div>
+                    -->
+
+
+                    </div>
+                </div>
+            </div>
+
+            <ngx-datatable class="material" [scrollbarH]="true" [rows]="pageCaixa.content" appResizeWatcher
+                [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                [selected]="selected" [selectionType]="selectionTypeSingle" (activate)="onActivate($event)"
+                [externalPaging]="true" [count]="pageCaixa.totalElements" [offset]="pageCaixa.pageable.pageNumber"
+                [limit]="pageCaixa.size" (page)='setPage($event)'>
+
+                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+
+                <ngx-datatable-column name="DATA REFÊRENCIA" prop="dtaReferencia" [width]="150">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao" [width]="170">
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="DATA ULT ALTERAÇÃO" prop="dtaUltAlteracao" [width]="170">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="USUÁRIO ULT ALTERAÇÃO" prop="usuarioUltAlteracao" [width]="170">
+                </ngx-datatable-column>
+
+
+
+                <ngx-datatable-column name="SOMA DE ENTRADA" [width]="200">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{getValorTotalEntradaTable(row) | number:'1.2-2':'pt-BR'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="SOMA DE SAÍDA" [width]="200">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{getValorTotalSaidaTable(row) | number:'1.2-2':'pt-BR'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="SOMA DE DIF" [width]="200">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{getValorTotalDifTable(row) | number:'1.2-2':'pt-BR'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+
+            </ngx-datatable>
+
+        </div>
+
+    </div>
+</div>

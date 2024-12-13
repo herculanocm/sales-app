@@ -1,0 +1,26 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Pesquisa de Itens</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="modal-body">
+  <input
+    id="idTypeaheadItem"
+    type="text"
+    class="form-control"
+    #searchItem
+    [class.is-invalid]="searchFailedItemNome"
+    [ngbTypeahead]="searchItemNome"
+    (selectItem)="typeaHeadSelectItem($event)"
+    [inputFormatter]="formatterItem"
+    [resultTemplate]="rt"
+    placeholder="Busca Nome de item"
+  />
+</div>

@@ -1,0 +1,304 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Movimentos'" [picon]="'fa-retweet'" [heading]="'Preço Item'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <div class="form-group row">
+                        <label for="idInputDtaInicial" class="col-sm-2 col-form-label col-12">Dta Inicial</label>
+                        <div class="col-sm-4 col-12 padding-0">
+                            <input type="date" class="form-control" id="idInputDtaInicial" name="nameInputDtaInicial"
+                                [(ngModel)]="procuraPrecoItem.dtaInicial" />
+                        </div>
+                        <label for="idInputDtaFinal" class="col-sm-2 col-form-label col-12">Dta Final</label>
+                        <div class="col-sm-4 col-12 padding-0">
+                            <input type="date" class="form-control" id="idInputDtaFinal" name="nameInputDtaFinal"
+                                [(ngModel)]="procuraPrecoItem.dtaFinal" />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group row">
+                        <label for="almoxarifadoId" class="col-sm-2 col-form-label col-12">Almoxarifado</label>
+                        <div class="col-sm-10 col-12 padding-0">
+
+                            <select class="form-control" name="almoxarifadoId" id="almoxarifadoName"
+                                [compareWith]="compareAlmoxarifado" [(ngModel)]="procuraPrecoItem.estoqueAlmoxarifadoId"
+                                >
+                                <option [ngValue]="null">Selecione</option>
+                                <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="typeaheadItem" class="col-sm-2 col-form-label">Item</label>
+                        <div class="col-lg-2 col-sm-2 col-12" style="padding: 0px;margin: 0px">
+                        <div class="input-group padding-0">
+                            <input type="number" class="form-control" id="idCodItem" name="nameCodItem" pattern="\d*"
+                                inputmode="numeric" (keydown.Tab)="selectedItemId(procuraPrecoItem.itemDTO.id)"
+                                (keydown.enter)="selectedItemId(procuraPrecoItem.itemDTO.id)"
+                                [(ngModel)]="procuraPrecoItem.itemDTO.id">
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" type="button"
+                                    (click)="selectedItemId(procuraPrecoItem.itemDTO.id)"><i
+                                        class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                        <div class="col-sm-6 col-12 padding-0">
+                            <input id="typeaheadItem" [ngbTypeahead]="searchItem"
+                                [(ngModel)]="procuraPrecoItem.itemDTO.nome" [resultTemplate]="rt"
+                                (selectItem)="selectedItem($event)" name="typeaheadItem" type="text"
+                                class="form-control" [class.is-invalid]="searchFailedItem" [placement]="'top-left'"
+                                placeholder="Busca de Item" />
+                        </div>
+                        <span class="col-sm-2 col-form-label" *ngIf="searchingItem">procurando...</span>
+                        <span class="col-sm-2 col-form-label" *ngIf="searchFailedItem">Não encontrado</span>
+                    </div>
+                    <!--
+                <hr>
+                <div class="form-group row">
+                    <label for="typeaheadItem" class="col-sm-3 col-form-label col-12">Preço Médio Entrada</label>
+                    <div class="col-sm-3 col-12 padding-0">
+                        <input currencyMask class="form-control" [(ngModel)]="precoMedioEntrada"
+                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', precision: 5}" disabled>
+                    </div>
+                    <label for="typeaheadItem" class="col-sm-3 col-form-label col-12">Preço Médio Saída</label>
+                    <div class="col-sm-3 col-12 padding-0">
+                        <input currencyMask class="form-control" [(ngModel)]="precoMedioSaida"
+                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', precision: 5}" disabled>
+                    </div>
+                </div>
+            -->
+
+                    <br *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+                    <hr *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+                    <br *ngIf="movimentoItemAuditoriaDTOs.length > 0">
+
+                    <div *ngIf="movimentoItemAuditoriaDTOs.length > 0" class="col-sm-12">
+
+                        <p class="text-center">Tabela de Médias</p>
+
+                        <ngx-datatable class="material striped" appResizeWatcher [rows]="resumoPrecoItens"
+                            [columnMode]="ColumnMode.standard" [scrollbarH]="true" [headerHeight]="35"
+                            [footerHeight]="70" rowHeight="auto" [limit]="10" [rowClass]="getRowClass"
+                            [selectionType]="selectionTypeSingle">
+
+                            <ngx-datatable-column name="ID" [width]="70" prop="id">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="NOME" [width]="250" prop="nome">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD ENTRADA" [width]="120" prop="qtdEntrada">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD SAÍDA" [width]="120" prop="qtdSaida">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="VLR ENTRADA" [width]="120" prop="vlrEntrada">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="VLR SAÍDA" [width]="120" prop="vlrSaida">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="MÉDIO ENTRADA" [width]="120" prop="vlrMediaEntrada">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="MÉDIO SAÍDA" [width]="120" prop="vlrMediaSaida">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+
+                        <br>
+                        <hr>
+                        <br>
+
+                        <p class="text-center">Tabela de Lançamentos de movimentos</p>
+
+                        <ngx-datatable appResizeWatcher class="material striped" [rows]="movimentoItemAuditoriaDTOs"
+                            [columnMode]="ColumnMode.standard" [scrollbarH]="true" [headerHeight]="35"
+                            [footerHeight]="70" rowHeight="auto" [limit]="10" [rowClass]="getRowClass"
+                            [selectionType]="selectionTypeSingle">
+
+
+
+                            <ngx-datatable-column name="ID MOV" [width]="70" prop="movimentoId">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="DATA INC." [width]="170" prop="dtaInclusao">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="ITEM" [width]="280" prop="itemNome">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="TIPO" [width]="400" prop="movimentoTipoNome">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="ORIGEM" [width]="300" prop="movimentoOrigemNome">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="USUÁRIO INC." [width]="120" prop="usuarioInclusao">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD" prop="qtd" [width]="80">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="QTD CONV" [width]="80" prop="qtdConvertido">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="FATOR" [width]="80" prop="fatorOriginal">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="TIPO ORIG" [width]="80" prop="tipoOriginal">
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="GERA PREÇO" [width]="140" prop="indGeraPreco">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <div class="row">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" [(ngModel)]="row.indGeraPreco"
+                                                name="{{'nomeRadio' + row.id}}" id="inlineRadio1" [value]="true">
+                                            <label class="form-check-label" for="inlineRadio1">Sim</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" [(ngModel)]="row.indGeraPreco"
+                                                name="{{'nomeRadio' + row.id}}" id="inlineRadio2" [value]="false">
+                                            <label class="form-check-label" for="inlineRadio2">Não</label>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="VALOR CONV" [width]="200" prop="valorUnitario">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <input currencyMask [(ngModel)]="row.valorUnitario"
+                                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', precision: 5}">
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="AÇÃO" [width]="60">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <button type="button" class="btn btn-warning butao-alterar"
+                                        (click)="alteraValor(row)">
+                                        <i *ngIf="row.isLoading" class="fa fa-refresh fa-spin fa-fw sping-loading"></i>
+                                        Alterar
+                                    </button>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+
+                        <!-- 
+                    <table class="table table-bordered table-personalizada">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Id Mov</th>
+                                <th>Dta Inc.</th>
+                                <th>Usuário Inc.</th>
+                                <th>Item</th>
+                                <th>Qtd</th>
+                                <th>Qtd Conv.</th>
+                                <th>Fator</th>
+                                <th>Gera Preço</th>
+                                <th>Valor Conv.</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let movItemAud of movimentoItemAuditoriaDTOs">
+                                <td class="align-left">{{movItemAud.id}}</td>
+                                <td class="align-left">{{movItemAud.movimentoId}}</td>
+                                <td class="align-left">{{movItemAud.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                </td>
+                                <td class="align-left">{{movItemAud.usuarioInclusao}}</td>
+                                <td class="align-left">{{movItemAud.itemNome}}</td>
+                                <td class="align-left">{{movItemAud.qtd}}</td>
+                                <td class="align-left">{{movItemAud.qtdConvertido}}</td>
+                                <td class="align-left">{{movItemAud.fatorOriginal}}</td>
+                                <td class="align-left">
+                                    <div class="row">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                [(ngModel)]="movItemAud.indGeraPreco" name="{{movItemAud.id}}"
+                                                id="inlineRadio1" [value]="true">
+                                            <label class="form-check-label" for="inlineRadio1">Sim</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio"
+                                                [(ngModel)]="movItemAud.indGeraPreco" name="{{movItemAud.id}}"
+                                                id="inlineRadio2" [value]="false">
+                                            <label class="form-check-label" for="inlineRadio2">Não</label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="align-left">
+                                    <input currencyMask class="form-control input-alterar" [(ngModel)]="movItemAud.valorUnitario"
+                                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', precision: 5}">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-warning btn-block butao-alterar"
+                                        (click)="alteraValor(movItemAud)">Alterar
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                -->
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

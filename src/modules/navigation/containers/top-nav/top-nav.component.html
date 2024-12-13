@@ -1,0 +1,47 @@
+<nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white">
+    <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"
+        data-cy="topNavToggleSideNav" (click)="toggleSideNav()">
+        <i-feather name="menu"></i-feather>
+    </button>
+    <a class="navbar-brand pe-3 ps-4 ps-lg-2" routerLink="/pages/dashboards/clientes" style="padding-bottom: 0px;">SALES
+        3.0</a>
+
+    <ul class="navbar-nav align-items-center ms-auto me-lg-4">
+
+
+
+        <li class="nav-item dropdown no-caret me-3 me-lg-0 dropdown-user" ngbDropdown placement="bottom-end"
+            display="dynamic">
+            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" ngbDropdownToggle
+                data-cy="userMenu" role="button" aria-haspopup="true" aria-expanded="false"><img
+                    class="img-fluid rounded-circle" src="/assets/img/illustrations/profiles/profile-1.png"
+                    alt="Profile" /></a>
+            <div class="dropdown-menu border-0 shadow animated--fade-in-up" ngbDropdownMenu
+                aria-labelledby="dropdownUser">
+                <h6 class="dropdown-header d-flex align-items-center">
+                    <img class="dropdown-user-img" alt="Profile"
+                        src="/assets/img/illustrations/profiles/profile-1.png" />
+                    <div class="dropdown-user-details">
+                        <div class="dropdown-user-details-name">{{profile.firstName}}</div>
+                        <div class="dropdown-user-details-email">{{profile.email}}</div>
+                    </div>
+                </h6>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" routerLink="/pages/profile">
+                    <div class="dropdown-item-icon d-flex aligns-items-center justify-content-center"><i-feather
+                            class="menu-i-feather" name="settings"></i-feather><span
+                            class="align-middle span-item-icon">Account</span></div>
+
+                </a>
+                <a class="dropdown-item" routerLink="/login/logout">
+                    <div class="dropdown-item-icon d-flex aligns-items-center justify-content-center"><i-feather
+                            class="menu-i-feather" name="log-out"></i-feather><span
+                            class="align-middle span-item-icon">Logout</span></div>
+
+                </a>
+            </div>
+        </li>
+
+
+    </ul>
+</nav>

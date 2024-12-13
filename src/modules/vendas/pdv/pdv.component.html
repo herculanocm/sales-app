@@ -1,0 +1,587 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+<ng-template #rtFantasia let-r="result" let-t="term">
+  {{ r.fantasia }}
+</ng-template>
+
+<div class="col-12" style="padding: 15px; margin: 0px">
+  <div class="card div-geral-page">
+    <ngx-spinner
+      class="spinner-full"
+      name="fullSpinner"
+      [fullScreen]="false"
+      bdColor="rgba(51,51,51,0.8)"
+      size="medium"
+      color="#fff"
+      type="ball-spin-clockwise"
+    >
+      <p style="font-size: 20px; color: white">
+        Comunicando com o Servidor, Aguarde...
+      </p>
+    </ngx-spinner>
+
+    <div class="div-tabs">
+      <form [formGroup]="pdvForm">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <a ngbNavLink>PDV</a>
+            <ng-template ngbNavContent>
+              <br />
+
+              <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                  <div class="">
+
+                    <div class="col-12 padding-5" style="margin-bottom: 20px;">
+                      <div class="form-group custom-input">
+                        
+  
+                        <select
+                          class="form-control"
+                          (change)="onChangeAlmoxarifado($event)"
+                          (keydown)="onKeyDown($event, 'almoxarifado')"
+                          #estoqueAlmoxarifado
+                          ngbTooltip="Selecione o almoxarifado onde será aplicado o pedido"
+                          [ngClass]="{
+                            'is-invalid':
+                              submitted && f.estoqueAlmoxarifadoId.errors
+                          }"
+                          formControlName="estoqueAlmoxarifadoId"
+                          id="idEstAlx"
+                        >
+                          <option [ngValue]="null">SELECIONE</option>
+                          <option
+                            *ngFor="let ealxv of estoqueFiltrados"
+                            [ngValue]="ealxv.id"
+                          >
+                            {{ ealxv.nome }}
+                          </option>
+                        </select>
+                        <label class="outlined" for="idEstAlx">Estoque Almoxarifado</label>
+                        <div
+                          *ngIf="submitted && f.estoqueAlmoxarifadoId.errors"
+                          class="invalid-feedback"
+                        >
+                          <div *ngIf="f.estoqueAlmoxarifadoId.errors['required']">
+                            Selecione um estoque
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="" formGroupName="itemForm">
+                      <div class="row">
+
+                        
+
+                        <div class="col-1 padding-5">
+                          <div class="form-group custom-input">
+                            <input
+                              type="number"
+                              class="form-control"
+                              (keydown)="onKeyDown($event, 'searchItem')"
+                              id="itemId"
+                              #itemId
+                              formControlName="id"
+                              [ngClass]="{'is-invalid': submittedItem && fi['item'].errors}"
+                            />
+                            <label for="itemId" class="outlined"
+                              >ID do Item</label
+                            >
+                            <div *ngIf="submittedItem && fi['item'].errors" class="invalid-feedback">
+                              <div *ngIf="fi['item'].errors['required']">
+                                Item
+                              </div>
+                          </div>
+
+                          </div>
+                        </div>
+
+                        <div class="col-5 padding-5">
+                          <div class="form-group custom-input">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="codBarrasItem"
+                              #itemCodBarras
+                              (keydown)="onKeyDown($event, 'searchCodBarras')"
+                              formControlName="codigoBarras"
+                              [ngClass]="{'is-invalid': submittedItem && fi['item'].errors}"
+                            />
+                            <label for="codBarrasItem" class="outlined"
+                              >Cod Barras</label
+                            >
+                          </div>
+                        </div>
+
+                        <div class="col-6 padding-5">
+                          <div class="form-group custom-input">
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="itemName"
+                              placeholder=" "
+                              (keydown)="onKeyDown($event, 'searchNome')"
+                              formControlName="nome"
+                              [ngClass]="{'is-invalid': submittedItem && fi['item'].errors}"
+                            />
+                            <label for="itemName" class="outlined"
+                              >Nome do Item</label
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 20px">
+                      <div class="col-6">
+                        <div class="image-item">
+                          <div class="col-12" style="margin-bottom: 20px">
+                            <div
+                              class="picsum-img-wrapper"
+                              *ngIf="
+                                !isItemSelecionado() ||
+                                getImagemItemSelecionado().length === 0
+                              "
+                            >
+                              <img
+                                src="../../../assets/img/itemDefaultPDV.png"
+                                class="rounded mx-auto d-block img-max-lenght"
+                                alt="item padrão"
+                                title="item padrão"
+                              />
+                            </div>
+
+                            <ngb-carousel
+                              *ngIf="
+                                isItemSelecionado() &&
+                                getImagemItemSelecionado().length > 0
+                              "
+                            >
+                              <ng-template
+                                ngbSlide
+                                *ngFor="
+                                  let itemImg of getImagemItemSelecionado()
+                                "
+                              >
+                                <div class="picsum-img-wrapper">
+                                  <img
+                                    [src]="itemImg.srcImg"
+                                    class="rounded mx-auto d-block img-max-lenght"
+                                    [alt]="itemImg.fileName"
+                                    [title]="itemImg.fileName"
+                                  />
+                                </div>
+                              </ng-template>
+                            </ngb-carousel>
+                          </div>
+                        </div>
+
+                        <div class="" formGroupName="itemForm">
+
+                          <div class="row" style="margin-top: 20px;margin-bottom: 20px;">
+                            <div class="col-8 padding-5">
+                              <div class="form-group custom-input">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="estoqueUnId"
+                        
+                                  formControlName="estoqueUnAp"
+                                />
+                                <label for="estoqueUnId" class="outlined"
+                                  >Estoque Un</label
+                                >
+                              </div>
+                            </div>
+
+                            <div class="col-4 padding-5">
+                              <div class="form-group custom-input">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="vlrUnId"
+                    
+                                  formControlName="vlrUnAp"
+                                />
+                                <label for="vlrUnId" class="outlined"
+                                  >Valor Un</label
+                                >
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <div class="col-12 padding-5">
+                            <div class="form-group custom-input">
+                              <select
+                                class="form-control"
+                                #itemAgrupamento
+                                (keydown)="onKeyDown($event, 'agrupamento')"
+                                name="nmAgItemSelecionado"
+                                [ngClass]="{'is-invalid': submittedItem && fi['agrupamento'].errors}"
+                                id="idAgItemSelecionado"
+                                (change)="changeQtd()"
+                                formControlName="agrupamento"
+                              >
+                                <option [ngValue]="null" disabled>
+                                  Selecione
+                                </option>
+                                <option
+                                  *ngFor="let un of getAllAgrupamentos()"
+                                  [ngValue]="un"
+                                >
+                                  {{ un.nome }}
+                                </option>
+                              </select>
+                              <label for="idAgItemSelecionado" class="outlined"
+                                >Agrupamento</label
+                              >
+                              <div
+                                *ngIf="
+                                  submittedItem && fi['agrupamento'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="fi['agrupamento'].errors['required']"
+                                >
+                                  O agrupamento precisa ser selecionado
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row" style="margin-top: 20px">
+                            <div class="col-6 padding-5">
+                              <div class="form-group custom-input">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="qtdItemId"
+                                  #itemQtd
+                                  (keydown)="onKeyDown($event, 'qtd')"
+                                  [ngClass]="{'is-invalid': submittedItem && fi['qtd'].errors}"
+                                  formControlName="qtd"
+                                />
+                                <label for="qtdItemId" class="outlined"
+                                  >Quantidade</label
+                                >
+                              <div *ngIf="submittedItem && fi['qtd'].errors" class="invalid-feedback">
+                                  <div *ngIf="fi['qtd'].errors['required']">
+                                    A qtd precisa ser digitada
+                                  </div>
+                                  <div *ngIf="fi['qtd'].errors['min']">
+                                    A qtd precisa ser maior que 0
+                                  </div>
+                              </div>
+
+                              </div>
+                            </div>
+
+                            <div class="col-6 padding-5">
+                              <div class="form-group custom-input">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="vlrItemId"
+                                  #itemVlr
+                                  (keydown)="onKeyDown($event, 'vlr')"
+                                  [ngClass]="{'is-invalid': submittedItem && fi['vlr'].errors}"
+                                  formControlName="vlr"
+                                />
+                                <label for="vlrItemId" class="outlined"
+                                  >Valor</label
+                                >
+
+                                <div *ngIf="submittedItem && fi['vlr'].errors" class="invalid-feedback">
+                                  <div *ngIf="fi['vlr'].errors['required']">
+                                    O valor precisa ser digitado
+                                  </div>
+                                  <div *ngIf="fi['vlr'].errors['min']">
+                                    O valor precisa ser maior que 0
+                                  </div>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 20px">
+
+                          <div class="col-6 padding-5">
+                            <div class="form-group custom-input">
+                              <label for="idCondicaoPagamento"
+                                ></label
+                              >
+                              <select
+                                class="form-control"
+                                #condicaoPagId
+                                (keydown)="onKeyDown($event, 'condicaoPagamento')"
+                                [ngClass]="{
+                                  'is-invalid': submitted && f.condicaoPagamento.errors
+                                }"
+                                [compareWith]="compareCondicaoPagamento"
+                                id="idCondicaoPagamento"
+                               
+                                formControlName="condicaoPagamento"
+                              >
+                                <option [ngValue]="null">SELECIONE</option>
+                                <option
+                                  *ngFor="let cd of condicaoPagamentosVisiveis"
+                                  [ngValue]="cd"
+                                >
+                                  {{ cd.nome }}
+                                </option>
+                              </select>
+                              <label for="idCondicaoPagamento" class="outlined"
+                                  >Condição de Pagamento</label
+                                >
+
+                              <div
+                                *ngIf="submitted && f.condicaoPagamento.errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="f.condicaoPagamento.errors['required']">
+                                  Selecione uma condição de pagamento
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <div class="col-6 padding-5">
+                            <div class="form-group custom-input">
+                              <input
+                                type="number"
+                                class="form-control"
+                                id="vlrItemId"
+                                #itemVlr
+                                (keydown)="onKeyDown($event, 'vlrTotal')"
+                                formControlName="vlrTotal"
+                              />
+                              <label for="vlrItemId" class="outlined"
+                                >Valor Total</label
+                              >
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div
+                          class="position-sticky h-100 overflow-auto"
+                          style="
+                            top: 0;
+                            width: 100%;
+                            border: 1px solid #ced4da;
+                            height: 610px;
+                            max-height: 610px;
+                            overflow-y: auto;
+                          "
+                        >
+                          <table
+                            class="table table-sm table-striped table-bordered table-hover table-itens"
+                          >
+                            <thead>
+                              <tr>
+                                <th scope="col" style="max-width: 10px">#</th>
+                                <th scope="col" style="max-width: 20px">
+                                  Item ID
+                                </th>
+                                <th scope="col">Item Nome</th>
+                                <th scope="col">Agrupamento</th>
+                                <th scope="col" style="max-width: 20px">Qtd</th>
+                                <th scope="col" style="max-width: 30px">Vlr</th>
+                                <th scope="col" style="max-width: 40px">
+                                  SubTotal
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let rr of vendaItems; index as i">
+                                <td style="max-width: 10px">{{ i + 1 }}</td>
+                                <td style="max-width: 20px">
+                                  {{ rr.itemDTO.id }}
+                                </td>
+                                <td>{{ rr.itemDTO.nome }}</td>
+                                <td>{{ rr.itemUnidadeDTO.nome }}</td>
+                                <td style="max-width: 20px">{{ rr.qtd | number : "1.0-0" : "pt-BR"}}</td>
+                                <td style="max-width: 30px">
+                                  {{ rr.vlrUnitario | number : "1.2-2" : "pt-BR" }}
+                                </td>
+                                <td style="max-width: 40px">{{ rr.vlr | number : "1.2-2" : "pt-BR" }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2">
+            <a ngbNavLink>Configurações</a>
+            <ng-template ngbNavContent>
+              <div class="configs">
+                <div class="row">
+                  <div class="col-xl-6 col-lg-6 col-sm-6 col-12 padding-5">
+                    <div class="form-group">
+                      <label for="inputDtaEmissao">Data Emissão</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        (keydown)="onKeyDown($event, 'dataEmissao')"
+                        [ngClass]="{
+                          'is-invalid': submitted && f.dtaEmissao.errors
+                        }"
+                        id="inputDtaEmissao"
+                        formControlName="dtaEmissao"
+                        ngbTooltip="Digite a data de Emissão"
+                      />
+                      <div
+                        *ngIf="submitted && f.dtaEmissao.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="f.dtaEmissao.errors['required']">
+                          Data de emissão é obrigatoria e não pode estar antes
+                          da data atual
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-6 col-lg-6 col-sm-6 col-12 padding-5">
+                    <div class="form-group">
+                      <label for="idIptDtaEntrega">Data/Hr Entrega</label>
+                      <input
+                        type="datetime-local"
+                        (keydown)="onKeyDown($event, 'dataEntrega')"
+                        class="form-control"
+                        [ngClass]="{
+                          'is-invalid': submitted && f.dtaEntrega.errors
+                        }"
+                        id="idIptDtaEntrega"
+                        formControlName="dtaEntrega"
+                        ngbTooltip="Digite a data/hora de Entrega Estimada"
+                      />
+                      <div
+                        *ngIf="submitted && f.dtaEntrega.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="f.dtaEntrega.errors['required']">
+                          Data de Entrega é Obrigatoria
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  
+
+                  <div class="col-xl-4 col-lg-4 col-sm-4 col-12 padding-5">
+                    <div class="form-group">
+                      <label for="idSelectRepresentante">Representante</label>
+                      <select
+                        class="form-control"
+                        [compareWith]="compareVendedor"
+                        (keydown)="onKeyDown($event, 'representante')"
+                        
+                        [ngClass]="{
+                          'is-invalid': submitted && f.vendedor.errors
+                        }"
+                        formControlName="vendedor"
+                        id="idSelectRepresentante"
+                      >
+                        <option [ngValue]="null">SELECIONE</option>
+                        <option
+                          *ngFor="let vd of vendedoresVisiveis"
+                          [ngValue]="vd"
+                        >
+                          {{ vd.nome }}
+                        </option>
+                      </select>
+                      <div
+                        *ngIf="submitted && f.vendedor.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="f.vendedor.errors['required']">
+                          Selecione um vendedor
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  
+
+                  <div class="col-xl-2 col-lg-2 col-sm-2 col-12 padding-5">
+                    <div class="form-group">
+                      <label for="idInputCodCli">Cod Cliente</label>
+                      <div
+                        class="input-group"
+                        ngbTooltip="Digite o Codigo do Cliente"
+                      >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="idInputCodCli"
+                          (keydown)="onKeyDown($event, 'codCli')"
+                          formControlName="clienteId"
+                          (keydown.Tab)="findClienteById()"
+                          (keydown.enter)="findClienteById()"
+                          [ngClass]="{
+                            'is-invalid': submitted && f['clienteId'].errors
+                          }"
+                          name="nameInputCodCli"
+                          pattern="\d*"
+                          inputmode="numeric"
+                        />
+                        <div class="input-group-append">
+                          <button
+                            class="btn btn-secondary"
+                            (click)="findClienteById()"
+                            type="button"
+                          >
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </div>
+                        <div
+                          *ngIf="submitted && f['clienteId'].errors"
+                          class="invalid-feedback"
+                        >
+                          <div *ngIf="f['clienteId'].errors['required']">
+                            Digite o id do Cliente
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-6 col-lg-6 col-sm-6 col-12 padding-5">
+                    <div
+                      class="form-group"
+                      ngbTooltip="Digite o nome do Cliente"
+                    >
+                      <label for="typeaheadCliente">Nome Cliente</label>
+                      <input
+                      (keydown)="onKeyDown($event, 'nomeCliente')"
+                        id="typeaheadCliente"
+                        type="text"
+                        class="form-control"
+                        formControlName="clienteNome"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </form>
+    </div>
+  </div>
+</div>

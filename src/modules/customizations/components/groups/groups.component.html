@@ -1,0 +1,233 @@
+<app-head-compact title="Customizações - Grupos"
+    icon="user"></app-head-compact><!-- Main page content-->
+<div class="container-xl px-4 mt-4">
+    <!-- <nav class="nav nav-borders"><a class="nav-link active ms-0" routerLink="/pages/access/user">Usuário</a>
+        <a class="nav-link" routerLink="/pages/access/find-user">Busca</a>
+    </nav> 
+<hr class="mt-0 mb-4" />
+-->
+
+
+    <div class="row gx-4">
+        <div class="col-xl-12">
+            <!-- Account details card-->
+            <div class="card mb-4" *ngIf="statusForm < 3">
+                <div class="card-header">Formulário</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                        type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+
+                            <div class="col-sm-2 col-4 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-group">Id</label>
+                                    <input type="number" class="form-control" id="id-group" formControlName="id">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-10 col-8 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-name">Nome do Grupo*</label>
+                                    <input type="text" class="form-control" id="id-name"
+                                        [ngClass]="{'is-invalid': submitted && f.name.errors}" formControlName="name">
+                                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                                        <div *ngIf="f.name.errors['required']">Adicione um nome para o Grupo
+                                        </div>
+                                        <div *ngIf="f.name.errors['maxlength']">Tamanho máximo excedido de 255
+                                            caracteres
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="exampleFormControlTextarea1">Descrição</label>
+
+
+                                    <textarea class="form-control" id="exampleFormControlTextarea1"
+                                        [ngClass]="{'is-invalid': submitted && f.description.errors}"
+                                        formControlName="description" rows="2">
+                                </textarea>
+
+                                    <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                                        <div *ngIf="f.description.errors['required']">Adicione uma descrição
+                                        </div>
+                                        <div *ngIf="f.description.errors['maxlength']">Tamanho máximo excedido de 255
+                                            caracteres
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-tags">TAGs* - Adicione separadas por virgula examplo (financeiro, operação, vendas)</label>
+                                    <input type="text" class="form-control" id="id-tags"
+                                        [ngClass]="{'is-invalid': submitted && f.tags.errors}" formControlName="tags">
+                                    <div *ngIf="submitted && f.tags.errors" class="invalid-feedback">
+                                        <div *ngIf="f.tags.errors['required']">Adicione TAGs para o Grupo
+                                        </div>
+                                        <div *ngIf="f.tags.errors.maxlength">Tamanho máximo excedido de 255
+                                            caracteres
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div> -->
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-company">Organização*</label>
+                                    <select class="form-control" [compareWith]="compareCompanies"
+                                        [ngClass]="{'is-invalid': submitted && f.organization.errors}"
+                                        formControlName="organization" id="id-company">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let cp of organizations" [ngValue]="cp">
+                                            {{cp.name}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.organization.errors" class="invalid-feedback">
+                                        <div *ngIf="f.organization.errors['required']">Selecione uma organização
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label for="id-checkbox-usuario-desabilitado" class="small mb-1">Status</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="id-checkbox-usuario-desabilitado" formControlName="enableState">
+                                        <label class="form-check-label" for="id-checkbox-usuario-desabilitado">Grupo
+                                            ativo?</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+                    </form>
+
+                    <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                    <div class="row">
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Salvar ou Alterar" class="btn btn-block butao-acao"
+                                [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onSubmit()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">{{statusForm ===
+                                    2 ?
+                                    'Alterar' : 'Salvar'}}
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Limpa todos os campos"
+                                class="btn btn-outline-dark butao-acao" (click)="onClear()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div>
+
+
+
+                    </div>
+
+
+
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Grupos</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" name="search-spinner" bdColor="rgba(51,51,51,0.8)" size="medium"
+                        color="#fff" type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="col-12">
+                        <input type="text" class="input-filter" 
+                            placeholder="Digite o nome do grupo para procura" (keyup)="filterGroupName($event)" />
+                    </div>
+
+
+
+                    <ngx-datatable class="bootstrap" #table [scrollbarH]="true" [rows]="groupUsersFiltered"
+                        appResizeWatcher [columnMode]="ColumnMode.force" [headerHeight]="35" [footerHeight]="70"
+                        rowHeight="auto" [selectionType]="SelectionTypeSingle" [limit]="20">
+
+                        <ngx-datatable-column name="Id" prop="id" [width]="70"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Editar" [width]="90">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <button type="button" class="btn btn-warning btn-table" (click)="edit(row)"
+                                    [disabled]="permitEditOrDelete(row)">
+                                    <span class="fa fa-edit"></span><span class="span-table">Editar</span></button>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Excluir" [width]="90">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <button type="button" class="btn btn-danger btn-table" (click)="delete(row)"
+                                    [disabled]="permitEditOrDelete(row)">
+                                    <span class="fa fa-trash"></span><span class="span-table">Excluir</span></button>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+                        <ngx-datatable-column name="Name" prop="name" [width]="350"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Ativa?" prop="enableState" [width]="70">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value === true ? 'Sim' : 'Não'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Organização" prop="organization.name"
+                            [width]="350"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Usuário Inclusão" prop="userInclusion"
+                            [width]="180"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Data Inclusão" prop="dtaInclusion" [width]="180">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Usuário Ult Alteração" prop="userLastUpdate"
+                            [width]="180"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Data Ult Alteração" prop="dtaLastUpdate" [width]="180">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+
+                    </ngx-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

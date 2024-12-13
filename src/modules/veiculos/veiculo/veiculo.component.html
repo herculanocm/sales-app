@@ -1,0 +1,180 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Veículos'" [picon]="'fa-truck'" [heading]="'Veículo'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div *ngIf="statusForm === 1 || statusForm === 2" class="row">
+            <div class="col-md-12">
+
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                                <button class="btn btn-block butao-acao"
+                                    [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onCadastra()">
+                                    <span class="fa fa-save span-acao"></span> {{statusForm === 2 ? 'Alterar':'Salvar'}}
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()">
+                                    <span class="fa fa-eraser span-acao"></span> Limpar
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onLeftArray()">
+                                    <span class="fa fa-arrow-circle-left span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao"
+                                    (click)="onRightArray()">
+                                    <span class="fa fa-arrow-circle-right span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-1 col-xl-1 col-4 d-grid">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onTable()">
+                                    <span class="fa fa-table span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" [disabled]="isValidDelete()"
+                                    class="btn btn-block btn-danger butao-acao" (click)="onDeleta(veiculo.id)">
+                                    <span class="fa fa-trash span-acao"></span> Deletar
+                                </button>
+                            </div>
+                            <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                                <button type="button" class="btn btn-block btn-success butao-acao"
+                                    (click)="onPesquisa()">
+                                    <span class="fa fa-search span-acao"></span> Pesq
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Veículos</div>
+                    <div class="card-body">
+                        <app-fields-erro-directive *ngIf="errorForm !== null" [servererror]="errorForm">
+                        </app-fields-erro-directive>
+                        <form (ngSubmit)="onCadastra()">
+
+                            <div class="form-group row">
+                                <label for="inputId" class="col-sm-2 col-form-label">Id</label>
+                                <div class="col-sm-2">
+                                    <input type="number" class="form-control" name="inputId" [(ngModel)]="veiculo.id"
+                                        [disabled]="statusForm === 2" id="inputId" placeholder="Id">
+                                </div>
+                                <label for="veiculoNome" class="col-sm-2 col-form-label">Nome</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" name="veiculoNome"
+                                        [(ngModel)]="veiculo.nome" id="veiculoNome" placeholder="Nome">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="inputMarca" class="col-sm-2 col-form-label">Marca</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="inputMarca"
+                                        [(ngModel)]="veiculo.marca" id="inputMarca" placeholder="Marca">
+                                </div>
+                                <label for="inputMarca" class="col-sm-2 col-form-label">Modelo</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="inputModelo"
+                                        [(ngModel)]="veiculo.modelo" id="inputModelo" placeholder="Modelo">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputPlaca" class="col-sm-2 col-form-label">Placa</label>
+                                <div class="col-sm-2">
+                                    <input type="text" class="form-control" name="inputPlaca"
+                                        [(ngModel)]="veiculo.placa" id="inputPlaca" placeholder="Placa">
+                                </div>
+                                <label for="inputCor" class="col-sm-2 col-form-label">Cor</label>
+                                <div class="col-sm-2">
+                                    <input type="text" class="form-control" name="inputCor" [(ngModel)]="veiculo.cor"
+                                        id="inputCor" placeholder="Cor">
+                                </div>
+                                <label for="inputAno" class="col-sm-2 col-form-label">Ano</label>
+                                <div class="col-sm-2">
+                                    <input type="number" class="form-control" name="inputAno" [(ngModel)]="veiculo.ano"
+                                        id="inputAno" placeholder="Ano">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="inputDescricao" class="col-sm-2 col-form-label">Descrição</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="inputDescricao" [(ngModel)]="veiculo.descricao"
+                                        id="inputDescricao">{{veiculo.descricao}}</textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label for="radio" class="col-sm-2 col-form-label">Status</label>
+                                <fieldset>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadiosStatus" [value]="true"
+                                                [(ngModel)]="veiculo.status"> Ativo
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadiosStatus" [value]="false"
+                                                [(ngModel)]="veiculo.status"> Bloqueado
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="statusForm === 3">
+            <div class="card bg-light mb-3">
+                <div class="card-header">Ações</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" (click)="voltar()">
+                                <span class="fa fa-arrow-left span-acao"></span> Voltar
+                            </button>
+                        </div>
+
+                        <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao"
+                                [disabled]="selected.length === 0" (click)="editando()">
+                                <span class="fa fa-edit span-acao "></span> Editar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <ngx-datatable class="material striped" appResizeWatcher [rows]="rows" [columnMode]="ColumnMode.standard"
+                [columns]="columns" [headerHeight]="35" [footerHeight]="70" rowHeight="auto" [limit]="50"
+                [selected]="selected" [selectionType]="selectionTypeSingle" (activate)="onActivate($event)">
+
+                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                <ngx-datatable-column name="NOME" prop="nome" [width]="400"></ngx-datatable-column>
+                <ngx-datatable-column name="PLACA" prop="placa" [width]="200"></ngx-datatable-column>
+                <ngx-datatable-column name="MARCA" prop="marca" [width]="250"></ngx-datatable-column>
+                <ngx-datatable-column name="MODELO" prop="modelo" [width]="250"></ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

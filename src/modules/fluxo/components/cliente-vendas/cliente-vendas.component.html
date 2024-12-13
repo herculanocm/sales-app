@@ -1,0 +1,83 @@
+<div>
+
+    <ngx-spinner [fullScreen]="false" name="searchVendasClientes" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+    type="ball-spin-clockwise">
+    <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+    </ngx-spinner>
+
+    <div class="modal-header">
+        <span>{{ modalHeader }}</span>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+
+                <div class="col-sm-5 col-12  padding-5">
+                    <div class="form-group">
+                        <label for="idDataRefIncial">Data Emissão Inicial</label>
+                        <input type="date" 
+                        [ngClass]="{'is-invalid': submitted && f['dtaReferenciaInicial'].errors}"
+                        class="form-control" id="idDataRefIncial" formControlName="dtaReferenciaInicial">
+                        <div *ngIf="submitted && f['dtaReferenciaInicial'].errors" class="invalid-feedback">
+                            <div *ngIf="f['dtaReferenciaInicial'].errors['required']">É necessário adicionar a data de emissão inicial
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5 col-12  padding-5">
+                    <div class="form-group">
+                        <label for="iddtaReferenciaFinal">Data Emissão Final</label>
+                        <input type="date" 
+                        [ngClass]="{'is-invalid': submitted && f['dtaReferenciaFinal'].errors}"
+                        class="form-control" id="iddtaReferenciaFinal" formControlName="dtaReferenciaFinal">
+                        <div *ngIf="submitted && f['dtaReferenciaFinal'].errors" class="invalid-feedback">
+                            <div *ngIf="f['dtaReferenciaFinal'].errors['required']">É necessário adicionar a data de emissão final
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                    <label for="idVendasCliente">Buscar Vendas</label>
+                    <button id="idVendasCliente" type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onSubmit()">
+                        <span class="fa fa-search span-acao"></span>
+                    </button>
+                </div>
+
+
+            </div>
+        </form>
+        <br>
+        <br>
+        <div class="table-responsive" *ngIf="vendaAux.length > 0">
+            <table class="table table-sm table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Ação</th>
+                        <th scope="col">VendaId</th>
+                        <th scope="col">Dta Emissão</th>
+                        <th scope="col">Dta Inclusão</th>
+
+                        <th scope="col">Condição Pagamento</th>
+                        <th scope="col">Valor Total</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let rr of vendaAux">
+                        <td>
+                            <button type="button" class="btn btn-warning btn-table" (click)="selecionarVenda(rr)" style="padding-top: 2px;padding-bottom: 2px;padding-right: 2px;padding-left: 2px;margin: 0px;"  >
+                              <span class="fa fa-edit"></span><span class="span-table">Selecionar</span></button>
+                        </td>
+                        <td>{{rr.id}}</td>
+                        <td>{{rr.dtaEmissao | amDateFormat : "DD/MM/YYYY"}}</td>
+                        <td>{{rr.dtaInclusao | amDateFormat : "DD/MM/YYYY HH:mm:ss"}}</td>
+                        <td>{{rr.condicaoPagamentoDTO!.nome}}</td>
+                        <td>{{rr.vlrTotal | number : "1.2-2" : "pt-BR"}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

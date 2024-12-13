@@ -1,0 +1,19 @@
+.card-sales {
+    margin: 0px;
+}
+:host ::ng-deep .datatable-body-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;  
+}
+:host ::ng-deep .datatable-header-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;     
+}
+.card-header {
+    background-color: white;
+}
+.card-body {
+    background-color: white;
+}

@@ -1,0 +1,402 @@
+<app-head-compact title="Customizações - Relatórios"
+    icon="user"></app-head-compact><!-- Main page content-->
+<div class="container-xl px-4 mt-4">
+    <!-- <nav class="nav nav-borders"><a class="nav-link active ms-0" routerLink="/pages/access/user">Usuário</a>
+        <a class="nav-link" routerLink="/pages/access/find-user">Busca</a>
+    </nav> 
+<hr class="mt-0 mb-4" />
+-->
+
+
+    <div class="row gx-4">
+        <div class="col-xl-12">
+            <!-- Account details card-->
+            <div class="card mb-4" *ngIf="statusForm < 3">
+                <div class="card-header">Formulário</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" name="full-spinner" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                        type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+
+                            <div class="col-12 text-center" style="margin-top: 10px;">
+                                <h5>Menu</h5>
+                            </div>
+
+                            <div class="col-sm-2 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-report">Id</label>
+                                    <input type="number" class="form-control" id="id-report" formControlName="id">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-name-menu">Nome do Menu</label>
+                                    <input type="text" class="form-control" id="id-name-menu"
+                                        [ngClass]="{'is-invalid': submitted && f.text.errors}" formControlName="text">
+                                    <div *ngIf="submitted && f.text.errors" class="invalid-feedback">
+                                        <div *ngIf="f.text.errors['required']">Adicione um nome para o Menu
+                                        </div>
+                                        <div *ngIf="f.text.errors['maxlength']">Tamanho máximo excedido de 255
+                                            caracteres
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-icon-menu">Ícone do Menu</label>
+                                    <input type="text" class="form-control" id="id-icon-menu"
+                                        [ngClass]="{'is-invalid': submitted && f.icon.errors}" formControlName="icon">
+                                    <div *ngIf="submitted && f.icon.errors" class="invalid-feedback">
+                                        <div *ngIf="f.icon.errors['required']">Adicione um ícone para o Menu
+                                        </div>
+                                        <div *ngIf="f.icon.errors['maxlength']">Tamanho máximo excedido de 255
+                                            caracteres
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-orderView-menu">Ordem</label>
+                                    <input type="number" class="form-control" id="id-orderView-menu"
+                                    ngbTooltip="Ordem de exibição"
+                                        formControlName="orderView">
+                                    
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-12 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-organization">Organização*</label>
+                                    <select class="form-control" [compareWith]="compareOrganization"
+                                        (change)="changeOrganization()"
+                                        ngbTooltip="Atenção - A organização irá definir os grupos de acesso"
+                                        [ngClass]="{'is-invalid': submitted && f.organization.errors}"
+                                        formControlName="organization" id="id-organization">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let cp of organizations" [ngValue]="cp">
+                                            {{cp.name}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f.organization.errors" class="invalid-feedback">
+                                        <div *ngIf="f.organization.errors['required']">Selecione uma organização
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-12 div-field">
+
+
+                                <div class="form-group">
+                                    <label for="idGroupUser" class="small mb-1">Grupos de Acesso*</label>
+                                    <ng-select id="idGroupUser" [items]="groupUsers" [multiple]="true" [closeOnSelect]="true"
+                                        ngbTooltip="Atenção - Selecione uma organização para selecionar os grupos vinculados"
+                                        (change)="changeGroups()"
+                                        [ngClass]="{'is-invalid': submitted && f.groupUsers.errors}"
+                                        [compareWith]="compareGrupos" [searchable]="true" [bindLabel]="'name'"
+                                        formControlName="groupUsers">
+
+
+
+                                    </ng-select>
+                                    <div *ngIf="searchingGroup">
+                                        <span class="fa span-btn2"
+                                            [ngClass]="searchingGroup ? 'fa-refresh fa-spin fa-fw' : 'fa-window-maximize span-btn-excluir'"></span>
+                                        <span>{{searchingGroup ? ' Consultando grupos...' :''}}</span>
+                                    </div>
+
+                                    <div *ngIf="submitted && f.groupUsers.errors" class="invalid-feedback">
+                                        <div *ngIf="f.groupUsers.errors['required']">Adicione grupos ao menu
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label for="id-checkbox-menu-desabilitado" class="small mb-1">Status</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="id-checkbox-menu-desabilitado" formControlName="enableState">
+                                        <label class="form-check-label" for="id-checkbox-menu-desabilitado">Menu
+                                            visível?</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                    <form [formGroup]="reportForm" (ngSubmit)="addReport()">
+
+
+                        <div class="col-12 sub-form">
+                            <div class="row">
+
+                                <div class="col-12 text-center" style="margin-top: 10px;">
+                                    <h5>SubMenu</h5>
+                                </div>
+
+
+
+                                <div class="col-sm-3 col-12 div-field">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="id-workspace">Workspace*</label>
+                                        <select class="form-control" [compareWith]="compareWorkspace"
+                                            (change)="alterWorkspace()"
+                                            [ngClass]="{'is-invalid': submittedReport && r.workspace.errors}"
+                                            formControlName="workspace" id="id-workspace">
+                                            <option [ngValue]="null">SELECIONE</option>
+                                            <option *ngFor="let cp of workspaces" [ngValue]="cp">
+                                                {{cp.name}}
+                                            </option>
+                                        </select>
+                                        <div *ngIf="submittedReport && r.workspace.errors" class="invalid-feedback">
+                                            <div *ngIf="r.workspace.errors['required']">Selecione uma workspace
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3 col-12 div-field">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="id-sub-menu-report">Relátorio Visível*</label>
+                                        <select class="form-control" [compareWith]="compareRelatorio"
+                                            (change)="changeReport()"
+                                            ngbTooltip="Atenção - Selecione o workspace para buscar os relatorios"
+                                            [ngClass]="{'is-invalid': submittedReport && r.reportObj.errors}"
+                                            formControlName="reportObj" id="id-sub-menu-report">
+                                            <option [ngValue]="null">SELECIONE</option>
+                                            <option *ngFor="let cp of reports" [ngValue]="cp">
+                                                {{cp.name}}
+                                            </option>
+                                        </select>
+                                        <div *ngIf="submittedReport && r.reportObj.errors" class="invalid-feedback">
+                                            <div *ngIf="r.reportObj.errors['required']">Selecione um relátorio
+                                            </div>
+                                        </div>
+                                        <div *ngIf="searchingReportPBI">
+                                            <span class="fa span-btn2" [ngClass]="searchingReportPBI ? 'fa-refresh fa-spin fa-fw' : 'fa-window-maximize span-btn-excluir'"></span>
+                                            <span>{{searchingReportPBI ? ' Consultando relatórios...' :''}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4 col-12 div-field">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="id-name-submenu">Nome do SubMenu*</label>
+                                        <input type="text" class="form-control" id="id-name-submenu"
+                                            [ngClass]="{'is-invalid': submittedReport && r.text.errors}"
+                                            formControlName="text">
+                                        <div *ngIf="submittedReport && r.text.errors" class="invalid-feedback">
+                                            <div *ngIf="r.text.errors['required']">Adicione um nome para o Menu
+                                            </div>
+                                            <div *ngIf="r.text.errors['maxlength']">Tamanho máximo excedido de 255
+                                                caracteres
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 col-12 div-field">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="id-order-view-submenu">Ordem</label>
+                                        <input type="number" class="form-control" id="id-order-view-submenu"
+                                            formControlName="orderView">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 div-field">
+                                    <div class="form-group">
+                                        <label for="idGroupUserReport" class="small mb-1">Grupos de Acesso - SubMenu*</label>
+                                        <ng-select id="idGroupUserReport"  [items]="groupUsersReport" [multiple]="true" [closeOnSelect]="true"
+                                            [ngClass]="{'is-invalid': submittedReport && r.groupUsers.errors}"
+                                            [compareWith]="compareGrupos" [searchable]="true" [bindLabel]="'name'"
+                                            formControlName="groupUsers">
+
+
+
+                                        </ng-select>
+                                        <div *ngIf="submittedReport && r.groupUsers.errors" class="invalid-feedback">
+                                            <div *ngIf="r.groupUsers.errors['required']">Adicione grupos ao submenu
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                            <div class="row">
+
+                                <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                                    <button type="button" ngbTooltip="Adicionar relatório/submenu"
+                                        class="btn btn-block butao-acao-report btn-primary" (click)="addReport()">
+                                        <span class="fa fa-plus span-bt-icon-report"></span><span
+                                            class="span-bt-text">Adicionar</span>
+                                    </button>
+                                </div>
+
+                                <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                                    <button type="button" ngbTooltip="Limpa todos os campos do SubMenu"
+                                        class="btn btn-outline-dark butao-acao-report" (click)="onClearReport()">
+                                        <span class="fa fa-eraser span-bt-icon-report"></span><span
+                                            class="span-bt-text">Limpar</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                            <div class="ngxdatatable">
+                                <ngx-datatable class="bootstrap" #tableReports [scrollbarH]="true" [rows]="submenus"
+                                    appResizeWatcher [columnMode]="ColumnMode.force" [headerHeight]="35"
+                                    [footerHeight]="70" rowHeight="auto" [selectionType]="SelectionTypeSingle" [limit]="20">
+
+
+
+                                    <ngx-datatable-column name="Remover" [width]="120">
+                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                            <button type="button" class="btn btn-danger btn-table"
+                                                (click)="deleteReport(row)">
+                                                <span class="fa fa-trash"></span><span
+                                                    class="span-table">Remover</span></button>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column name="Id" prop="id" [width]="300"></ngx-datatable-column>
+
+                                    <ngx-datatable-column name="Name" prop="text" [width]="350"></ngx-datatable-column>
+                                    <ngx-datatable-column name="Report" prop="name"
+                                        [width]="350"></ngx-datatable-column>
+
+                                </ngx-datatable>
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                    <div class="row">
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Salvar ou Alterar" class="btn btn-block butao-acao"
+                                [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onSubmit()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">{{statusForm ===
+                                    2 ?
+                                    'Alterar' : 'Salvar'}}
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Limpa todos os campos"
+                                class="btn btn-outline-dark butao-acao" (click)="onClear()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Menus</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" name="search-spinner" bdColor="rgba(51,51,51,0.8)" size="medium"
+                        color="#fff" type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="col-12">
+                        <input type="text" class="input-filter" placeholder="Digite o nome do menu para procura"
+                            (keyup)="filterMenuName($event)" />
+                    </div>
+
+
+
+                    <ngx-datatable class="bootstrap" #table [scrollbarH]="true" [rows]="menusFiltered" appResizeWatcher
+                        [columnMode]="ColumnMode.force" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                        [selectionType]="SelectionTypeSingle" [limit]="20">
+
+                        <ngx-datatable-column name="Id" prop="id" [width]="90"></ngx-datatable-column>
+
+
+                        <ngx-datatable-column name="Editar" [width]="100">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <button type="button" class="btn btn-warning btn-table" (click)="editMenu(row)"
+                                    >
+                                    <span class="fa fa-edit"></span><span class="span-table">Editar</span></button>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Excluir" [width]="100">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <button type="button" class="btn btn-danger btn-table" (click)="deleteMenu(row)"
+                                    >
+                                    <span class="fa fa-trash"></span><span class="span-table">Excluir</span></button>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Ordem" prop="orderView" [width]="70"></ngx-datatable-column>
+                        <ngx-datatable-column name="Nome do Menu" prop="text" [width]="350"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Ativo?" prop="enableState" [width]="70">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value === true ? 'Sim' : 'Não'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Organização" prop="organization.name"
+                            [width]="350"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Usuário Inclusão" prop="userInclusion"
+                            [width]="180"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Data Inclusão" prop="dtaInclusion" [width]="200">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="Usuário Ult Alteração" prop="userLastUpdate"
+                            [width]="180"></ngx-datatable-column>
+
+                        <ngx-datatable-column name="Data Ult Alteração" prop="dtaLastUpdate" [width]="200">
+                            <ng-template let-value="value" ngx-datatable-cell-template>
+                                {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                            </ng-template>
+                        </ngx-datatable-column>
+
+
+
+                    </ngx-datatable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

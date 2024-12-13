@@ -1,0 +1,21 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Digite o numero # para remover</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="modal.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="modal-body">
+  <input
+    id="idTypeaheadItem"
+    #deleteItem
+    type="number"
+    class="form-control"
+    (keydown.enter)="sendValue(deleteItem.value)"
+  />
+</div>

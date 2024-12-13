@@ -1,0 +1,207 @@
+.status-linha-red {
+    background-color: #f9d1d7;
+}
+
+.status-linha-green {
+    background-color: #eafceb;
+}
+
+.status-linha-yellow {
+    background-color: #fcfaea;
+}
+
+.status-linha-neutro {
+    background-color: #cdd5dc;
+}
+
+.texto-card {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.align-center {
+    margin-bottom: 1.5rem;
+}
+
+.padding-5 {
+    padding: 5px 5px 5px 5px;
+
+}
+
+.ng-select.select-custom {
+    padding: 5px 5px 5px 5px;
+}
+
+.label-select-custom {
+    padding: 5px 5px 5px 5px;
+}
+
+.margin-padding-0 {
+    padding: 0px;
+    margin: 0px;
+}
+
+.col-sm-12 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.row {
+    margin: 0px;
+    padding: 0px;
+}
+
+.span-fa {
+    font-size: 1.5em;
+}
+
+.span-status {
+    font-size: 2em;
+}
+
+.div-span-status-wait {
+    color: #FF9A00;
+    padding: 0px 5px 0px 5px;
+}
+
+.div-span-status-complete {
+    color: #009E4D;
+    padding: 0px 5px 0px 5px;
+}
+
+.span-disable {
+    background-color: #E9ECEF;
+}
+
+.div-mobile-buttons {
+    padding: 0px 2px 0px 2px;
+}
+
+.card-buttons {
+    padding: 10px 0px 10px 0px;
+}
+
+.span-bt-icon {
+    font-size: 1.4em;
+}
+
+.span-bt-text {
+    margin-left: 5px;
+}
+
+.butao-acao {
+    padding: 5px 0px 5px 0px;
+}
+
+.botao-acao-item {
+    padding: 1px 1px 1px 1px;
+    margin: 0px;
+    font-size: 12px;
+}
+
+.span-info-alert {
+    font-size: 0.6em;
+}
+
+.alert-acesso {
+    padding: 5px;
+}
+
+.span-pesq {
+    font-size: 14px;
+}
+
+.span-pesq-alert {
+    margin-left: 5px;
+}
+
+.table-venda {
+    background-color: #ffffff;
+}
+
+.div-totals {
+    padding: 5px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+:host ::ng-deep .datatable-body-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;
+}
+
+:host ::ng-deep .datatable-header-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;
+}
+
+.form-group {
+    margin-bottom: 0px;
+}
+
+label {
+    font-size: 14px;
+}
+
+.span-btn-excluir {
+    font-size: 14px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+
+button {
+    border: 1px solid #ced4da;
+}
+
+.span-status-atual {
+    font-size: 12px;
+}
+
+hr {
+    margin: 5px 0px;
+}
+
+.col-md-12 {
+    padding: 0px;
+}
+
+:host ::ng-deep .classe-fechado {
+    background-color: rgba(0, 128, 0, 0.199);
+}
+
+:host ::ng-deep .classe-alerta {
+    background-color: rgba(255, 255, 0, 0.247);
+}
+
+input[type="checkbox"] {
+    transform: scale(1.7);
+    -webkit-transform: scale(1.7);
+    -ms-transform: scale(1.7);
+}
+
+.card-header {
+    background-color: white;
+}
+
+.card-body {
+    background-color: white;
+}
+
+.p-warning {
+    margin: 0;
+    padding: 0;
+    font-size: 2rem;
+}
+
+.div-warning {
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    text-align: center;
+}

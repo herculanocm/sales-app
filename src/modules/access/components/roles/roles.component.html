@@ -1,0 +1,96 @@
+<app-head-compact title="Acessos - Papéis"
+    icon="user"></app-head-compact><!-- Main page content-->
+<div class="container-xl px-4 mt-4" style="max-width: 950px;">
+    <!-- <nav class="nav nav-borders"><a class="nav-link active ms-0" routerLink="/pages/access/user">Usuário</a>
+        <a class="nav-link" routerLink="/pages/access/find-user">Busca</a>
+    </nav> 
+<hr class="mt-0 mb-4" />
+-->
+
+
+    <div class="row gx-4">
+        <div class="col-xl-12">
+            <!-- Account details card-->
+            <div class="card mb-4">
+                <div class="card-header">Formulário</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                        type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-login">Digite o nome do Papel</label>
+
+                                    <div class="input-group mb-3" id="id-login">
+
+                                        <input type="text" class="form-control"
+                                            [ngClass]="{'is-invalid': submitted && f.role.errors}"
+                                            formControlName="role">
+                                        <button class="btn btn-block butao-acao btn-primary" type="button"
+                                            (click)="onSubmit()" id="button-addon1">
+                                            <span class="fa fa-plus span-bt-icon"></span>
+                                        </button>
+                                        <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
+                                            <div *ngIf="f.role.errors['required']">Adicione uma nome para o papel
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div *ngIf="submitted && f.role.errors" class="invalid-feedback">
+                                        <div *ngIf="f.role.errors['required']">Adicione uma nome para o papel
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+
+
+                        </div>
+
+
+                    </form>
+
+                    <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Excluir</th>
+                                    <th scope="col">Nome</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rr of roles; index as i">
+                                    <td>{{i + 1}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-table" (click)="delete(rr)"
+                                        [disabled]="permitDelete(rr)">
+                                            <span class="fa fa-trash"></span><span
+                                                class="span-table">Excluir</span></button>
+                                    </td>
+                                    <td>{{getNameRole(rr)}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

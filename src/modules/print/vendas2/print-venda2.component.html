@@ -1,0 +1,158 @@
+<div class="div-print-content">
+  <div *ngIf="pv === null || isUndefined(pv) || pv.id === null || pv.id === 'erro'">
+    <h3>Impressão foi acionada fora de um contexto da aplicação, não existe nada aqui para imprimir, feche esta janela
+    </h3>
+  </div>
+  <div class="div-print-principal" *ngIf="pv !== null && !isUndefined(pv) && pv.id !== null && pv.id !== 'erro' && !isUndefined(pv.data) && pv.data !== null">
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm;align-items: center;text-align: center;"><span
+            class="span-data" style="font-size: 10px">ATENÇÃO - ORÇAMENTO DE VENDA</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm">Data Inclusão :<span
+            class="span-data" style="font-size: 8px">{{pv.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span></td>
+      </tr>
+    </table>
+
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm">Status :<span class="span-data"
+            style="font-size: 8px">{{pv.data.vendaStatusAtualDTO.vendaStatusLabelDTO.sigla}} - {{pv.data.vendaStatusAtualDTO.vendaStatusLabelDTO.label}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 50mm">Impresso em :<span
+            class="span-data" style="font-size: 8px">{{dataImpressao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span></td>
+        <td class="td-cabecalho" style="width: 30mm">Por :<span class="span-data" style="font-size: 8px">{{pv.data.usuarioInclusao}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 40mm">Id Pré-Venda :<span
+            class="span-data" style="font-size: 11px">{{pv.data.id}}</span></td>
+        <td class="td-cabecalho" style="width: 40mm">Emissão : <span 
+          class="span-data" style="font-size: 11px">{{pv.data.dtaEmissao | amDateFormat:'DD/MM/YYYY'}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm">Cliente :<span
+            class="span-data" style="font-size: 8px">{{pv.data.clienteDTO.id}} - {{pv.data.clienteDTO.nome}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 40mm">CGC :
+          <span class="span-data"  *ngIf="pv.data.clienteDTO.cgc.length === 14" style="font-size: 8px">{{pv.data.clienteDTO.cgc | mask: '00.000.000/0000-00'}}</span>
+          <span class="span-data" *ngIf="pv.data.clienteDTO.cgc.length !== 14" style="font-size: 8px">{{pv.data.clienteDTO.cgc | mask: '000.000.000-00'}}</span>
+        </td>
+
+        <td class="td-cabecalho" style="width: 40mm">Condição :<span 
+          class="span-data" style="font-size: 8px">{{pv.data.condicaoPagamentoDTO.nome}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm">Representante:<span
+            class="span-data" style="font-size: 8px">{{pv.data.vendedorDTO.id}} -
+            {{pv.data.vendedorDTO.nome}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm">Almoxarifado:<span
+            class="span-data" style="font-size: 8px">{{pv.data.estoqueAlmoxarifadoDTO.nome}}</span></td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm;align-items: center;text-align: center;">ITENS</td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 5mm">QTD</td>
+        <td class="td-cabecalho" style="width: 45mm">NOME</td>
+        <td class="td-cabecalho" style="width: 20mm">AGRUPAMENTO</td>
+        <td class="td-cabecalho" style="width: 10mm">VLR TT</td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0" *ngFor="let vi of pv.data.vendaItemDTOs">
+        <td class="td-cabecalho" style="width: 5mm"><span
+            class="span-data" style="font-size: 8px">{{vi.qtd}}</span></td>
+        <td class="td-cabecalho" style="width: 45mm"><span 
+          class="span-data" style="font-size: 8px">{{vi.itemDTO.nome}} - {{vi.itemDTO.id}}</span>
+        </td>
+
+        <td class="td-cabecalho" style="width: 20mm"><span
+          class="span-data" style="font-size: 8px">{{vi.itemUnidadeDTO.nome}}</span></td>
+      <td class="td-cabecalho" style="width: 10mm"><span 
+        class="span-data" style="font-size: 9px;text-align: right;">{{vi.vlr | number:'1.2-2':'pt-BR'}}</span>
+      </td>
+
+      </tr>
+    </table>
+
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 20mm">Frete</td>
+        <td class="td-cabecalho" style="width: 20mm">Desp Asc</td>
+
+        <td class="td-cabecalho" style="width: 20mm">Acresc Cond</td>
+
+        <td class="td-cabecalho" style="width: 20mm">Total</td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 20mm"><span
+            class="span-data" style="font-size: 8px">{{pv.data.vlrFrete | number:'1.2-2':'pt-BR' }}</span></td>
+        <td class="td-cabecalho" style="width: 20mm"><span 
+          class="span-data" style="font-size: 8px">{{pv.data.vlrDespAcessoria | number:'1.2-2':'pt-BR'}}</span>
+        </td>
+
+        <td class="td-cabecalho" style="width: 20mm"><span 
+          class="span-data" style="font-size: 8px">{{pv.data.vlrAcrescimoFixoCondicao | number:'1.2-2':'pt-BR'}}</span>
+        </td>
+
+        <td class="td-cabecalho" style="width: 20mm"><span 
+          class="span-data" style="font-size: 12px;text-align: right;">{{pv.data.vlrTotal | number:'1.2-2':'pt-BR'}}</span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="padding-margin-0" style="border-bottom: 1px solid #000000;">
+      <tr class="padding-margin-0">
+        <td class="td-cabecalho" style="width: 80mm;align-items: center;text-align: center;"><span
+            class="span-data" style="font-size: 10px">ATENÇÃO - NÃO É DOCUMENTO FISCAL</span></td>
+      </tr>
+    </table>
+
+
+
+  </div>
+
+
+</div>

@@ -1,0 +1,49 @@
+button {
+    border: 1px solid #ced4da;
+}
+  .style3 {
+        border-top: 1px dashed #8c8b8b;
+    }
+    .accordion-header {
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgba(0, 0, 0, 0.125);
+        background-color: #f7f7f7;
+    }
+    .accordion-body {
+        border-style: solid;
+        border-width: 1px;
+        border-color: rgba(0, 0, 0, 0.125);
+    }
+.chbox {
+    margin-left: 20px;
+}
+.rinline {
+    margin-left: 20px;
+}
+.span-disable {
+    background-color: #E9ECEF;
+}
+:host ::ng-deep .datatable-body-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;  
+}
+:host ::ng-deep .datatable-header-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+    border: 0.7px solid #E9ECEF;     
+}
+.div-mobile-buttons {
+    padding: 0px 2px 0px 2px;
+}
+
+.chart-container {
+    max-height: 400px; /* Set your desired maximum height here */
+    overflow: auto;    /* Add scrollbars if chart exceeds max height */
+}
+
+.chart-container {
+    width: 100%; /* Adjust the width as needed */
+    height: 100%; /* Adjust the height as needed */
+  }

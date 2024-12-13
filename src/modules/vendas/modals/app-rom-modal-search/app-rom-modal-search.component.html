@@ -1,0 +1,252 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <div class="card-body padding-5">
+
+            <ngx-spinner class="spinner-full" name="spinnerSearch" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                size="medium" color="#fff" type="ball-spin-clockwise">
+                <p style="font-size: 20px; color: white">
+                    Comunicando com o Servidor, Aguarde...
+                </p>
+            </ngx-spinner>
+
+            <form [formGroup]="searchForm">
+
+                <div class="row">
+
+                    <div class="col-sm-6 col-12 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="idSelectRepresentante">Representante</label>
+                            <select class="form-control" [compareWith]="compareVendedor" formControlName="vendedor"
+                                id="idSelectRepresentante">
+                                <option [ngValue]="null">SELECIONE</option>
+                                <option *ngFor="let vd of vendedores" [ngValue]="vd">
+                                    {{ vd.nome }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="idEstAlx">Estoque Almoxarifado</label>
+
+                            <select class="form-control" formControlName="estoqueAlmoxarifadoDTO"
+                                [compareWith]="compareAlx" id="idEstAlx">
+                                <option [ngValue]="null">SELECIONE</option>
+                                <option *ngFor="let ealxv of estoqueAlmoxarifados" [ngValue]="ealxv">
+                                    {{ ealxv.nome }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 col-12 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label class="label-select-custom" for="idSelectStatus">Filtro de Status</label>
+                            <ng-select class="select-custom" [multiple]="true" [items]="vendaStatusLabels"
+                                bindLabel="label" [closeOnSelect]="true" [searchable]="true"
+                                placeholder="Selecione um ou mais status de venda" [compareWith]="compareStatus"
+                                formControlName="vendaStatusLabelDTOs">
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label class="label-select-custom" for="idSelectStatus">Filtro de Municípios</label>
+                            <ng-select class="select-custom" [multiple]="true" [items]="municipios" bindLabel="nome"
+                                [closeOnSelect]="true" [searchable]="true" [compareWith]="compareMunicipios"
+                                placeholder="Selecione um ou mais municípios" formControlName="municipioDTOs">
+                            </ng-select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-3 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="iddtaEmissaoInicial">Data Emissão Inicial</label>
+                            <input type="date" class="form-control" id="iddtaEmissaoInicial" name="nmdtaEmissaoInicial"
+                                formControlName="dtaEmissaoInicial">
+                        </div>
+                    </div>
+
+                    <div class="col-3 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="iddtaEmissaoFinal">Data Emissão Final</label>
+                            <input type="date" class="form-control" id="iddtaEmissaoFinal" name="nmdtaEmissaoFinal"
+                                formControlName="dtaEmissaoFinal">
+                        </div>
+                    </div>
+
+                    <div class="col-3 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="iddtaEntregaInicial">Data Entrega Inicial</label>
+                            <input type="date" class="form-control" id="iddtaEntregaInicial" name="nmdtaEntregaInicial"
+                                formControlName="dtaEntregaInicial">
+                        </div>
+                    </div>
+
+                    <div class="col-3 padding-5" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="iddtaEntregaFinal">Data Entrega Final</label>
+                            <input type="date" class="form-control" id="iddtaEntregaFinal" name="nmdtaEntregaFinal"
+                                formControlName="dtaEntregaFinal">
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <div class="row" style="margin-top: 20px;">
+
+                <div class="col-lg-3 col-12 div-mobile-buttons d-grid">
+                    <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                        <span class="fa fa-search span-bt-icon"></span><span class="span-bt-text">Pesquisar</span>
+                    </button>
+                </div>
+
+                <div class="col-lg-3 col-12 div-mobile-buttons d-grid">
+                    <button type="button" class="btn btn-outline-dark butao-acao" (click)="onLimpa()">
+                        <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                    </button>
+                </div>
+
+                <div class="col-sm-3 col-12 div-mobile-buttons d-grid">
+                  <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                      (click)="selecionarTodasAsVendas()">
+                      <span class="fa fa-check span-acao"></span>Selecionar todas
+                  </button>
+              </div>
+
+                <div class="col-lg-3 col-12 div-mobile-buttons d-grid">
+                    <button type="button" class="btn btn-block btn-primary butao-acao" (click)="onAdd()">
+                        <span class="fa fa-plus span-bt-icon"></span><span class="span-bt-text">Adicionar ao Romaneio</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="row" style="margin-top: 20px;" *ngIf="isUndefined(pageVenda) === false && isUndefined(pageVenda.content) === false && isArray(pageVenda.content) && pageVenda.content.length > 0" >
+            <ngx-datatable
+        class="material"
+        [scrollbarH]="true"
+        [rows]="pageVenda.content"
+        appResizeWatcher
+        [columnMode]="ColumnMode.standard"
+        [headerHeight]="35"
+        [footerHeight]="70"
+        rowHeight="auto"
+        [selected]="selected"
+        [selectionType]="selectionTypeSingle"
+        [externalPaging]="true"
+        [count]="pageVenda.totalElements"
+        [offset]="pageVenda.pageable.pageNumber"
+        [limit]="pageVenda.size"
+        (page)="setPage($event)"
+      >
+
+      <ngx-datatable-column name="TRANSF" [width]="80">
+          <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+              <div style="padding: 0px; margin: 0px; text-align: center;">
+                  <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                      style="padding: 0px;margin: 0px" [(ngModel)]="row.imprime">
+              </div>
+          </ng-template>
+      </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="ID"
+          prop="id"
+          [width]="100"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="ORIGEM"
+          prop="origem"
+          [width]="100"
+        ></ngx-datatable-column>
+
+        <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+        <ngx-datatable-column
+          name="DATA INCLUSÃO"
+          prop="dtaInclusao"
+          [width]="130"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | amDateFormat : "DD/MM/YYYY HH:mm:ss" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="USUÁRIO INCLUSÃO"
+          prop="usuarioInclusao"
+          [width]="110"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="DATA EMISSÃO"
+          prop="dtaEmissao"
+          [width]="110"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | amDateFormat : "DD/MM/YYYY" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="DATA ENTREGA"
+          prop="dtaEntrega"
+          [width]="130"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | amDateFormat : "DD/MM/YYYY HH:mm:ss" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="ALMOXARIFADO"
+          prop="estoqueAlmoxarifadoNome"
+          [width]="350"
+        >
+        </ngx-datatable-column>
+        <ngx-datatable-column
+        name="CIDADE ENTREGA"
+        prop="municipioNome"
+        [width]="300"
+      >
+      </ngx-datatable-column>
+
+        <ngx-datatable-column name="STATUS" prop="status" [width]="300">
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="CONDIÇÃO"
+          prop="condicaoPagamentoNome"
+          [width]="200"
+        ></ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="CLI ID"
+          prop="clienteId"
+          [width]="50"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="CLIENTE"
+          prop="clienteNome"
+          [width]="400"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="VENDEDOR"
+          prop="vendedorNome"
+          [width]="350"
+        ></ngx-datatable-column>
+        <ngx-datatable-column name="VALOR TOTAL" prop="vlrTotal" [width]="130">
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | number : "1.2-2" : "pt-BR" }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+ </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Dashboards'" [picon]="'fa-tachometer'" [heading]="'Dash Geral'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+
+
+
+
+
+    <div class="row">
+
+        <div class="col-sm-4 col-xl-4 col-12">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center" style="color: white;">Quantidade de Clientes</h5>
+                    <p class="card-text text-center" style="font-size: 40px;">{{qtdClientes | number:'1.0':'pt-BR'}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4 col-xl-4 col-12">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center" style="color: white;">Quantidade de Funcionários</h5>
+                    <p class="card-text text-center" style="font-size: 40px;">{{qtdFuncionarios | number:'1.0':'pt-BR'}}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4 col-xl-4 col-12">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center" style="color: white;">Quantidade de Itens</h5>
+                    <p class="card-text text-center" style="font-size: 40px;">{{qtdItens | number:'1.0':'pt-BR'}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-6 col-12">
+
+            <div class="card mb-3">
+                <h5 class="card-title text-center">Clientes Cadastrados por Mês</h5>
+                <div class="card-body" style="padding-bottom: 65px;padding-top: 0px;padding-left: 0px;padding-right: 0px;margin: 0px;">
+
+                    <div class="container" style="max-height: 400px;padding: 0px;margin: 0px;">
+                        <ngx-charts-bar-vertical [results]="single" [xAxis]="showXAxis"
+                            [yAxis]="showYAxis" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
+                            [showDataLabel]="true" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel">
+                        </ngx-charts-bar-vertical>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-sm-6 col-xl-6 col-12">
+
+            <div class="card mb-3">
+                <h5 class="card-title text-center">Clientes Vs Ativos</h5>
+                <div class="card-body" style="padding-bottom: 65px;padding-top: 0px;padding-left: 0px;padding-right: 0px;margin: 0px;">
+
+                    <div class="container" style="max-height: 400px;padding: 0px;margin: 0px;">
+                        <ngx-charts-bar-vertical-2d [results]="resultsClientesVsAtivos"
+                            [legend]="true" [legendPosition]="legendPosition" [xAxis]="showXAxis" [yAxis]="showYAxis"
+                            [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [showDataLabel]="true"
+                            [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel">
+                        </ngx-charts-bar-vertical-2d>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-12">
+
+            <div class="card mb-3">
+                <h5 class="card-title text-center">Títulos a Receber - Divida Acumulada por Vencimento</h5>
+                <div class="card-body" style="padding-bottom: 65px;padding-top: 0px;padding-left: 0px;padding-right: 0px;margin: 0px;">
+
+                    <div class="container" style="min-height: 800px; max-height: 1200px;padding: 0px;margin: 0px;">
+                        <ngx-charts-bar-horizontal-2d [results]="resultsDividaAcumulada"
+                            [legend]="true" [legendPosition]="legendPosition" [xAxis]="showXAxis" [yAxis]="showYAxis"
+                            [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [showDataLabel]="true"
+                            [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel">
+                        </ngx-charts-bar-horizontal-2d>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+</div>

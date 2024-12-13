@@ -1,0 +1,202 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Report Grupos'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" *ngIf="itemClientes.length > 0">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" ngbTooltip="Download CSV"
+                                (click)="onDownloadCSV()">
+                                <span class="fa fa-download span-acao"></span> Download CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoInicial">Data Emissão Inicial</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoInicial"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoInicial'].errors}"
+                                        formControlName="dtaEmissaoInicial"
+                                        ngbTooltip="Digite a data de Emissão Inicial">
+                                    <div *ngIf="submitted && f['dtaEmissaoInicial'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoInicial'].errors['required']">Data de emissão inicial é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoFinal">Data Emissão Final</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoFinal"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoFinal'].errors}"
+                                        formControlName="dtaEmissaoFinal" ngbTooltip="Digite a data de Emissão Final">
+                                    <div *ngIf="submitted && f['dtaEmissaoFinal'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoFinal'].errors['required']">Data de emissão final é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectRepresentante">Representante</label>
+                                    <select class="form-control" [compareWith]="compareVendedor"
+                                        [ngClass]="{'is-invalid': submitted && f['vendedor'].errors}"
+                                        formControlName="vendedor" id="idSelectRepresentante">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let vd of vendedores" [ngValue]="vd">{{vd.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['vendedor'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vendedor'].errors['required']">Selecione um vendedor
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectGrupo">Grupos</label>
+                                    <select class="form-control" [compareWith]="compareVendedor"
+                                        [ngClass]="{'is-invalid': submitted && f['grupo'].errors}"
+                                        formControlName="grupo" id="idSelectGrupo">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let g of grupos" [ngValue]="g">{{g.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['grupo'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['grupo'].errors['required']">Selecione um Grupo
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-12 col-12 padding-5">
+                                <div class="form-group">
+                                    <label  for="id" >Marcas</label>
+                                    <ng-select class="select-custom" [multiple]="true" [items]="marcas" bindLabel="nome"
+                                        [closeOnSelect]="true" [searchable]="true" formControlName="marcas">
+                                    </ng-select>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="itens" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os itens, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Itens do Grupo - Faturados</h6>
+                        <p *ngIf="itensGrupos.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <table class="table table-bordered table-status" *ngIf="itensGrupos.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Id</th>
+                                <th class="th-status">Nome</th>
+                                <th class="th-status">Qtd Venda</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let itg of itensGrupos">
+                                <td class="align-left td-status">{{itg.item_id}}</td>
+                                <td class="align-left td-status">{{itg.item_nome}}</td>
+                                <td class="align-left td-status number-aling">{{itg.qtd_venda | number:'1.0-0':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="clientes" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os clientes, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Clientes - Faturados</h6>
+                        <p *ngIf="itemClientes.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <p *ngIf="itemClientes.length > 0"> {{analiseClientes()}} </p>
+
+                    <table class="table table-bordered table-status" *ngIf="itemClientes.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Id</th>
+                                <th class="th-status">Nome</th>
+                                <th class="th-status">Qtd Venda</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let itc of itemClientes">
+                                <td class="align-left td-status">{{itc.cliente_id}}</td>
+                                <td class="align-left td-status">{{itc.cliente_nome}}</td>
+                                <td class="align-left td-status number-aling">{{itc.qtd_venda | number:'1.0-0':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

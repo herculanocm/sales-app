@@ -1,0 +1,218 @@
+<div class="div-print-content">
+  <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+    type="ball-spin-clockwise">
+    <p style="font-size: 20px; color: white">Processando, Aguarde...</p>
+  </ngx-spinner>
+
+  <div *ngIf="printObject !== null && !isUndefined(printObject) && !isUndefined(printObject.id) && printObject.id !== null && printObject.id === 'erro'">
+    <h3>Impressão foi acionada fora de um contexto da aplicação, não existe nada aqui para imprimir, feche esta janela
+    </h3>
+  </div>
+  <div *ngIf="printObject !== null && !isUndefined(printObject) && !isUndefined(printObject.id) && printObject.id !== null && printObject.id === 'movimento'">
+    <table class="table table-bordered border-dark">
+      <thead>
+        <tr>
+          <th class="th-center">Id</th>
+          <th class="th-center">Data Inclusão</th>
+          <th class="th-center">Usuário Inclusão</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.id}}</td>
+          <td class="align-left">{{printObject.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+          <td class="align-center">{{printObject.data.usuarioInclusao}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <table class="table table-bordered  border-dark">
+      <thead>
+        <tr>
+          <th class="th-center">Tipo</th>
+          <th class="th-center">Almoxarifado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.movimentoTipoDTO.nome}}</td>
+          <td class="align-left">{{printObject.data.estoqueAlmoxarifadoDTO.nome}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <table class="table table-bordered  border-dark">
+      <thead>
+        <tr>
+          <th class="th-center">Origem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.movimentoOrigemDTO.nome}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <table class="table table-bordered  border-dark">
+      <thead>
+        <tr>
+          <th class="th-center">NF</th>
+          <th class="th-center">Fornecedor/Cliente</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.numNotaFiscal !== null && !isUndefined(printObject.data.numNotaFiscal) && printObject.data.numNotaFiscal.length > 0 ? printObject.data.numNotaFiscal : ''}}</td>
+          <td class="align-left">{{fornecedorCliente(printObject.data)}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="div-veiculo" *ngIf="printObject.data.veiculoDTO !== null">
+      <table class="table table-sup  border-dark">
+        <thead>
+          <tr>
+            <th class="th-center">Veiculo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <table class="table table-bordered  border-dark">
+              <thead>
+                <tr>
+                  <th class="th-center">Id</th>
+                  <th class="th-center">Nome</th>
+                  <th class="th-center">Modelo</th>
+                  <th class="th-center">Placa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="align-left">{{printObject.data.veiculoDTO.id}}</td>
+                  <td class="align-left">{{printObject.data.veiculoDTO.nome}}</td>
+                  <td class="align-left">{{printObject.data.veiculoDTO.modelo}}</td>
+                  <td class="align-left">{{printObject.data.veiculoDTO.placa}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <table class="table table-sup  border-dark" *ngIf="printObject.data.motoristaDTO !== null">
+      <thead>
+        <tr>
+          <th class="th-center">Motorista</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <table class="table table-bordered  border-dark">
+            <thead>
+              <tr>
+                <th class="th-center">Id</th>
+                <th class="th-center">Nome</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-left">{{printObject.data.motoristaDTO.id}}</td>
+                <td class="align-left">{{printObject.data.motoristaDTO.nome}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <table class="table table-sup  border-dark" *ngIf="printObject.data.conferenteDTO !== null">
+      <thead>
+        <tr>
+          <th class="th-center">Conferente</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <table class="table table-bordered  border-dark">
+            <thead>
+              <tr>
+                <th class="th-center">Id</th>
+                <th class="th-center">Nome</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-left">{{printObject.data.conferenteDTO.id}}</td>
+                <td class="align-left">{{printObject.data.conferenteDTO.nome}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </tr>
+      </tbody>
+    </table>
+
+    <!--
+    <table class="table table-bordered table1">
+      <thead>
+        <tr>
+          <th class="th-center">PreVendaId</th>
+          <th class="th-center">Num Nota Fiscal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.preVendaId}}</td>
+          <td class="align-left">{{printObject.data.numNotaFiscal}}</td>
+        </tr>
+      </tbody>
+    </table>
+  -->
+
+    <!--
+    <table class="table table-sup">
+      <thead>
+        <tr>
+          <th class="th-center">Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="align-left">{{printObject.data.descricao}}</td>
+        </tr>
+      </tbody>
+    </table>
+  -->
+    <div>
+      <p class="p-titulo">Descrição</p>
+      <p class="p-descricao">{{printObject.data.descricao}}</p>
+    </div>
+
+    <div>
+      <p class="p-titulo">Itens</p>
+    </div>
+
+    <table class="table table-bordered  border-dark">
+      <thead>
+        <tr>
+          <th class="th-center">Qtd</th>
+          <th class="th-center">Id</th>
+          <th class="th-center">Nome</th>
+          <th class="th-center">Agrupamento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movi of printObject.data.movimentoItemDTOs">
+          <td class="align-left">{{movi.qtd}}</td>
+          <td class="align-left">{{movi.itemDTO.id}}</td>
+          <td class="align-left">{{movi.itemDTO.nome}}</td>
+          <td class="align-left">{{movi.itemUnidadeDTO.nome}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
+</div>

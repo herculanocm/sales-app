@@ -1,0 +1,153 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Movimentos'" [picon]="'fa-retweet'" [heading]="'Checagem de almoxarifados'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-12 d-grid" *ngIf="resultado.length > 0">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" ngbTooltip="Download CSV"
+                                (click)="onDownloadCSV()">
+                                <span class="fa fa-download span-acao"></span> Download CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <div class="form-group row">
+                        <label for="idAlx1" class="col-sm-2 col-form-label col-12">Almoxarifado 1</label>
+                        <div class="col-sm-8 col-8 padding-0">
+
+                            <select class="form-control" name="nmidAlx1" id="idAlx1" [compareWith]="compareAlmoxarifado"
+                                [(ngModel)]="procura.idAlx1">
+                                <option [ngValue]="null">Selecione</option>
+                                <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                            </select>
+
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-4  d-grid">
+                            <button class="btn btn-block btn-warning butao-acao" (click)="atualizaAlmoxarifados()">
+                                <i class="fa fa-refresh span-acao" aria-hidden="true"> Refresh</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="idAlx2" class="col-sm-2 col-form-label col-12">Almoxarifado 2</label>
+                        <div class="col-sm-8 col-8 padding-0">
+
+                            <select class="form-control" name="nmidAlx2" id="idAlx2" [compareWith]="compareAlmoxarifado"
+                                [(ngModel)]="procura.idAlx2">
+                                <option [ngValue]="null">Selecione</option>
+                                <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                            </select>
+
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-4 d-grid">
+                            <button class="btn btn-block btn-warning butao-acao" (click)="atualizaAlmoxarifados()">
+                                <i class="fa fa-refresh span-acao" aria-hidden="true"> Refresh</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="typeaheadItem" class="col-sm-2 col-form-label col-12">Nome Item</label>
+                        <div class="col-sm-10 col-12 padding-0">
+                            <input id="idTypeaheadItem" [(ngModel)]="procura.itemNome" (keydown.enter)="onPesquisa()"
+                                name="nameTypeaheadItem" type="text" class="form-control" placeholder="Nome do Item" />
+                        </div>
+                    </div>
+
+                    <br *ngIf="resultado.length > 0">
+                    <hr *ngIf="resultado.length > 0">
+                    <br *ngIf="resultado.length > 0">
+
+                    <div *ngIf="resultado.length > 0" class="col-sm-12">
+                        <!-- <button (click)="acertarEstoque()">acertar</button>-->
+
+                        <!--
+                        <ngx-datatable class="material striped" [scrollbarH]="true" [rows]="itemAlmoxarifadoDTOs"
+                        [columnMode]="'force'" [rowClass]="getRowClass" [headerHeight]="65" [footerHeight]="70" [rowHeight]="'50'" 
+                        [selectionType]="'single'">
+
+                        <ngx-datatable-column name="ID" prop="id" [width]="70"></ngx-datatable-column>
+                        <ngx-datatable-column name="NOME" prop="nome" [width]="350"></ngx-datatable-column>
+                        <ngx-datatable-column name="QTD" prop="itemQtdAlmoxarifadoDTO" [width]="200">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{getQtdItemV2(value)}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                    </ngx-datatable>
+                -->
+
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Rua</th>
+                                    <th>Id</th>
+                                    <th>Nome</th>
+                                    <th>Agrupamento</th>
+                                    <th>Qtd Alx1</th>
+                                    <th>Qtd Alx2</th>
+                                    <th>Dif</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let r of resultado" [ngClass]="r.qtd_alx1 !== r.qtd_alx2 ? 'tr-dif':''">
+                                    <td class="align-left">{{r.itemRuaNome}}</td>
+                                    <td class="align-left">{{r.itemId}}</td>
+                                    <td class="align-left">{{r.itemNome}}</td>
+                                    <td>
+                                        <select class="form-control select-font" name="nameSelectUnidades"
+                                            id="idSelectUnidades" [(ngModel)]="r.itemUnidadeDTO"
+                                            [compareWith]="compareUnidade">
+                                            <option *ngFor="let iu of r.itemUnidadeDTOs" [ngValue]="iu">{{iu.nome}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="align-left">
+                                        {{getQtdItem(r.itemUnidadeDTO, r.qtd_alx1) | number:'1.1-2':'pt-BR'}}
+                                    </td>
+                                    <td class="align-left">
+                                        {{getQtdItem(r.itemUnidadeDTO, r.qtd_alx2) | number:'1.1-2':'pt-BR'}}
+                                    </td>
+                                    <td class="align-left">
+                                        {{(getQtdItem(r.itemUnidadeDTO, r.qtd_alx1) - getQtdItem(r.itemUnidadeDTO,
+                                        r.qtd_alx2)) | number:'1.1-2':'pt-BR'}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

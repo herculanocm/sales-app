@@ -1,0 +1,221 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 movimento-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Movimentos'" [picon]="'fa-retweet'" [heading]="'Posição Item'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <!--
+                <div class="form-group row">
+                    <label for="almoxarifadoId" class="col-sm-2 col-form-label col-12">Almoxarifado</label>
+                    <div class="col-sm-8 col-8 padding-0">
+
+                        <select class="form-control" name="almoxarifadoId" id="almoxarifadoName"
+                            [compareWith]="compareAlmoxarifado" [(ngModel)]="movPosicaoItem.estoqueAlmoxarifadoId"
+                            autofocus>
+                            <option [ngValue]="null">Selecione</option>
+                            <option *ngFor="let al of almoxarifados" [ngValue]="al.id">{{al.nome}}</option>
+                        </select>
+
+                    </div>
+                    <div class="col-lg-2 col-xl-2 col-4">
+                        <button class="btn btn-block btn-warning butao-acao" (click)="atualizaAlmoxarifados()">
+                            <i class="fa fa-refresh" aria-hidden="true"> Refresh</i>
+                        </button>
+                    </div>
+                </div>
+                -->
+
+                    <div class="form-group row">
+                        <label for="id" class="col-sm-2 col-form-label col-12">Almoxarifados</label>
+                        <div class="col-sm-10 col-12 padding-0">
+                            <ng-select class="select-custom" [multiple]="true" [items]="almoxarifados" bindLabel="nome"
+                                [closeOnSelect]="true" [searchable]="true" [compareWith]="compareAlmoxarifado"
+                                [(ngModel)]="movPosicaoItem.almoxarifados">
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="typeaheadItem" class="col-sm-2 col-form-label col-12">Nome Item</label>
+                        <div class="col-sm-10 col-12 padding-0">
+                            <input id="idTypeaheadItem" [(ngModel)]="movPosicaoItem.nomeItem"
+                                (keydown.enter)="onPesquisa()" name="nameTypeaheadItem" type="text" class="form-control"
+                                placeholder="Nome do Item" />
+                        </div>
+                    </div>
+
+                    <br>
+                    <hr>
+                    <br>
+
+                    <div *ngIf="itemAlmoxarifadoDTOs === null || itemAlmoxarifadoDTOs.length === 0"
+                        class="form-group row div-view">
+                        <div class="col-12 text-center">
+                            <h5 style="padding-top: 20px;padding-bottom: 20px;">Busque os itens</h5>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div *ngIf="itemAlmoxarifadoDTOs.length > 0" class="form-group">
+
+
+                        <div class="table-responsive ">
+                            <table class="table table-sm table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">NOME</th>
+                                        <th scope="col">AGRUPAMENTO</th>
+                                        <th scope="col">QTD DISPONIVEL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let itemAlx of itemAlmoxarifadoDTOs">
+
+
+
+
+                                        <td>{{itemAlx.id}}</td>
+                                        <td class="td-min">{{itemAlx.nome}}</td>
+                                        <td>
+                                            <select class="form-control select-item" name="nameSelectUnidades" id="idSelectUnidades"
+                                                [(ngModel)]="itemAlx.itemUnidadeDTO" [compareWith]="compareUnidade">
+                                                <option *ngFor="let iu of itemAlx.itemUnidadeDTOs" [ngValue]="iu">
+                                                    {{iu.nome}}
+                                                </option>
+                                            </select>
+                                        </td>
+
+                                        <td>
+                                            {{getQtdItemDisponivel(itemAlx.itemUnidadeDTO,
+                                            itemAlx.itemQtdAlmoxarifadoDTO) |
+                                            number:'1.1-2':'pt-BR'}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <!-- <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nome</th>
+                                    <th >Agrupamento</th>
+                                   
+                                    <th>Qtd Disp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let itemAlx of itemAlmoxarifadoDTOs" style="background-color: white;">
+                                    <td class="align-left">{{itemAlx.id}}</td>
+                                    <td class="align-left">{{itemAlx.nome}}</td>
+                                    <td class="align-left">
+                                        <select class="form-control" name="nameSelectUnidades"
+                                            id="idSelectUnidades" [(ngModel)]="itemAlx.itemUnidadeDTO"
+                                            [compareWith]="compareUnidade">
+                                            <option *ngFor="let iu of itemAlx.itemUnidadeDTOs" [ngValue]="iu">
+                                                {{iu.nome}}
+                                            </option>
+                                        </select>
+                                    </td>
+                        
+                                    <td class="align-left">
+                                        {{getQtdItemDisponivel(itemAlx.itemUnidadeDTO, itemAlx.itemQtdAlmoxarifadoDTO) |
+                                        number:'1.1-2':'pt-BR'}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+
+                        <!-- <div class="row block-line" *ngFor="let itemAlx of itemAlmoxarifadoDTOs">
+
+                            <div class="col-lg-1 col-sm-1 col-2 div-internal">
+                                <div class="header-tit">
+                                    ID
+                                </div>
+                                <div class="header-body">
+                                    {{itemAlx.id}}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-6 col-sm-6 col-10 div-internal">
+                                <div class="header-tit">
+                                    NOME
+                                </div>
+                                <div class="header-body">
+                                    {{itemAlx.nome}}
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-3 col-sm-3 col-12 div-internal">
+                                <div class="header-tit">
+                                    AGRUPAMENTO
+                                </div>
+                                <div class="header-body" style="padding: 5px">
+                                    <select class="form-control select-item" name="nameSelectUnidades"
+                                    id="idSelectUnidades" [(ngModel)]="itemAlx.itemUnidadeDTO"
+                                    [compareWith]="compareUnidade">
+                                    <option *ngFor="let iu of itemAlx.itemUnidadeDTOs" [ngValue]="iu">
+                                        {{iu.nome}}
+                                    </option>
+                                </select>
+                                </div>
+                            </div>
+    
+                            <div class="col-lg-2 col-sm-2 col-12 div-internal">
+                                <div class="header-tit">
+                                    QTD DISPONIVEL
+                                </div>
+                                <div class="header-body qtd-disp" style="font-size: 18px;">
+                                    {{getQtdItemDisponivel(itemAlx.itemUnidadeDTO, itemAlx.itemQtdAlmoxarifadoDTO) |
+                                        number:'1.1-2':'pt-BR'}}
+                                </div>
+                            </div>
+    
+                        </div> -->
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

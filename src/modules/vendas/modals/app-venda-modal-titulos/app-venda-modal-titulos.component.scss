@@ -1,0 +1,118 @@
+.img-max-lenght {
+  max-height: 300px;
+  max-width: 300px;
+}
+
+.picsum-img-wrapper {
+  background-color: #e3e9ee;
+  border-style: groove;
+  border-width: 2px;
+}
+
+.success-dialog {
+  border-style: solid;
+  border-color: rgb(228, 61, 61);
+  border-width: 3px;
+}
+
+.error-dialog {
+  border-style: solid;
+  border-color: rgb(228, 61, 61);
+  border-width: 1px;
+}
+
+.div-block-cli {
+  border-style: solid;
+  border-color: rgb(0, 0, 0);
+  border-width: 1px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.margin-padding-0 {
+  margin: 0px;
+  padding: 0px;
+}
+
+.div-block-in {
+  border-style: solid;
+  border-color: rgb(110, 109, 109);
+  border-width: 0.1px;
+  padding: 0px;
+}
+
+.label-titulo {
+  margin-bottom: 2px;
+  padding-left: 5px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  font-size: 12px;
+}
+
+.div-label-titulo {
+  background-color: rgb(192, 192, 192);
+}
+
+.div-input-group {
+  padding-top: 2px;
+  padding-left: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  font-size: 12px;
+}
+
+.div-form-princ {
+  margin: 0px;
+  padding: 0px;
+}
+
+.div-form-group {
+  margin: 0px;
+  padding: 2px;
+}
+
+.span-bt {}
+
+.span-pesq {
+  font-size: 22px;
+}
+
+.form-group {
+  margin: 0px;
+}
+
+label {
+  margin: 0px;
+}
+
+button {
+  border: 1px solid #ced4da;
+}
+
+.table-atraso {
+  background-color: #db13349a;
+}
+
+:host ::ng-deep .table-atraso {
+  background-color: #db13349a;
+}
+
+.table th,
+.table td {
+  padding: 5px;
+}
+
+:host ::ng-deep .datatable-body-cell {
+  padding: 5px !important;
+  margin: 0px !important;
+  border: 0.7px solid #E9ECEF;
+  font-size: 10px !important;
+}
+
+:host ::ng-deep .datatable-header-cell {
+  padding: 5px !important;
+  margin: 0px !important;
+  border: 0.7px solid #E9ECEF;
+  font-size: 10px !important;
+}

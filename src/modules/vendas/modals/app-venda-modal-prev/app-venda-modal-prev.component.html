@@ -1,0 +1,34 @@
+<div class="error-dialog">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <h4>Pré Vendas</h4>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Pré Venda Id</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                    *ngFor="let vsa of vendaStatusAuxs">
+                    <td class="align-left">
+                        {{vsa.vendaId}}</td>
+                    <td class="align-left">
+                        {{vsa.label}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 text-center">
+            <button class="btn btn-md btn-primary" ngbAutofocus (click)="activeModal.close('default')">OK
+            </button>
+        </div>
+    </div>
+</div>

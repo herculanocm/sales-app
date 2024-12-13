@@ -1,0 +1,349 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Clientes'" [picon]="'fa-users'" [heading]="'Comodato'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+                <div class="row">
+
+                    <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                        <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()" style="margin-left: 10px;">
+                            <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body padding-5">
+
+                <form [formGroup]="comodatoForm">
+
+                    <div class="row">
+
+                        <div class="col-12" *ngIf="flgPesquisandoCliente === 1">
+                            <span class="fa fa-refresh fa-spin fa-fw span-pesq"></span><span class="span-pesq">Buscando
+                                dados do cliente, aguarde...</span>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idInputCodCli">Cod Cliente</label>
+                                <div class="input-group" ngbTooltip="Digite o Codigo do Cliente">
+                                    <input type="number" class="form-control" id="idInputCodCli"
+                                        formControlName="clienteId" (keydown.Tab)="findClienteById($event)"
+                                        (keydown.enter)="findClienteById($event)">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" (click)="findClienteById()" type="button"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="typeaheadCliente">Nome Cliente</label>
+                                <input id="typeaheadCliente" type="text" class="form-control"
+                                    [class.is-invalid]="searchFailedCliente" formControlName="clienteDTO"
+                                    [ngClass]="{'is-invalid': submitted && f['clienteDTO'].errors}"
+                                    [ngbTypeahead]="searchCliente" (selectItem)="typeaHeadSelectCliente($event)"
+                                    [inputFormatter]="formatterCliente" [resultTemplate]="rt"
+                                    placeholder="Busca Nome do Cliente">
+                                <span class="col-sm-2 col-form-label" *ngIf="searchingCliente">procurando...</span>
+                                <span class="col-sm-12 col-form-label" *ngIf="searchFailedCliente">Não
+                                    foi
+                                    encontrado nada</span>
+                                <div *ngIf="submitted && f['clienteDTO'].errors" class="invalid-feedback">
+                                    <div *ngIf="f['clienteDTO'].errors['required']">Selecione o Cliente para o Titulo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idEstAlx">Estoque Almoxarifado</label>
+                                <select class="form-control"
+                                    [ngClass]="{'is-invalid': submitted && f['estoqueAlmoxarifadoId'].errors}"
+                                    formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let ealxv of estoqueAlmoxarifados" [ngValue]="ealxv.id">
+                                        {{ealxv.nome}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f['estoqueAlmoxarifadoId'].errors" class="invalid-feedback">
+                                    <div *ngIf="f['estoqueAlmoxarifadoId'].errors['required']">Selecione um
+                                        estoque
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <br>
+                    <hr />
+                    <br>
+
+                    <div ngbAccordion>
+                        <div ngbAccordionItem [collapsed]="false">
+                            <h2 ngbAccordionHeader>
+                                <button ngbAccordionButton>COMODATO</button>
+                            </h2>
+
+                            <div ngbAccordionCollapse>
+                                <div ngbAccordionBody>
+                                    <ng-template ngbPanelContent>
+
+                                        <div class="row">
+        
+                                            <div class="col-sm-2 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idInputCodItemId">Cod Item Comodato</label>
+                                                    <div class="input-group" ngbTooltip="Digite o Codigo do Item">
+                                                        <input type="number" class="form-control" id="idInputCodItemId"
+                                                            formControlName="itemId" (keydown.Tab)="findItemById($event)"
+                                                            (keydown.enter)="findItemById($event)" name="nameInputCodItem"
+                                                            pattern="\d*" inputmode="numeric">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" (click)="findItemById()"
+                                                                type="button"><i class="fa fa-search"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-10 col-12 padding-5">
+                                                <div class="form-group">
+        
+                                                    <label for="typeaheadCliente">Nome Item Comodato</label>
+                                                    <input id="idTypeaheadItem" type="text" class="form-control"
+                                                        [class.is-invalid]="searchFailedItemNome" formControlName="itemDTO"
+                                                        [ngClass]="{'is-invalid': submitted && f['itemDTO'].errors}"
+                                                        [ngbTypeahead]="searchItemNome"
+                                                        (selectItem)="typeaHeadSelectItem($event)"
+                                                        [inputFormatter]="formatterCliente" [resultTemplate]="rt"
+                                                        placeholder="Busca Nome de item Comodato">
+                                                    <span class="col-sm-2 col-form-label"
+                                                        *ngIf="searchingItemNome">procurando...</span>
+                                                    <span class="col-sm-12 col-form-label" *ngIf="searchFailedItemNome">Não
+                                                        foi
+                                                        encontrado nada</span>
+                                                    <div *ngIf="submitted && f['itemDTO'].errors" class="invalid-feedback">
+                                                        <div *ngIf="f['itemDTO'].errors['required']">Selecione o Comodato
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        </div>
+                                        <div class="row">
+        
+                                            <div class="col-sm-7 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idAgItemSelecionado">Agrupamento</label>
+                                                    <div class="input-group">
+                                                        <select class="form-control" name="nmAgItemSelecionado"
+                                                            [ngClass]="{'is-invalid': submitted && f['agrupamento'].errors}"
+                                                            id="idAgItemSelecionado" formControlName="agrupamento">
+                                                            <option [ngValue]="null" disabled>Selecione</option>
+                                                            <option *ngFor="let un of getAgrupamentos()" [ngValue]="un">
+                                                                {{un.nome}}</option>
+                                                        </select>
+                                                        <div *ngIf="submitted && f['agrupamento'].errors" class="invalid-feedback">
+                                                            <div *ngIf="f['agrupamento'].errors['required']">O agrupamento
+                                                                precisa ser selecionado
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-2 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idItemQtd">Qtd</label>
+                                                    <div class="input-group">
+                                                        <input type="number" class="form-control" id="idItemQtd"
+                                                            [ngClass]="{'is-invalid': submitted && f['qtd'].errors}"
+                                                            inputmode="numeric" formControlName="qtd">
+                                                        <div *ngIf="submitted && f['qtd'].errors" class="invalid-feedback">
+                                                            <div *ngIf="f['qtd'].errors['required']">Qtd precisa ser digitada
+                                                            </div>
+                                                            <div *ngIf="f['qtd'].errors['min']">Qtd deve ser maior que 0
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-3 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idDtaEmprestimo">Dta Empréstimo</label>
+                                                    <div class="input-group">
+                                                        <input type="date" class="form-control" id="idDtaEmprestimo"
+                                                            [ngClass]="{'is-invalid': submitted && f['dtaEmprestimo'].errors}"
+                                                            formControlName="dtaEmprestimo">
+                                                        <div *ngIf="submitted && f['dtaEmprestimo'].errors"
+                                                            class="invalid-feedback">
+                                                            <div *ngIf="f['dtaEmprestimo'].errors['required']">Data precisa ser
+                                                                digitada
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        </div>
+        
+                                        <div class="row">
+        
+                                            <div class="col-sm-4 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idQtdEstoque">QTD ESTOQUE</label>
+                                                    <span class="form-control span-disable"
+                                                        id="idQtdEstoque">{{estoqueComodatoAux.qtd_disponivel_estoque}}</span>
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-4 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idQtdUtilizado">QTD UTILIZADO</label>
+                                                    <span class="form-control span-disable"
+                                                        id="idQtdUtilizado">{{estoqueComodatoAux.qtd_convertido_comodato}}</span>
+                                                </div>
+                                            </div>
+        
+                                            <div class="col-sm-4 col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="idQtdDisponivel">QTD DISPONIVEL</label>
+                                                    <span class="form-control span-disable"
+                                                        id="idQtdDisponivel">{{estoqueComodatoAux.qtd_disponivel_comodato}}</span>
+                                                </div>
+                                            </div>
+        
+                                        </div>
+        
+                                        <div class="row">
+                                            <div class="col-12 padding-5">
+                                                <div class="form-group">
+                                                    <label for="nameInputDescricao">Descrição</label>
+                                                    <textarea class="form-control" formControlName="descricao"
+                                                        id="nameInputDescricao"></textarea>
+                                                </div>
+                                            </div>
+        
+                                        </div>
+        
+                                        <hr>
+        
+                                        <div class="row">
+                                            <div class="col-sm-3 col-6  d-grid ">
+                                                <button class="btn btn-block butao-acao btn-primary" (click)="addItem()">
+                                                    <span class="fa fa-plus span-buttons-body"></span> Adicionar Comodato
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-6  d-grid ">
+                                                <button class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpaItem()">
+                                                    <span class="fa fa-eraser span-buttons-body"></span> Limpar Comodato
+                                                </button>
+                                            </div>
+                                        </div>
+        
+                                        <hr>
+        
+                                        <br>
+                                        <div *ngIf="comodatos.length > 0">
+        
+                                            <ngx-spinner class="spinner-full" name="comodatosSpinner" [fullScreen]="false"
+                                                bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                                                type="ball-spin-clockwise">
+                                                <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+                                                </p>
+                                            </ngx-spinner>
+        
+                                            <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                                [rows]="comodatos" [columnMode]="ColumnMode.standard" [headerHeight]="35"
+                                                [footerHeight]="50" rowHeight="auto" [limit]="50" [selected]="selected"
+                                                [selectionType]="selectionTypeSingle"
+                                                >
+        
+                                                <ngx-datatable-column name="EX" [width]="40">
+                                                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                                        <button (click)="deletarComodato(row)"><span
+                                                                class="fa fa-trash"></span></button>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+        
+                                                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                                                <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+                                                <ngx-datatable-column name="DATA INCLUSÃO" prop="dta_inclusao" [width]="170">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuario_inclusao"
+                                                    [width]="150">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DATA EMPRESTIMO" prop="dta_emprestimo"
+                                                    [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="ITEM COMODATO" prop="item_nome" [width]="250">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="AGRUPAMENTO" prop="agrupamento_nome" [width]="200">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="QTD" prop="qtd" [width]="90">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="QTD CONV" prop="qtd_convertido" [width]="90">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="ALMOXARIFADO" prop="estoque_almoxarifado_nome"
+                                                    [width]="250">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DESCRIÇÃO" prop="descricao" [width]="200">
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+        
+                                        </div>
+        
+        
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+           
+
+
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>

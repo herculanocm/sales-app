@@ -1,0 +1,82 @@
+<div class="div-print-content">
+    <div *ngIf="!isUndefined(pr) && pr!.data !== null && pr!.data.length > 0">
+        <div *ngFor="let rw of pr!.data" style="margin-top: 10px;margin-bottom: 10px;border: 0.7px solid black;">
+
+
+            <table class="table table-bordered border-dark">
+                <thead>
+                  <tr>
+                    <th class="th-center">CONTA</th>
+                    <th class="th-center">CLIENTE</th>
+                    <th class="th-center">SALDO INICIAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="align-left">{{rw.centro_id}} - {{rw.centro_nome}}</td>
+                    <td class="align-left">{{rw.cliente_id}} - {{rw.cliente_nome}}</td>
+                    <td class="align-left">{{rw.transactions[0].saldo_ant | number : "1.2-2" : "pt-BR"}}</td>
+
+                  </tr>
+                </tbody>
+              </table>
+
+
+            <div class="col-12" style="text-align: center;">
+                <p>Lançamentos - 
+                  <button id="idVendasCliente" class="btn btn-outline-dark butao-acao" (click)="printRw(rw)" style="margin: 0px;padding: 0px;">
+                    <span class="fa fa-download span-acao" style="margin: 0px;padding: 0px;"></span>
+                </button>
+                </p>
+            </div>
+
+            <table class="table table-bordered border-dark">
+                <thead>
+                  <tr>
+                    <th class="th-center" style="max-width: 30px;">OR</th>
+                    <th class="th-center" style="max-width: 80px;">Data Ref</th>
+                    <th class="th-center">Tipo</th>
+                    <th class="th-center">Condição</th>
+                   
+                    <th class="th-center">Receita</th>
+                    <th class="th-center">Despesa</th>
+                    <th class="th-center">Saldo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let tr of rw.transactions">
+                    <td class="align-left" style="max-width: 30px;">{{tr.ordem}}</td>
+                    <td class="align-left" style="max-width: 80px;">{{tr.dta_referencia| amDateFormat:'DD/MM/YYYY'}}</td>
+                    <td class="align-left">{{tr.tipo_nome}}</td>
+                    <td class="align-left">{{tr.condicao_nome}}</td>
+                   
+                    <td class="align-left">{{tr.valor_receita | number : "1.2-2" : "pt-BR"}}</td>
+                    <td class="align-left">{{tr.valor_despesa | number : "1.2-2" : "pt-BR"}}</td>
+                    <td class="align-left">{{tr.saldo | number : "1.2-2" : "pt-BR"}}</td>
+
+                  </tr>
+                </tbody>
+              </table>
+
+
+           
+
+            <!-- <table class="table table-bordered border-dark">
+                <thead>
+                  <tr>
+                    <th class="th-center">Id</th>
+                    <th class="th-center">Data Inclusão</th>
+                    <th class="th-center">Usuário Inclusão</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="align-left">{{printObject.data.id}}</td>
+                    <td class="align-left">{{printObject.data.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                    <td class="align-center">{{printObject.data.usuarioInclusao}}</td>
+                  </tr>
+                </tbody>
+              </table> -->
+        </div>
+    </div>
+</div>

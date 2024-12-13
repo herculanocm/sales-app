@@ -1,0 +1,17 @@
+<div [ngClass]="modalType === 'error' ? 'error-dialog' : ''">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        {{ modalContent }}
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="col-12 text-center d-grid">
+                <button class="btn btn-md btn-primary" ngbAutofocus (click)="activeModal.close('default')">OK
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

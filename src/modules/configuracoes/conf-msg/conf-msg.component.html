@@ -1,0 +1,99 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Configurações'" [picon]="'fa-cogs'" [heading]="'Mensagem do Sistema'"
+        [icon]="'fa-th-list'"></app-page-header>
+
+
+    <div class="card">
+        <div class="row">
+            <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                type="ball-spin-clockwise">
+                <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+            </ngx-spinner>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button class="btn btn-block butao-acao btn-primary" (click)="onCadastra()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">Salvar
+                                    Msg</span>
+                            </button>
+                        </div>
+                        <!-- <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-outline-dark butao-acao" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+
+                        <form [formGroup]="msgForm">
+                            <div class="row">
+
+                                <div class="col-sm-2 col-12 padding-5">
+                                    <div class="form-group">
+                                        <label for="idphoneTo">Id</label>
+
+                                        <input type="number" class="form-control" id="idphoneTo" formControlName="id">
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-10 col-12 padding-5">
+                                    <div class="form-group">
+                                        <label for="idds">Checks</label><br>
+                                        <div class="form-check form-check-inline">
+
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1"
+                                                formControlName="firstOnly" [value]="true">
+                                            <label class="form-check-label" for="inlineCheckbox1">Primeiro Login do
+                                                dia</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2"
+                                                formControlName="alwaysOnLogin" [value]="true">
+                                            <label class="form-check-label" for="inlineCheckbox2">Sempre ao
+                                                logar</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 padding-5">
+                                    <div class="form-group">
+
+                                        <!-- <label for="idsmsText">Mensagem</label>
+                                        <textarea class="form-control" formControlName="msg"
+                                            [ngClass]="{'is-invalid': submitted && f.msg.errors}"
+                                            id="idsmsText"></textarea>
+                                        <div *ngIf="submitted && f.msg.errors" class="invalid-feedback">
+                                            <div *ngIf="f.msg.errors['required']">Texto é obrigatorio
+                                            </div>
+                                        </div> -->
+
+                                        <label for="idsmsText">Mensagem</label>
+                                        <angular-editor formControlName="msg"></angular-editor>
+                                        <div *ngIf="submitted && f.msg.errors" class="invalid-feedback">
+                                            <div *ngIf="f.msg.errors['required']">Texto é obrigatorio
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

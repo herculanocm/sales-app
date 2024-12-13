@@ -1,0 +1,324 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 venda-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Report Representante'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoInicial">Data Emissão Inicial</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoInicial"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoInicial'].errors}"
+                                        formControlName="dtaEmissaoInicial"
+                                        ngbTooltip="Digite a data de Emissão Inicial">
+                                    <div *ngIf="submitted && f['dtaEmissaoInicial'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoInicial'].errors['required']">Data de emissão inicial é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoFinal">Data Emissão Final</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoFinal"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoFinal'].errors}"
+                                        formControlName="dtaEmissaoFinal" ngbTooltip="Digite a data de Emissão Final">
+                                    <div *ngIf="submitted && f['dtaEmissaoFinal'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoFinal'].errors['required']">Data de emissão final é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectRepresentante">Representante</label>
+                                    <select class="form-control" [compareWith]="compareVendedor"
+                                        [ngClass]="{'is-invalid': submitted && f['vendedor'].errors}"
+                                        formControlName="vendedor" id="idSelectRepresentante">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let vd of vendedores" [ngValue]="vd">{{vd.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['vendedor'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vendedor'].errors['required']">Selecione um vendedor
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectCidade">Cidade</label>
+
+                                    <ng-select
+                                    id="idSelectCidade"
+                                    class="select-custom"
+                                    [multiple]="true"
+                                    [items]="cidades"
+                                    bindLabel="nome"
+                                    [closeOnSelect]="true"
+                                    [searchable]="true"
+                                    [compareWith]="compareCidade"
+                                    formControlName="cidade"
+                                    >
+                                    </ng-select>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="status" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os status, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Pedidos por Status</h6>
+                        <p *ngIf="retornoStatus.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <table class="table table-bordered table-status" *ngIf="retornoStatus.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Status</th>
+                                <th class="th-status">Qtd</th>
+                                <th class="th-status">Vlr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let rets of retornoStatus">
+                                <td class="align-left td-status">{{rets.label}}</td>
+                                <td class="align-left td-status number-aling">{{rets.qtd_pedido | number:'1.0-0':'pt-BR'
+                                    }}</td>
+                                <td class="align-left td-status number-aling">{{rets.val_total | number:'1.2-2':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br>
+                    <hr>
+
+
+                    <div class="aling-center text-center">
+                        <h6>Itens por Status</h6>
+                        <p *ngIf="retornoStatus.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <table class="table table-bordered table-status" *ngIf="retornoStatusItens.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Status</th>
+                                <th class="th-status">Vlr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let rets of retornoStatusItens">
+                                <td class="align-left td-status">{{rets.label}}</td>
+                                <td class="align-left td-status number-aling">{{rets.val_total | number:'1.2-2':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="cliente" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os Clientes, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Faturados por Cliente</h6>
+                        <p *ngIf="retornoClientes.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <table class="table table-bordered table-status" *ngIf="retornoClientes.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Cliente</th>
+                                <th class="th-status">Qtd</th>
+                                <th class="th-status">Vlr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let retc of retornoClientes">
+                                <td class="align-left td-status">{{retc.cliente_nome}}</td>
+                                <td class="align-left td-status number-aling">{{retc.qtd_pedido | number:'1.0-0':'pt-BR'
+                                    }}</td>
+                                <td class="align-left td-status number-aling">{{retc.val_total | number:'1.2-2':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="item" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os Itens, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Faturados por Item</h6>
+                        <p *ngIf="retornoItens.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <table class="table table-bordered table-status" *ngIf="retornoItens.length > 0">
+                        <thead>
+                            <tr>
+                                <th class="th-status">Item</th>
+                                <th class="th-status">Qtd P</th>
+                                <th class="th-status">Qtd V</th>
+                                <th class="th-status">Vlr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let reti of retornoItens">
+                                <td class="align-left td-status">{{reti.item_nome}}</td>
+                                <td class="align-left td-status number-aling">{{reti.qtd_pedido | number:'1.0-0':'pt-BR'
+                                    }}</td>
+                                <td class="align-left td-status number-aling">{{reti.qtd_vendido |
+                                    number:'1.0-0':'pt-BR' }}</td>
+                                <td class="align-left td-status number-aling">{{reti.val_total | number:'1.2-2':'pt-BR'
+                                    }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <ngx-spinner class="spinner-full" name="pedido" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+                        size="medium" color="#fff" type="ball-spin-clockwise">
+                        <p style="font-size: 20px; color: white">Buscando os Pedidos, Aguarde...</p>
+                    </ngx-spinner>
+
+                    <div class="aling-center text-center">
+                        <h6>Detalhado por Pedido</h6>
+                        <p *ngIf="retornoPedidos.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <div *ngFor="let retp of retornoPedidos" (click)="imprimeVenda(retp.venda_id)" (keydown.enter)="imprimeVenda(retp.venda_id)" tabindex={0}
+                        class="row border-div" style="background-color: white;font-size: 10px;margin-bottom: 10px;">
+
+                        <div class="col-2 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label for="id"  class="label-margin-padding-0">ID</label></p>
+                            <p class="p-margin-padding-0"><span>{{retp.venda_id}}</span></p>
+                        </div>
+
+                        <div class="col-10 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">STATUS</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{retp.label_status}}</span></p>
+
+                        </div>
+
+
+                        <div class="col-6 margin-padding-0 border-div">
+
+                            <p class="p-titulo-margin-padding-0"><label for="id"  class="label-margin-padding-0">DTA
+                                    EMISSÃO</label></p>
+                            <p class="p-margin-padding-0"><span>{{retp.dta_emissao | amDateFormat:'DD/MM/YYYY'}}</span>
+                            </p>
+
+                        </div>
+
+                        <div class="col-6 margin-padding-0 border-div">
+
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">DTA
+                                    INCLUSAO</label></p>
+                            <p class="p-margin-padding-0"><span>{{retp.dta_inclusao | amDateFormat:'DD/MM/YYYY
+                                    HH:mm:ss'}}</span></p>
+
+                        </div>
+
+                        <div class="col-8 margin-padding-0 border-div">
+
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">COND. PAG</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{retp.condicao_pagamento_nome}}</span></p>
+
+                        </div>
+
+                        <div class="col-4 margin-padding-0 border-div">
+
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">VALOR</label></p>
+                            <p class="p-margin-padding-0 number-aling"><span>{{retp.val_total | number:'1.2-2':'pt-BR'
+                                    }}</span></p>
+
+                        </div>
+
+                        <div class="col-12 margin-padding-0 border-div">
+
+                            <p class="p-titulo-margin-padding-0"><label for="id" class="label-margin-padding-0">CLIENTE</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{retp.cliente_nome}}</span></p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1671 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Clientes'" [picon]="'fa-users'" [heading]="'Cliente'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div *ngIf="statusForm === 1 || statusForm === 2" class="row">
+            <div class="col-md-12">
+
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3 col-xl-3 col-6 d-grid  div-mobile-buttons">
+                                <button class="btn btn-block butao-acao"
+                                    [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onCadastra()">
+                                    <span class="fa fa-save span-acao"></span> {{statusForm === 2 ? 'Alterar':'Salvar'}}
+                                </button>
+                            </div>
+                            <div class="col-sm-2 col-xl-2 col-6 d-grid  div-mobile-buttons">
+                                <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                    (click)="onLimpa()">
+                                    <span class="fa fa-eraser span-acao"></span> Limpar
+                                </button>
+                            </div>
+                            <div class="col-sm-1 col-xl-1 col-4 d-grid  div-mobile-buttons">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onLeftArray()">
+                                    <span class="fa fa-arrow-circle-left span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-1 col-xl-1 col-4 d-grid  div-mobile-buttons">
+                                <button type="button" class="btn btn-block btn-info butao-acao"
+                                    (click)="onRightArray()">
+                                    <span class="fa fa-arrow-circle-right span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-1 col-xl-1 col-4 d-grid  div-mobile-buttons">
+                                <button type="button" class="btn btn-block btn-info butao-acao" (click)="onTable()">
+                                    <span class="fa fa-table span-acao"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-2 col-xl-2 col-6  d-grid div-mobile-buttons">
+                                <button type="button" [disabled]="isValidDelete()"
+                                    class="btn btn-block btn-danger butao-acao" (click)="onDeleta(cliente.id)">
+                                    <span class="fa fa-trash span-acao"></span> Deletar
+                                </button>
+                            </div>
+                            <div class="col-sm-2 col-xl-2 col-6  d-grid div-mobile-buttons">
+                                <button type="button" class="btn btn-block btn-success butao-acao"
+                                    (click)="onPesquisa()">
+                                    <span class="fa fa-search span-acao"></span> Pesq
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-light mb-3">
+                    <div class="card-header">Cliente</div>
+                    <div class="card-body">
+                        <app-fields-erro-directive *ngIf="errorForm.message !== null" [servererror]="errorForm">
+                        </app-fields-erro-directive>
+
+                        <div ngbAccordion>
+                            <div ngbAccordionItem [collapsed]="true">
+                                <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton>Filtros de Pesquisa</button>
+                                </h2>
+
+                                <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody>
+
+                                        <ng-template>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="dtInicialPesq">Data Inclusão Inicial</label>
+                                                        <input type="date" class="form-control" id="dtInicialPesq"
+                                                            name="dtInicialPesq"
+                                                            [(ngModel)]="clientePesquisa.dtaInicialPesquisa">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="inputDtFinalPesq">Data Inclusão Final</label>
+                                                        <input type="date" class="form-control" id="inputDtFinalPesq"
+                                                            name="inputDtFinalPesq"
+                                                            [(ngModel)]="clientePesquisa.dtaFinalPesquisa">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="typeaheadCidade">Cidade</label>
+                                                        <input id="typeaheadCidade" name="typeaheadCidade" type="text"
+                                                            class="form-control"
+                                                            [(ngModel)]="clientePesquisa.municipioDTO"
+                                                            [class.is-invalid]="searchFailedCidade"
+                                                            [ngbTypeahead]="searchCidade"
+                                                            [inputFormatter]="formatterCidade" [resultTemplate]="rt"
+                                                            placeholder="Busca de Cidade" />
+                                                        <span class="col-sm-2 col-form-label"
+                                                            *ngIf="searchingCidade">procurando...</span>
+                                                        <span class="col-sm-12 col-form-label"
+                                                            *ngIf="searchFailedCidade">Não
+                                                            foi
+                                                            encontrado nada</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="labelsStatusProcura">Status</label>
+                                                        <select class="form-control" name="labelsStatusProcura"
+                                                            id="labelsStatusProcura"
+                                                            [(ngModel)]="clientePesquisa.clienteStatusLabelDTO"
+                                                            [compareWith]="compareStatusLabel">
+                                                            <option [ngValue]="null">Selecione</option>
+                                                            <option *ngFor="let cslsp of clienteStatusLabels"
+                                                                [ngValue]="cslsp">
+                                                                {{cslsp.label}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="vendedorPesquisaId">Vendedor</label>
+                                                        <select class="form-control" name="vendedorPesquisaNm"
+                                                            id="vendedorPesquisaId"
+                                                            [(ngModel)]="clientePesquisa.vendedorDTO">
+                                                            <option [ngValue]="null">Selecione</option>
+                                                            <option *ngFor="let vend of vendedores" [ngValue]="vend">
+                                                                {{vend.nome}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="vendedorPesquisaId">Endereço</label>
+                                                        <input type="text" class="form-control" name="enderecoPesqId"
+                                                            [(ngModel)]="clientePesquisa.endereco"
+                                                            ngbTooltip="Atenção adicione o caractere % antes ou depois para pesquisa."
+                                                            id="EnderecoPesquisaId" placeholder="Jose Fonseca e Sil%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label for="inputNome">Id</label>
+                                    <input type="number" class="form-control" name="inputId" [(ngModel)]="cliente.id"
+                                        (keydown.Tab)="onPesquisa()" (keydown.enter)="onPesquisa()"
+                                        [disabled]="idDisable()" id="inputId" placeholder="Id">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label for="inputNome">Id Aux</label>
+                                    <input type="number" class="form-control" name="inputIdAux"
+                                        [(ngModel)]="cliente.idAux" id="inputIdAux" placeholder="IdAux">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <label for="nomeCliente">Nome</label>
+                                    <input type="text" class="form-control" name="nomeCliente"
+                                        [(ngModel)]="cliente.nome" id="nomeCliente" placeholder="Nome">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="fasntasiaCliente">Fantasia</label>
+                                    <input type="text" class="form-control" name="fasntasiaCliente"
+                                        [(ngModel)]="cliente.fantasia" id="fasntasiaCliente" placeholder="fasntasia">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="cpf">CGC</label>
+                                    <input type="text" class="form-control" name="cgcCliente"
+                                        [specialCharacters]="[' ', '(', ')', '-', '.', '/']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="00.000.000/0000-00"
+                                        [(ngModel)]="cliente.cgc" id="cgcCliente">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="rg">Rg/Ie</label>
+                                    <input type="text" class="form-control" name="rg" [(ngModel)]="cliente.rgie" id="rg"
+                                        placeholder="rg/ie">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="emailCliente">Email</label>
+                                    <input type="text" class="form-control" name="emailCliente"
+                                        [(ngModel)]="cliente.email" id="emailCliente" placeholder="email">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <hr class="style3">
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="dtaInclusao">Dta Inclusão</label>
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{cliente.dtaInclusao | amDateFormat:'DD/MM/YYYY
+                                        HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="usuarioInclusao">Usuário Inclusão</label>
+                                    <span class="form-control span-disable" name="nameUsuarioInclusao"
+                                        id="idUsuarioInclusao">{{cliente.usuarioInclusao}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="dtaNasc">Dta Nasc</label>
+                                    <input type="date" class="form-control" name="dtaNasc" [(ngModel)]="cliente.dtaNasc"
+                                        id="dtaNasc">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <hr class="style3">
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="fone1">Fone 1</label>
+                                    <input type="text" [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00) 0000-0000"
+                                        class="form-control" name="fone1" [(ngModel)]="cliente.telefone1" id="fone1">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="fone2">Fone 2</label>
+                                    <input type="text" [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00) 0000-0000"
+                                        class="form-control" name="fone2" [(ngModel)]="cliente.telefone2" id="fone2">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="celular1">Celular 1</label>
+                                    <input type="text" [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00) 0.0000-0000"
+                                        class="form-control" name="celular1" [(ngModel)]="cliente.celular1"
+                                        id="celular1">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="celular2">Celular 2</label>
+                                    <input type="text" [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                        [dropSpecialCharacters]="true" [showMaskTyped]="true" mask="(00) 0.0000-0000"
+                                        class="form-control" name="celular2" [(ngModel)]="cliente.celular2"
+                                        id="celular2">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <hr class="style3">
+                            </div>
+
+                            <div class="col-sm-12">
+
+                                <div ngbAccordion>
+                                    <div ngbAccordionItem [collapsed]="true">
+                                        <h2 ngbAccordionHeader>
+                                            <button ngbAccordionButton>Categoria do Cliente</button>
+                                        </h2>
+        
+                                        <div ngbAccordionCollapse>
+                                            <div ngbAccordionBody>
+        
+                                                <ng-template>
+                                                    <label for="typeaheadCategoria">Categoria</label>
+                                            <input id="typeaheadCategoria" name="typeaheadCategoria" type="text"
+                                                class="form-control" [class.is-invalid]="searchFailedCategoria"
+                                                (blur)="verificaCategoria()" [(ngModel)]="cliente.clienteCategoriaDTO"
+                                                [ngbTypeahead]="searchCategoria" [inputFormatter]="formatterCategoria"
+                                                [resultTemplate]="rt" placeholder="Busca de Categoria" />
+                                            <span class="col-sm-2 col-form-label"
+                                                *ngIf="searchingCategoria">procurando...</span>
+                                            <span class="col-sm-12 col-form-label" *ngIf="searchFailedCategoria">Não
+                                                foi
+                                                encontrado
+                                                nada</span>
+                                            <div *ngIf="isCategoria()" class="col-sm-12">
+                                                <div class="col-sm-12 div-info">
+                                                    <span>Categoria Configurada</span>
+                                                </div>
+                                                <table class="table table-bordered table-object-selected">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Nome</th>
+                                                            <th>Ações</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="align-left">{{cliente.clienteCategoriaDTO!.id}}
+                                                            </td>
+                                                            <td class="align-left">{{cliente.clienteCategoriaDTO!.nome}}
+                                                            </td>
+                                                            <td class="align-center">
+
+                                                                <button class="btn btn-danger"
+                                                                    (click)="removeCategoria()"
+                                                                    (keydown)="removeCategoria()" tabindex="0">
+                                                                    <fa-icon class="ms-auto"
+                                                                        [icon]="['fas', 'trash']"></fa-icon>
+                                                                </button>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                                </ng-template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                     
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <hr class="style3">
+                        </div>
+
+                        <div class="div-tabs">
+
+
+
+
+                            <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+
+                                <li [ngbNavItem]="1">
+                                    <a ngbNavLink>Endereços</a>
+                                    <ng-template ngbNavContent>
+
+                                        <br>
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Adicionar um ou mais endereços que o cliente possui</h5>
+                                        </div>
+                                        <br>
+
+                                        <div class="form-group">
+                                            <label for="id" class="col-sm-12 control-label">Tipo End.</label>
+                                            <label for="id" class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkEndResidencial"
+                                                    name="checkEndResidencial" [(ngModel)]="endereco.indResidencial">
+                                                Residencial
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkEndTrabalho" name="checkEndTrabalho"
+                                                    [(ngModel)]="endereco.indTrabalho">Trabalho
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkEndOutros" name="checkEndOutros"
+                                                    [(ngModel)]="endereco.indOutros">Outros
+                                            </label>
+                                        </div>
+
+
+
+                                        <hr>
+
+
+                                        <fieldset class="form-group">
+                                            <label for="id" class="col-sm-12 control-label">Entrega</label>
+                                            <label for="id" class="radio-inline rinline">
+                                                <input type="radio" [(ngModel)]="endereco.indEntrega"
+                                                    name="nameOptRdEntrega" id="IdOptRdEntregaSim" [value]="true">Sim
+                                            </label>
+                                            <label class="radio-inline rinline">
+                                                <input type="radio" [(ngModel)]="endereco.indEntrega"
+                                                    name="nameOptRdEntrega" id="IdOptRdEntregaNao" [value]="false">Não
+                                            </label>
+                                        </fieldset>
+
+                                        <hr>
+
+
+                                        <fieldset class="form-group">
+                                            <label for="id" class="col-sm-12 control-label">Prioridade</label>
+                                            <label class="radio-inline rinline">
+                                                <input type="radio" [(ngModel)]="endereco.indPrioritario"
+                                                    name="nameOptRdPrioritario" id="IdOptRdPrioriPrincipal"
+                                                    [value]="true">Principal
+                                            </label>
+                                            <label for="id" class="radio-inline rinline">
+                                                <input type="radio" [(ngModel)]="endereco.indPrioritario"
+                                                    name="nameOptRdPrioritario" id="IdOptRdPrioriSecundario"
+                                                    [value]="false">Secundário
+                                            </label>
+                                        </fieldset>
+
+                                        <hr>
+
+                                        <div class="form-group row" *ngIf="1 !== 1">
+                                            <label for="idEndereco" class="col-sm-2 control-label">Id End</label>
+                                            <div class="col-sm-4">
+                                                <input type="number" class="form-control" id="idEndereco"
+                                                    name="idEndereco" [(ngModel)]="endereco.id" disabled>
+                                            </div>
+                                            <label for="idEndereco" class="col-sm-2 control-label">Id Cliente</label>
+                                            <div class="col-sm-4">
+                                                <input type="number" class="form-control" id="idEndereco"
+                                                    name="idEndereco" [(ngModel)]="endereco.clienteDTO_id" disabled>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="form-group row">
+                                            <label for="cep" class="col-sm-2 control-label">Cep</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" id="cep" name="cep"
+                                                    placeholder="Cep" [(ngModel)]="endereco.cep"
+                                                    (keydown.Tab)="buscaCep()"
+                                                    ngbTooltip="Digite o CEP e precione TAB no teclado para procura-lo online">
+                                            </div>
+                                            <label for="cpostal" class="col-sm-2 control-label">Cod Postal</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" id="cpostal" name="cpostal"
+                                                    placeholder="Codigo Postal" [(ngModel)]="endereco.codigoPostal">
+                                            </div>
+                                        </div> -->
+
+                                        <div class="form-group row">
+                                            <label for="cep" class="col-sm-2 control-label">Cep</label>
+                                            <div class="col-sm-4">
+                                                <div class="input-group"
+                                                    ngbTooltip="Digite o CEP e precione TAB no teclado para procura-lo online">
+                                                    <input type="text" class="form-control" id="cep" placeholder="Cep"
+                                                        [(ngModel)]="endereco.cep" (keydown.Tab)="buscaCep()"
+                                                        (keydown.enter)="buscaCep()" name="cep" pattern="\d*"
+                                                        inputmode="numeric">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-secondary" (click)="buscaCep()"
+                                                            type="button"><i class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label for="cpostal" class="col-sm-2 control-label">Cod Postal</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" id="cpostal" name="cpostal"
+                                                    placeholder="Codigo Postal" [(ngModel)]="endereco.codigoPostal">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group row">
+
+                                            <label for="logradouro" class="col-sm-2 control-label">Logradouro</label>
+
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="logradouro"
+                                                    name="logradouro" placeholder="Logradouro"
+                                                    [(ngModel)]="endereco.logradouro">
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="form-group row">
+
+                                            <label for="complemento" class="col-sm-2 control-label">Complemento</label>
+
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" id="complemento"
+                                                    name="complemento" placeholder="Complemento"
+                                                    [(ngModel)]="endereco.complemento">
+                                            </div>
+
+                                            <label for="numLogradouro" class="col-sm-2 control-label">Num</label>
+
+                                            <div class="col-sm-2">
+                                                <input type="number" class="form-control" id="numLogradouro"
+                                                    name="numLogradouro" [(ngModel)]="endereco.numLogradouro">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group row">
+
+                                            <label for="bairro" class="col-sm-2 control-label">Bairro</label>
+
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="bairro" name="bairro"
+                                                    placeholder="Bairro" [(ngModel)]="endereco.bairro">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="form-group row">
+
+                                            <label for="selectEstados" class="col-sm-2 control-label">UF</label>
+                                            <div class="col-sm-4">
+                                                <select class="form-control" name="selectEstados" id="selectEstados"
+                                                    (change)="buscaMunicipiosPorEstado(endereco.municipioDTO.estadoDTO!)"
+                                                    [compareWith]="compareEstado"
+                                                    [(ngModel)]="endereco.municipioDTO.estadoDTO">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option *ngFor="let est of estados" [ngValue]="est">{{est.nome}}
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-sm-6" *ngIf="flgBuscandoMunicipio === 1">
+                                                <span class="fa fa-sync-alt fa-spin fa-fw"></span> Buscando Cidades
+                                                Aguarde...
+                                            </div>
+
+                                            <label for="selectCidades" class="col-sm-2 control-label">Cidade</label>
+                                            <div class="col-sm-4">
+                                                <select class="form-control" name="selectCidades" id="selectCidades"
+                                                    [compareWith]="compareMunicipio"
+                                                    [(ngModel)]="endereco.municipioDTO">
+                                                    <option [ngValue]="{id: -1}">Selecione</option>
+                                                    <option *ngFor="let mun of municipios" [ngValue]="mun">{{mun.nome}}
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="form-group row">
+
+
+                                            <label for="latitude" class="col-sm-2 control-label">Latitude</label>
+
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" id="latitude" name="latitude"
+                                                    placeholder="Latitude" [(ngModel)]="endereco.latitude">
+                                            </div>
+
+                                            <label for="longitude" class="col-sm-2 control-label">Longitude</label>
+
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control" id="longitude" name="longitude"
+                                                    [(ngModel)]="endereco.longitude" placeholder="Longitude">
+                                            </div>
+
+
+
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-sm-3 col-6 d-grid">
+                                                <button class="btn btn-block butao-acao"
+                                                    [ngClass]="endereco.cep.length > 0 && selectedEndereco.cep.length > 0 ? 'btn-warning':'btn-primary'"
+                                                    (click)="addEndereco()"
+                                                    ngbTooltip="Clique aqui para adicionar o endereço">
+                                                    <span class="fa fa-plus span-buttons-body span-acao"></span>
+                                                    {{endereco.cep.length > 0 && selectedEndereco.cep.length > 0 ?
+                                                    'Alterar Endereço':'Adicionar Endereço'}}
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-6 d-grid">
+                                                <button class="btn btn-block btn-outline-dark butao-acao"
+                                                    (click)="onLimpaEndereco()">
+                                                    <span class="fa fa-eraser span-buttons-body span-acao"></span>
+                                                    Limpar Endereço
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-6 d-grid">
+                                                <button class="btn btn-block btn-danger butao-acao"
+                                                    (click)="onDeletaEndereco()"
+                                                    [disabled]="selectedEndereco.cep.length === 0">
+                                                    <span class="fa fa-trash span-buttons-body span-acao"></span>
+                                                    Deletar Endereço
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-6 d-grid">
+                                                <button class="btn btn-block butao-acao"
+                                                    (click)="addLatLong(endereco)"><span
+                                                        class="fa fa-search span-buttons-body span-acao"></span> Buscar
+                                                    LatLong</button>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div *ngIf="cliente.clienteEnderecoDTOs.length > 0">
+                                            <hr>
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteEnderecoDTOs" [columnMode]="'force'"
+                                                [rowClass]="getRowClass" [headerHeight]="40" [footerHeight]="70"
+                                                [rowHeight]="'auto'" [limit]="20" [selected]="selected"
+                                                [selectionType]="selectionTypeSingle"
+                                                (select)='onSelectEndereco($event)'>
+
+                                                <ngx-datatable-column name="CEP" prop="cep"
+                                                    [width]="120"></ngx-datatable-column>
+                                                <ngx-datatable-column name="LOGRADOURO" prop="logradouro" [width]="500">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="NUM" prop="numLogradouro" [width]="120">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="BAIRRO" [width]="400"
+                                                    prop="bairro"></ngx-datatable-column>
+                                                <ngx-datatable-column name="CIDADE" prop="municipioDTO.nome"
+                                                    [width]="400">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="UF" prop="municipioDTO.estadoDTO.nome"
+                                                    [width]="300">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="ENTREGA" prop="indEntrega">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Sim':'Não'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="PRIORIDADE" prop="indPrioritario">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Sim':'Não'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="RESIDENCIAL" prop="indResidencial">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Sim':'Não'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="TRABALHO" prop="indTrabalho">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Sim':'Não'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="OUTROS" prop="indOutros">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Sim':'Não'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="2">
+                                    <a ngbNavLink>Status</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Configure o status atual do Cliente</h5>
+                                        </div>
+                                        <br>
+                                        <input type="hidden" [(ngModel)]="cliente.clienteStatusDTO.id" disabled />
+
+                                        <div class="form-group row">
+
+                                            <div class="col-sm-12">
+                                                <label for="labels">Label de Status</label>
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="labels" id="labels"
+                                                    [compareWith]="compareStatusLabel"
+                                                    [(ngModel)]="cliente.clienteStatusDTO.clienteStatusLabelDTO"
+                                                    (change)="alteradoStatusPeloSelect()">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option
+                                                        *ngFor="let csls of clienteStatusLabels | clienteStatusLabelFilter:true"
+                                                        [ngValue]="csls">{{csls.label}}</option>
+                                                </select>
+                                            </div>
+
+
+                                            <div class="col-lg-2 col-xl-2 col-6  d-grid ">
+                                                <button class="btn btn-block btn-warning butao-acao"
+                                                    (click)="atualizaStatus()">
+                                                    <i class="fa fa-refresh" aria-hidden="true">Update</i>
+                                                </button>
+                                            </div>
+
+                                            <div class="col-12" style="margin-top: 10px;">
+                                                <label for="id">Observação do Status</label>
+                                            </div>
+
+                                            <div class="col-12" style="margin-bottom: 20px;">
+                                                <textarea class="form-control" name="nmobsStatus" id="idobsStatus"
+                                                    [(ngModel)]="cliente.clienteStatusDTO.obs"></textarea>
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="row">
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="idStatusDtaInclusao">Dta Inclusão</label>
+                                                    <span class="form-control span-disable" name="nmStatusDtaInclusao"
+                                                        id="idStatusDtaInclusao">{{cliente.clienteStatusDTO.dtaInclusao
+                                                        | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="idStatusUsuarioInclusao">Usuário Inclusão</label>
+                                                    <span class="form-control span-disable"
+                                                        name="nameStatusUsuarioInclusao"
+                                                        id="idStatusUsuarioInclusao">{{cliente.clienteStatusDTO.usuarioInclusao}}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row"
+                                            *ngIf="cliente.clienteStatusDTO !== null && !isUndefined(cliente.clienteStatusDTO) && cliente.clienteStatusDTO.clienteStatusLabelDTO !== null  && !isUndefined(cliente.clienteStatusDTO.clienteStatusLabelDTO)">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+
+                                                    <label for="id">Bloqueia Venda</label><br>
+                                                    <span
+                                                        class="form-control span-disable">{{cliente.clienteStatusDTO.clienteStatusLabelDTO.isVendaBloqueada
+                                                        === true ? 'Sim' : 'Não'}}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+
+                                                    <label for="id">Bloqueia Movimento</label><br>
+                                                    <span
+                                                        class="form-control span-disable">{{cliente.clienteStatusDTO.clienteStatusLabelDTO.isMovimentoBloqueado
+                                                        === true ? 'Sim' : 'Não'}}</span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div *ngIf="cliente.clienteStatusHistoricoDTOs.length > 0">
+                                            <hr>
+                                            <div class="align-center text-center">
+                                                <h5>Histórico</h5>
+                                            </div>
+                                            <hr>
+
+
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteStatusHistoricoDTOs"
+                                                [columnMode]="ColumnMode.standard" [rowClass]="getRowClass"
+                                                appResizeWatcher [headerHeight]="35" [footerHeight]="50"
+                                                [rowHeight]="'auto'" [limit]="40" [selected]="selected"
+                                                [sorts]="[{prop: 'dtaInclusao', dir: 'desc'}]"
+                                                [selectionType]="selectionTypeSingle">
+                                                <ngx-datatable-column name="STATUS" [width]="500"
+                                                    prop="clienteStatusLabelDTO.label">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="USUARIO INCLUSÃO" [width]="300"
+                                                    prop="usuarioInclusao">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DATA INCLUSÃO" [width]="300"
+                                                    prop="dtaInclusao">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="OBSERVAÇÃO" [width]="1200" prop="obs">
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="3">
+                                    <a ngbNavLink>Setor</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Configure o setor atual do Cliente</h5>
+                                        </div>
+                                        <br>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="labels">Setores Ativos</label>
+                                            </div>
+                                            <input type="hidden" [(ngModel)]="cliente.clienteSetorDTO!.id" disabled />
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="select-setores-name"
+                                                    id="select-setores-id" [compareWith]="compareSetores"
+                                                    [(ngModel)]="cliente.clienteSetorDTO!.setorDTO">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option *ngFor="let setor of setores" [ngValue]="setor">
+                                                        {{setor.nome}}</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-2 col-xl-2 col-12  d-grid ">
+                                                <button class="btn btn-block btn-warning butao-acao"
+                                                    (click)="atualizaSetor()">
+                                                    <i class="fa fa-refresh" aria-hidden="true">Update</i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="idStatusDtaInclusao">Dta Inclusão</label>
+                                                    <span class="form-control span-disable" name="nameSetorDtaInclusao"
+                                                        id="idSetorDtaInclusao">{{cliente.clienteSetorDTO!.dtaInclusao |
+                                                        amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="idStatusUsuarioInclusao">Usuário Inclusão</label>
+                                                    <span class="form-control span-disable"
+                                                        name="nameSetorusuarioInclusao"
+                                                        id="idSetorusuarioInclusao">{{cliente.clienteSetorDTO!.usuarioInclusao}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div *ngIf="cliente.clienteSetorHistoricoDTOs.length > 0">
+                                            <hr>
+                                            <div class="align-center text-center">
+                                                <h5>Histórico</h5>
+                                            </div>
+                                            <hr>
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteSetorHistoricoDTOs" [columnMode]="'force'"
+                                                [rowClass]="getRowClass" [headerHeight]="40" [footerHeight]="70"
+                                                [rowHeight]="'auto'" [limit]="20" [selected]="selected"
+                                                [selectionType]="selectionTypeSingle"
+                                                [sorts]="[{prop: 'dtaInclusao', dir: 'desc'}]">
+                                                <ngx-datatable-column name="SETOR" prop="setorDTO.nome">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="USUARIO INCLUSÃO" prop="usuarioInclusao">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="4">
+                                    <a ngbNavLink>Grupos</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Adicionar um ou mais grupos que o cliente faz parte</h5>
+                                        </div>
+                                        <br>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 div-info">
+                                                <span>Selecione um ou mais grupos que o cliente faz parte</span>
+                                            </div>
+                                            <label for="typeaheadGrupo" class="col-sm-2 col-form-label">Grupo</label>
+                                            <div class="col-sm-8">
+                                                <input #vGrupoSelecionado id="typeaheadGrupo" name="typeaheadGrupo"
+                                                    type="text" class="form-control"
+                                                    [class.is-invalid]="searchFailedGrupo" [ngbTypeahead]="searchGrupo"
+                                                    [inputFormatter]="formatterGrupo" [resultTemplate]="rt"
+                                                    (selectItem)="grupoSelecionado($event, vGrupoSelecionado)"
+                                                    placeholder="Busca de Grupos" />
+                                            </div>
+                                            <span class="col-sm-2 col-form-label"
+                                                *ngIf="searchingGrupo">procurando...</span>
+                                            <span class="col-sm-12 col-form-label" *ngIf="searchFailedGrupo">Não foi
+                                                encontrado
+                                                nada</span>
+                                        </div>
+
+                                        <hr *ngIf="cliente.clienteGrupoDTOs.length > 0">
+
+                                        <div *ngIf="cliente.clienteGrupoDTOs.length > 0" class="horizontal-scroll">
+                                            <table class="table table-bordered table-object-selected">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Id</th>
+                                                        <th>Setor</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let grupoCli of cliente.clienteGrupoDTOs">
+                                                        <td class="align-left">{{grupoCli.id}}</td>
+                                                        <td class="align-left">{{grupoCli.nome}}</td>
+                                                        <td class="align-center">
+                                                            <button class="btn btn-danger"
+                                                                (click)="removeGrupo(grupoCli.id)"
+                                                                (keydown)="removeGrupo(grupoCli.id)" tabindex="0">
+                                                                <fa-icon class="ms-auto"
+                                                                    [icon]="['fas', 'trash']"></fa-icon>
+                                                            </button>
+
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="5">
+                                    <a ngbNavLink>Limite</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+
+
+                                        <div>
+                                            <div class="align-center text-center">
+                                                <h5>Limite Atual Configurado</h5>
+                                            </div>
+                                            <br>
+                                            <input type="hidden" [(ngModel)]="cliente.clienteLimiteDTO.id" disabled />
+                                            <input type="hidden" [(ngModel)]="cliente.clienteLimiteDTO.clienteDTO_id"
+                                                disabled />
+
+                                            <div class="form-group row">
+                                                <label for="limiteConfiguradoAtual"
+                                                    class="col-sm-2 control-label">Limite</label>
+                                                <div class="col-sm-10">
+                                                    <input currencyMask class="form-control" id="limiteConfiguradoAtual"
+                                                        name="limiteConfiguradoAtual"
+                                                        [(ngModel)]="cliente.clienteLimiteDTO.limite"
+                                                        [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"
+                                                        (focus)="alterandoLimite()"
+                                                        ngbTooltip="Digite o novo limite do Cliente">
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="form-group row">
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="idLimiteDtaInclusao">Dta Inclusão</label>
+                                                        <span class="form-control span-disable"
+                                                            name="nameLimiteDtaInclusao"
+                                                            id="idLimiteDtaInclusao">{{cliente.clienteLimiteDTO.dtaInclusao
+                                                            | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="idLimiteUsuarioInclusao">Usuário Inclusão</label>
+                                                        <span class="form-control span-disable"
+                                                            name="nameLimiteUsuarioInclusao"
+                                                            id="idLimiteUsuarioInclusao">{{cliente.clienteLimiteDTO.usuarioInclusao}}</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <br>
+
+
+                                            <div class="form-group row">
+                                                <label for="JustificativaConfAtual"
+                                                    class="col-sm-2 control-label">Justificativa</label>
+                                                <div class="col-sm-10">
+                                                    <textarea class="form-control" name="JustificativaConfAtual"
+                                                        id="JustificativaConfAtual"
+                                                        [(ngModel)]="cliente.clienteLimiteDTO.descricao"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr *ngIf="cliente.clienteLimiteHistoricoDTOs.length > 0">
+
+                                        <div *ngIf="cliente.clienteLimiteHistoricoDTOs.length > 0">
+                                            <div class="align-center text-center">
+                                                <h5>Histórico</h5>
+                                            </div>
+                                            <hr>
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteLimiteHistoricoDTOs" [columnMode]="'force'"
+                                                [rowClass]="getRowClass" [headerHeight]="40" [footerHeight]="70"
+                                                [rowHeight]="'auto'" [limit]="20" [selected]="selected"
+                                                [sorts]="[{prop:'dtaInclusao',dir: 'desc'}]"
+                                                [selectionType]="selectionTypeSingle"
+                                                [sorts]="[{prop: 'dtaInclusao', dir: 'desc'}]"
+                                                (select)='onSelectLimite($event)'>
+                                                <ngx-datatable-column name="LIMITE"
+                                                    prop="limite"></ngx-datatable-column>
+                                                <ngx-datatable-column name="USUARIO INCLUSÃO" prop="usuarioInclusao">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DESCRIÇÃO" prop="descricao">
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="6">
+                                    <a ngbNavLink>Condição Pagamento</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Adicionar as condições de pagamentos que o cliente poderá utilizar</h5>
+                                        </div>
+                                        <br>
+
+                                        <div class="form-group row">
+                                            <label for="condicaoPagamentoLabelId"
+                                                class="col-sm-2 col-form-label">Condições</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" name="condicaoPagamentoLabelName"
+                                                    id="condicaoPagamentoLabelId" [(ngModel)]="condicaoPagamentoLabel">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option *ngFor="let cond of condicaoPagamentoLabels"
+                                                        [ngValue]="cond">
+                                                        {{cond.nome}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-2 col-xl-2 col-12  d-grid ">
+                                                <button class="btn btn-block btn-primary butao-acao"
+                                                    (click)="addCondicoes()">
+                                                    <span class="fa fa-plus span-buttons-body span-acao"></span> Add
+
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-2 col-xl-2 col-12  d-grid ">
+                                                <button class="btn btn-block btn-warning butao-acao"
+                                                    (click)="atualizaCondicoes()">
+                                                    <span class="fa fa-refresh span-buttons-body span-acao"></span>
+                                                    Update
+
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <br>
+
+                                        <div *ngIf="cliente.condicaoPagamentoDTOs.length > 0" class="horizontal-scroll">
+                                            <table class="table table-bordered table-object-selected">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Id</th>
+                                                        <th>Nome</th>
+                                                        <th>Ações</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let condCli of cliente.condicaoPagamentoDTOs">
+                                                        <td class="align-left">{{condCli.id}}</td>
+                                                        <td class="align-left">{{condCli.nome}}</td>
+                                                        <td class="align-center">
+                                                            <button class="btn btn-danger"
+                                                                (click)="removeCondicao(condCli.id)"
+                                                                (keydown)="removeCondicao(condCli.id)" tabindex="0">
+                                                                <fa-icon class="ms-auto"
+                                                                    [icon]="['fas', 'trash']"></fa-icon>
+                                                            </button>
+
+
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="form-group row" *ngIf="cliente.condicaoPagamentoDTOs.length > 0">
+                                            <label for="condicaoPagamentoLabelId"
+                                                class="col-sm-2 col-form-label">Condição
+                                                Preferida</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" name="condicaoPagamentoLabelName"
+                                                    id="condicaoPagamentoLabelId"
+                                                    [(ngModel)]="cliente.codCondicaoPagamento">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option *ngFor="let cond of cliente.condicaoPagamentoDTOs"
+                                                        [ngValue]="cond.id">{{cond.nome}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="7">
+                                    <a ngbNavLink>Consulta Credito</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+
+
+                                        <div>
+                                            <div class="align-center text-center">
+                                                <h5>Adicionar consulta de credito</h5>
+                                            </div>
+
+                                            <br>
+                                            <input type="hidden" [(ngModel)]="clienteConsultaCredito.id" disabled />
+                                            <input type="hidden" [(ngModel)]="clienteConsultaCredito.clienteDTO_id"
+                                                disabled />
+
+                                            <div class="form-group row">
+                                                <label for="orgao" class="col-sm-2 control-label">Orgão</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="orgao" name="orgao"
+                                                        [(ngModel)]="clienteConsultaCredito.orgao"
+                                                        ngbTooltip="Digite o orgão da consulta do Cliente, por exemplo SERASA">
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="form-group row">
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="idDtaInclusaoCredito">Dta Inclusão</label>
+                                                        <span class="form-control span-disable"
+                                                            name="nameDtaInclusaoCredito"
+                                                            id="idDtaInclusaoCredito">{{clienteConsultaCredito.dtaInclusao
+                                                            | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="idUsuarioInclusaoConsultaCredito">Usuário
+                                                            Inclusão</label>
+                                                        <span class="form-control span-disable"
+                                                            name="nameUsuarioInclusaoConsultaCredito"
+                                                            id="idUsuarioInclusaoConsultaCredito">{{clienteConsultaCredito.usuarioInclusao}}</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <br>
+
+                                            <div class="form-group row">
+                                                <label for="descricaoConsulta"
+                                                    class="col-sm-2 control-label">Descrição</label>
+                                                <div class="col-sm-10">
+                                                    <textarea class="form-control" name="descricaoConsulta"
+                                                        id="descricaoConsulta"
+                                                        [(ngModel)]="clienteConsultaCredito.descricao"
+                                                        ngbTooltip="Digite a descrição da consulta do Cliente, no maximo 255 caracteres"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block butao-acao btn-primary"
+                                                    (click)="addConsultaCredito()"
+                                                    ngbTooltip="Clique aqui para adicionar uma nova consulta de credito">
+                                                    <span class="fa fa-plus span-buttons-body span-acao"></span>
+                                                    Adicionar
+                                                    Consulta
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block btn-outline-dark butao-acao"
+                                                    (click)="onLimpaConsultaCredito()">
+                                                    <span class="fa fa-eraser span-buttons-body span-acao"></span>
+                                                    Limpar Consulta
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block btn-danger butao-acao"
+                                                    (click)="onDeletaConsultaCredito()"
+                                                    [disabled]="!hasOwnPropertyObjetos('id',hasOwnPropertyObjetos) || selectedConsultaCredito.id! > 0">
+                                                    <span class="fa fa-trash span-buttons-body span-acao"></span>
+                                                    Deletar Consulta
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr *ngIf="cliente.clienteConsultaCreditoDTOs.length > 0">
+
+                                        <div *ngIf="cliente.clienteConsultaCreditoDTOs.length > 0">
+                                            <div class="align-center text-center">
+                                                <h5>Histórico</h5>
+                                            </div>
+                                            <hr>
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteConsultaCreditoDTOs" [columnMode]="'force'"
+                                                [rowClass]="getRowClass" [headerHeight]="40" [footerHeight]="70"
+                                                [rowHeight]="'auto'" [limit]="20" [selected]="selected"
+                                                [sorts]="[{prop:'dtaInclusao',dir: 'desc'}]"
+                                                [selectionType]="selectionTypeSingle"
+                                                (select)='onSelectConsultaCredito($event)'>
+                                                <ngx-datatable-column name="ORGÃO" prop="orgao"></ngx-datatable-column>
+                                                <ngx-datatable-column name="USUARIO INCLUSÃO" prop="usuarioInclusao">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DESCRIÇÃO" prop="descricao">
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="8">
+                                    <a ngbNavLink>Vendedores</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+
+                                        <div class="align-center text-center">
+                                            <h5>Configure os Vendedores para o Cliente</h5>
+                                        </div>
+                                        <br>
+
+                                        <div class="form-group row">
+                                            <label for="clienteVendedorNameId"
+                                                class="col-sm-2 col-form-label">Vendedores</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" name="clienteVendedorName"
+                                                    id="clienteVendedorNameId"
+                                                    [(ngModel)]="clienteVendedorDTO.funcionarioDTO">
+                                                    <option [ngValue]="null">Selecione</option>
+                                                    <option *ngFor="let vend of vendedores" [ngValue]="vend">
+                                                        {{vend.nome}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                                                <button class="btn btn-block btn-warning butao-acao"
+                                                    (click)="atualizaCondicoes()">
+                                                    <span class="fa fa-refresh span-buttons-body span-acao"></span>
+                                                    Update
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <br>
+                                        <div class="align-center text-center">
+                                            <h6>Dias de Visita</h6>
+                                        </div>
+                                        <br>
+
+                                        <div class="form-group">
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaSeg"
+                                                    name="checkVisitaSeg" [(ngModel)]="clienteVendedorDTO.segunda">
+                                                <label class="form-check-label" for="inlineCheckbox1">Segunda</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaTer"
+                                                    name="checkVisitaTer" [(ngModel)]="clienteVendedorDTO.terca">
+                                                <label class="form-check-label" for="checkVisitaTer">Terça</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaQua"
+                                                    name="checkVisitaQua" [(ngModel)]="clienteVendedorDTO.quarta">
+                                                <label class="form-check-label" for="checkVisitaQua">Quarta</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaQint"
+                                                    name="checkVisitaQint" [(ngModel)]="clienteVendedorDTO.quinta">
+                                                <label class="form-check-label" for="checkVisitaQint">Quinta</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaSex"
+                                                    name="checkVisitaSex" [(ngModel)]="clienteVendedorDTO.sexta">
+                                                <label class="form-check-label" for="checkVisitaSex">Sexta</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaSab"
+                                                    name="checkVisitaSab" [(ngModel)]="clienteVendedorDTO.sabado">
+                                                <label class="form-check-label" for="checkVisitaSab">Sabado</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="checkVisitaDom"
+                                                    name="checkVisitaDom" [(ngModel)]="clienteVendedorDTO.domingo">
+                                                <label class="form-check-label" for="checkVisitaDom">Domingo</label>
+                                            </div>
+
+                                            <!-- <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaSeg" name="checkVisitaSeg"
+                                                    [(ngModel)]="clienteVendedorDTO.segunda">
+                                                Segunda
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaTer" name="checkVisitaTer"
+                                                    [(ngModel)]="clienteVendedorDTO.terca">
+                                                Terca
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaQua" name="checkVisitaQua"
+                                                    [(ngModel)]="clienteVendedorDTO.quarta">
+                                                Quarta
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaQui" name="checkVisitaQui"
+                                                    [(ngModel)]="clienteVendedorDTO.quinta">
+                                                Quinta
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaSex" name="checkVisitaSex"
+                                                    [(ngModel)]="clienteVendedorDTO.sexta">
+                                                Sexta
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaSab" name="checkVisitaSab"
+                                                    [(ngModel)]="clienteVendedorDTO.sabado">
+                                                Sabado
+                                            </label>
+                                            <label class="checkbox-inline chbox">
+                                                <input type="checkbox" id="checkVisitaDom" name="checkVisitaDom"
+                                                    [(ngModel)]="clienteVendedorDTO.domingo">
+                                                Domingo
+                                            </label> -->
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-3 col-12 d-grid">
+                                                <button class="btn btn-block btn-primary butao-acao"
+                                                    (click)="addVendedores()">
+                                                    <span class="fa fa-plus span-buttons-body span-acao"></span>
+                                                    Adicionar Vendedor
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12 d-grid">
+                                                <button class="btn btn-block btn-outline-dark butao-acao"
+                                                    (click)="limparAddVendedores()">
+                                                    <span class="fa fa-eraser span-buttons-body span-acao"></span>
+                                                    Limpar Vendedor
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12 d-grid">
+                                                <button class="btn btn-block btn-danger butao-acao"
+                                                    (click)="excluiVendedor()">
+                                                    <span class="fa fa-trash span-buttons-body span-acao"></span> Exclui
+                                                    Vendedor
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr *ngIf="cliente.clienteVendedorDTOs.length > 0">
+
+                                        <div *ngIf="cliente.clienteVendedorDTOs.length > 0" class="horizontal-scroll">
+
+                                            <ngx-datatable class="material striped" [scrollbarH]="true" appResizeWatcher
+                                                [rows]="cliente.clienteVendedorDTOs" [columnMode]="ColumnMode.standard"
+                                                [rowClass]="getRowClass" [headerHeight]="35" [footerHeight]="50"
+                                                [limit]="20" [selected]="selected" [sorts]="[{prop: 'id', dir: 'desc'}]"
+                                                [selectionType]="selectionTypeSingle"
+                                                (select)='onSelectVendedor($event)'>
+
+                                                <ngx-datatable-column name="VENDEDOR" prop="funcionarioDTO.nome"
+                                                    [width]="400">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="SEGUNDA" prop="segunda" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="TERCA" prop="terca" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="QUARTA" prop="quarta" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="QUINTA" prop="quinta" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="SEXTA" prop="sexta" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="SABADO" prop="sabado" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="DOMINGO" prop="domingo" [width]="150">
+                                                    <ng-template let-value="value" ngx-datatable-cell-template>
+                                                        {{value === true ? 'Ativo' : 'Desativado'}}
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+
+                                        </div>
+
+                                    </ng-template>
+                                </li>
+
+                                <li [ngbNavItem]="9">
+                                    <a ngbNavLink>Emissores</a>
+                                    <ng-template ngbNavContent>
+                                        <br>
+
+
+
+
+                                        <div>
+                                            <div class="align-center text-center">
+                                                <h5>Adicionar Emissores</h5>
+                                            </div>
+
+                                            <br>
+                                            <input type="hidden" [(ngModel)]="clienteEmissor.id" disabled />
+                                            <input type="hidden" [(ngModel)]="clienteEmissor.clienteDTO_id" disabled />
+
+                                            <div class="row">
+
+                                                <div class="col-lg-9 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idNomeEmissorCh">Nome</label>
+                                                        <input type="text" class="form-control" id="idNomeEmissorCh"
+                                                            name="nmNomeEmissorCH" [(ngModel)]="clienteEmissor.nome">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-3 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idCGCEmissorCh">CGC</label>
+                                                        <input type="text" name="nmCGCCheque"
+                                                            [specialCharacters]="[' ', '(', ')', '-', '.', '/']"
+                                                            [dropSpecialCharacters]="true" [showMaskTyped]="true"
+                                                            mask="00.000.000/0000-00" class="form-control"
+                                                            id="idCGCEmissorCh" [(ngModel)]="clienteEmissor.cgc">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-9 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idEmailEmissorCh">Email</label>
+                                                        <input type="text" name="nmEmailEmissorCheque"
+                                                            class="form-control" id="idEmailEmissorCh"
+                                                            [(ngModel)]="clienteEmissor.email">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-3 col-12 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idFoneEmissorCh">Fone</label>
+                                                        <input type="text" name="nmFoneEmissorCheque"
+                                                            [specialCharacters]="[' ', '(', ')', '-', '.']"
+                                                            [dropSpecialCharacters]="true" [showMaskTyped]="true"
+                                                            mask="(00) 0.0000-0000" class="form-control"
+                                                            id="idFoneEmissorCh" [(ngModel)]="clienteEmissor.fone">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block butao-acao"
+                                                    [ngClass]="!isDisableDeleteClienteEmissor() ? 'btn-warning':'btn-primary'"
+                                                    (click)="addEmissor()">
+                                                    <span
+                                                        class="fa fa-plus span-buttons-body span-acao"></span>{{!isDisableDeleteClienteEmissor()
+                                                    ? 'Alterar Emissor' : 'Adicionar Emissor' }}
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block btn-outline-dark butao-acao"
+                                                    (click)="onLimpaEmissor()">
+                                                    <span class="fa fa-eraser span-buttons-body span-acao"></span>
+                                                    Limpar Emissor
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-3 col-12  d-grid ">
+                                                <button class="btn btn-block btn-danger butao-acao"
+                                                    (click)="onDeletaEmissor()"
+                                                    [disabled]="isDisableDeleteClienteEmissor()">
+                                                    <span class="fa fa-trash span-buttons-body span-acao"></span>
+                                                    Deletar Emissor
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr *ngIf="cliente.clienteEmissorDTOs.length > 0">
+
+                                        <div *ngIf="cliente.clienteEmissorDTOs.length > 0">
+                                            <ngx-datatable class="material striped" [scrollbarH]="true"
+                                                [rows]="cliente.clienteEmissorDTOs" [columnMode]="'force'"
+                                                [rowClass]="getRowClass" [headerHeight]="40" [footerHeight]="70"
+                                                [rowHeight]="'auto'" [limit]="20" [selected]="selectedClienteEmissor"
+                                                [sorts]="[{prop:'id',dir: 'desc'}]"
+                                                [selectionType]="selectionTypeSingle"
+                                                (select)='onSelectEmissor($event)'>
+                                                <ngx-datatable-column name="ID" prod="id"
+                                                    [width]="120"></ngx-datatable-column>
+                                                <ngx-datatable-column name="NOME" prop="nome"
+                                                    [width]="400"></ngx-datatable-column>
+                                                <ngx-datatable-column name="CGC" prop="cgc" [width]="200">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="EMAIL" prop="email" [width]="300">
+                                                </ngx-datatable-column>
+                                                <ngx-datatable-column name="FONE" prop="fone" [width]="200">
+                                                </ngx-datatable-column>
+                                            </ngx-datatable>
+                                        </div>
+
+
+                                    </ng-template>
+                                </li>
+                            </ul>
+                            <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="statusForm === 3">
+            <div class="card bg-light mb-3">
+                <div class="card-header">Ações</div>
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-sm-3 col-6 d-grid div-mobile-buttons">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" (click)="voltar()">
+                                <span class="fa fa-arrow-left span-acao"></span> Voltar
+                            </button>
+                        </div>
+
+                        <div class="col-sm-3 col-6 d-grid div-mobile-buttons">
+                            <button type="button" class="btn btn-block btn-warning butao-acao"
+                                [disabled]="selected.length === 0" (click)="editando()">
+                                <span class="fa fa-edit span-acao"></span> Editar
+                            </button>
+                        </div>
+
+                        <!-- <div class="col-sm-3 col-6 d-grid div-mobile-buttons">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" (click)="geraCSV()">
+                                <span class=" span-acao fa"
+                                    [ngClass]="botaoGeraCSV != 'Gerar CSV' ? 'fa-refresh fa-spin fa-fw' : ''"></span>
+                                {{botaoGeraCSV}}
+                            </button>
+                        </div> -->
+
+                    </div>
+                </div>
+            </div>
+
+            <ngx-datatable class="material striped" [scrollbarH]="true" [rows]="pageCliente.content"
+                [columnMode]="ColumnMode.standard" [rowClass]="getRowClass" [headerHeight]="35" [footerHeight]="50"
+                [selected]="selected" appResizeWatcher [selectionType]="selectionTypeSingle"
+                (activate)="onActivate($event)" [externalPaging]="true" [count]="pageCliente.totalElements"
+                [offset]="pageCliente.pageable.pageNumber" [limit]="pageCliente.size" (page)='setPage($event)'>
+
+                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                <ngx-datatable-column name="NOME" prop="nome" [width]="400"></ngx-datatable-column>
+                <ngx-datatable-column name="FANTASIA" prop="fantasia" [width]="400"></ngx-datatable-column>
+                <ngx-datatable-column name="QTD END" [width]="70" prop="qtdEndereco"></ngx-datatable-column>
+                <ngx-datatable-column name="ENDEREÇO" [width]="650">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{row.endereco}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="QTD VEND" [width]="70" prop="qtdVendedor"> </ngx-datatable-column>
+                <ngx-datatable-column name="VENDEDOR" [width]="300">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{row.vend}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="CGC" prop="cgc" [width]="200"></ngx-datatable-column>
+                <ngx-datatable-column name="EMAIL" prop="email" [width]="400"></ngx-datatable-column>
+                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="200">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                    [width]="140"></ngx-datatable-column>
+                <ngx-datatable-column name="FONE1" prop="telefone1" [width]="120"></ngx-datatable-column>
+            </ngx-datatable>
+
+        </div>
+    </div>
+</div>

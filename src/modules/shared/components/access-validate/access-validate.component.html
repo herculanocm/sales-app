@@ -1,0 +1,64 @@
+<ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-spin-clockwise"
+  name="modalValidateUserSpinner">
+  <p style="font-size: 20px; color: white">
+    Comunicando com o Servidor, Aguarde...
+  </p>
+</ngx-spinner>
+
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{modalHeader}}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss({ validate: false })"></button>
+</div>
+<div class="modal-body">
+  <h5>{{modalContent}}</h5>
+  <form [formGroup]="modalForm">
+
+    <div class="row">
+
+      <div class="col-12 padding-5">
+        <div class="form-group">
+          <label for="idUsuario">Usuário</label>
+          <input type="text" [ngClass]="{'is-invalid': submitted && f.username.errors}" class="form-control" (keydown.enter)="validarPassword()"
+            formControlName="username" id="idUsuario" placeholder="Usuário" />
+
+          <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+            <div *ngIf="f.username.errors['required']">Digite um usuário
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 padding-5">
+        <div class="form-group">
+          <label for="idSenha">Senha</label>
+          <input type="password" [ngClass]="{'is-invalid': submitted && f.password.errors}" class="form-control" (keydown.enter)="validarPassword()"
+            formControlName="password" id="idSenha" placeholder="Senha" />
+
+          <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors['required']">Digite uma senha
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 padding-5" *ngIf="messageValidation.length > 1">
+        <p class="message-validation-error">{{messageValidation}}</p>
+      </div>
+
+      
+
+    </div>
+
+
+  </form>
+
+  <div class="modal-footer">
+    <div class="col-12">
+      <div class="col-12 text-center">
+        <button class="btn btn-md btn-primary" (click)="validarPassword()">
+          Validar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

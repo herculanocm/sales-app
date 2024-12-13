@@ -1,0 +1,350 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+
+    <app-page-header [pheading]="' Configurações'" [picon]="'fa-cogs'" [heading]="'Configurações Gerais'"
+        [icon]="'fa-th-list'"></app-page-header>
+
+
+
+    <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+        type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+    </ngx-spinner>
+
+
+
+
+    <div class="col-sm-12">
+        <div class="card bg-light mb-3">
+            <div class="card-body" style="background-color: white;">
+                <div class="row">
+                    <div class="col-lg-3 col-xl-3 col-12 d-grid">
+                        <button class="btn btn-block btn-warning butao-acao" (click)="onCadastra()">
+                            <span class="fa fa-save span-acao"></span> Alterar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-12">
+        <div class="card bg-light mb-3">
+            <div class="card-header">Configurações Gerais</div>
+            <div class="card-body" style="background-color: white;">
+
+
+                <div class="row">
+                    <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs" orientation="horizontal">
+
+                        <li [ngbNavItem]="1">
+                            <button ngbNavLink>Cadastros</button>
+                            <ng-template ngbNavContent>
+
+
+
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Impedir duplicação de CGC para clientes?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCGCDupl" [value]="true"
+                                                                [(ngModel)]="conf.clienteCGCDuplicado"> Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCGCDupl" [value]="false"
+                                                                [(ngModel)]="conf.clienteCGCDuplicado"> Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Validar CGC para clientes?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCGCValido" [value]="true"
+                                                                [(ngModel)]="conf.clienteCGCValido"> Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCGCValido" [value]="false"
+                                                                [(ngModel)]="conf.clienteCGCValido"> Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>API google Key</td>
+                                            <td>
+                                                <input type="text" class="form-control" name="nmGoogleApiKey"
+                                                    [(ngModel)]="conf.googleApiKey" id="idGoogleApiKey">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="2">
+                            <button ngbNavLink>Exportação</button>
+                            <ng-template ngbNavContent>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Caminho de Exportação CSV?</td>
+                                            <td class="align-left">
+                                                <input type="text" class="form-control" name="caminhoGeracaoCSV"
+                                                    [(ngModel)]="conf.caminhoGeracaoCSV" id="caminhoGeracaoCSV"
+                                                    placeholder="Caminho Exportação">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="3">
+                            <button ngbNavLink>Vendas</button>
+                            <ng-template ngbNavContent>
+
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Id do Estoque Almoxarifado para Venda?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <input type="number" class="form-control"
+                                                        [(ngModel)]="conf.vendaEstoqueAlmoxarifadoId">
+                                                </fieldset>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Venda Bloqueada?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="nameRdVendaBloqueada"
+                                                                [value]="true" [(ngModel)]="conf.vendaBloqueada">
+                                                            Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="nameRdVendaBloqueada"
+                                                                [value]="false" [(ngModel)]="conf.vendaBloqueada">
+                                                            Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Valor minimo Pedido</td>
+                                            <td>
+                                                <input type="number" class="form-control" name="nameVlrMinimoPedido"
+                                                    [(ngModel)]="conf.valMinVenda" id="idVlrMinimoPedido">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cliente compra com saldo zerado?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCliSaldoZerado" [value]="true"
+                                                                [(ngModel)]="conf.clienteCompraSaldoZerado"> Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCliSaldoZerado"
+                                                                [value]="false"
+                                                                [(ngModel)]="conf.clienteCompraSaldoZerado"> Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+
+
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Cliente compra a prazo com saldo zerado?</td>
+                                            <td>
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCliCompraPrazoSaldoZerado"
+                                                                [value]="true"
+                                                                [(ngModel)]="conf.clienteCompraPrazoSaldoZerado">
+                                                            Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdCliCompraPrazoSaldoZerado"
+                                                                [value]="false"
+                                                                [(ngModel)]="conf.clienteCompraPrazoSaldoZerado">
+                                                            Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Cliente compra somente com condições cadastradas?</td>
+                                            <td>
+
+                                                <fieldset class="form-group">
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdClienteCompraCondCadastro"
+                                                                [value]="true"
+                                                                [(ngModel)]="conf.clienteCompraCondCadastro">
+                                                            Sim
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="opRdClienteCompraCondCadastro"
+                                                                [value]="false"
+                                                                [(ngModel)]="conf.clienteCompraCondCadastro"> Não
+                                                        </label>
+                                                    </div>
+                                                </fieldset>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="4">
+                            <button ngbNavLink>Movimentos</button>
+                            <ng-template ngbNavContent>
+
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Tipo de Movimento na Transferência de Almoxarifado - Origem</td>
+                                            <td>
+                                                <input type="number" class="form-control" name="nameTipoMovTransfOrigem"
+                                                    [(ngModel)]="conf.tipoMovimentoTransfOrigem"
+                                                    id="idTipoMovTransfOrigem">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo de Movimento na Transferência de Almoxarifado - Destino</td>
+                                            <td>
+                                                <input type="number" class="form-control"
+                                                    name="nameTipoMovTransfDestino"
+                                                    [(ngModel)]="conf.tipoMovimentoTransfDestino"
+                                                    id="idTipoMovTransfDestino">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="5">
+                            <button ngbNavLink>Titulos</button>
+                            <ng-template ngbNavContent>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Cod do Banco para geração de titulos na venda</td>
+                                            <td>
+                                                <input type="number" class="form-control" name="nmVendaTituloBancoId"
+                                                    [(ngModel)]="conf.idVendaTituloBancoId" id="idVendaTituloBancoId">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="6">
+                            <button ngbNavLink>Senhas</button>
+                            <ng-template ngbNavContent>
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Data/Hora limite para troca de senha</td>
+                                            <td>
+                                                <input type="datetime-local" class="form-control" name="nmDataHoraLimiteTrocaSenha"
+                                                    [(ngModel)]="conf.trocaSenha" id="idDataHoraLimiteTrocaSenha">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </ng-template>
+                        </li>
+
+                    </ul>
+                    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

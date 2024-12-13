@@ -1,0 +1,83 @@
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Configurações'" [picon]="'fa-cogs'" [heading]="'Executor'"
+        [icon]="'fa-th-list'"></app-page-header>
+
+
+    <div class="card">
+        <div class="row">
+            <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                type="ball-spin-clockwise">
+                <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+            </ngx-spinner>
+
+            <div class="col-sm-12">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <!--
+                    <div class="col-3">
+                        <button class="btn btn-block btn-warning butao-acao" (click)="atualizaLatLongEnderecos()">
+                            <span class="fa fa-save span-acao"></span> Atualizar Endereços
+                        </button>
+                    </div>
+                -->
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-warning butao-acao"
+                                    (click)="atualizarPlanilhaVendas()">
+                                    <span class="fa fa-bolt span-acao"></span> Exportar Planilha de Vendas
+                                </button>
+                            </div>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-warning butao-acao"
+                                    (click)="backupPostgres()">
+                                    <span class="fa fa-bolt span-acao"></span> Realizar Backup do database
+                                </button>
+                            </div>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-warning butao-acao"
+                                    (click)="copyTitulosWinthor()">
+                                    <span class="fa fa-bolt span-acao"></span> Copy Titulos
+                                </button>
+                            </div>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-danger butao-acao"
+                                    (click)="deployAPI()">
+                                    <span class="fa fa-bolt span-acao"></span> Deploy API
+                                </button>
+                            </div>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-danger butao-acao"
+                                    (click)="deployNG()">
+                                    <span class="fa fa-bolt span-acao"></span> Deploy NG
+                                </button>
+                            </div>
+
+                            <hr>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-danger butao-acao"
+                                    (click)="bloqueioClientesInadimplentes()">
+                                    <span class="fa fa-bolt span-acao"></span> Bloqueio clientes Inadimplentes
+                                </button>
+                            </div>
+
+                            <div class="col-lg-4 col-12 d-grid">
+                                <button class="btn btn-block btn-danger butao-acao"
+                                    (click)="desbloqueioClientesInadimplentes()">
+                                    <span class="fa fa-bolt span-acao"></span> Desbloqueio clientes Inadimplentes
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div [ngClass]="modalType === 'error' ? 'error-dialog' : ''">
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <p>Caso haja descrição deve ser adicinada na guia Geral antes de confirmar</p>
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div *ngIf="modalType === 'confirm' || modalType === 'remove-image'"
+                    class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-danger" (click)="justificativa()">{{confirmLabel}}</button>
+                </div>
+                <div
+                    [ngClass]="modalType === 'confirm' || modalType === 'remove-image' ? 'col-6 text-center d-grid':''">
+                    <button class="btn btn-md" ngbAutofocus
+                        [ngClass]="modalType === 'error' ? 'btn-danger':'btn-primary'"
+                        (click)="fechar()">{{defaultLabel}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

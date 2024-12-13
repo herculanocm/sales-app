@@ -1,0 +1,73 @@
+<div class="login-page">
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">
+
+            <h1 style="color: white;">Atenção vamos trocar de senha</h1>
+            <h3 style="color: white;">Escolha uma senha que contenha entre 8 e 12 caracteres, sendo números e letras com
+                pelo menos um caractere especial ex: (&#64;#$%&*)</h3>
+            <form role="form" [formGroup]="changeForm">
+                <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                    type="ball-spin-clockwise">
+                    <p style="font-size: 20px; color: white">Trocando a senha, Aguarde...</p>
+                </ngx-spinner>
+                <div class="form-content">
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg"
+                            [ngClass]="{'is-invalid': submitted && f['password'].errors}" id="idPassword"
+                            formControlName="password" placeholder="Nova Senha">
+                        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                            <div *ngIf="f['password'].errors['required']">Digite o Password
+                            </div>
+                            <div *ngIf="f['password'].errors['minlength']">Valor deve ter no minimo 8 caracteres
+                            </div>
+                            <div *ngIf="f['password'].errors['maxlength']">Valor deve ter no máximo 12 caracteres
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="form-control input-underline input-lg"
+                            [ngClass]="{'is-invalid': isPassword2Error()}" id="idPassword2"
+                            formControlName="password2" placeholder="Repita a Nova Senha">
+                        <div *ngIf="isPassword2Error()" class="invalid-feedback">
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['required']">Repita o Password
+                            </div>
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['minlength']">Valor deve ter no minimo 8 caracteres
+                            </div>
+                            <div *ngIf="f['password2'].errors && f['password2'].errors['maxlength']">Valor deve ter no máximo 12 caracteres
+                            </div>
+                            <div *ngIf="isPasswordMismatch()">As senhas devem ser iguais
+                            </div>
+                            <div *ngIf="isPasswordMisformat()">Escolha uma senha que contenha entre 8 e 12 caracteres, sendo números e letras com
+                                pelo menos um caractere especial ex: (&#64;#$%&*)
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <!-- <div>
+                     <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" [value]="true" [(ngModel)]="userForm.loginbebidas">
+                        <label class="form-check-label" for="inlineRadio1">Login Bebidas</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" [value]="false" [(ngModel)]="userForm.loginbebidas" disabled >
+                        <label class="form-check-label" for="inlineRadio2">Login Cereais</label>
+                      </div>
+                </div> -->
+
+                <div role="presentation">
+                    <!-- <a class="btn rounded-btn" tabIndex={0} role="button" (click)="onLoggedin()" (keydown)="onLoggedin()" >Entrar</a> -->
+                    <button class="btn rounded-btn" tabIndex={0} role="button" (click)="onChagePass()" (keydown)="onChagePass()" >Trocar a Senha</button>
+
+                </div>
+                &nbsp;
+
+                <!--<a class="btn rounded-btn" [routerLink]="['/signup']">{{ 'Register' | translate }}</a>-->
+            </form>
+        </div>
+    </div>
+</div>

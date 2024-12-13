@@ -1,0 +1,167 @@
+<app-head-compact title="Acessos - Usuário"
+    icon="user"></app-head-compact><!-- Main page content-->
+<div class="container-xl px-4 mt-4" style="max-width: 950px;">
+    <!-- <nav class="nav nav-borders"><a class="nav-link active ms-0" routerLink="/pages/access/user">Usuário</a>
+        <a class="nav-link" routerLink="/pages/access/find-user">Busca</a>
+    </nav> 
+<hr class="mt-0 mb-4" />
+-->
+
+
+    <div class="row gx-4">
+        <div class="col-xl-12">
+            <!-- Account details card-->
+            <div class="card mb-4">
+                <div class="card-header">Formulário</div>
+                <div class="card-body">
+
+                    <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+                        type="ball-spin-clockwise">
+                        <p style="color: white">Aguarde...</p>
+                    </ngx-spinner>
+
+                    <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+                        <div class="row">
+
+                            <div class="col-sm-2 col-4 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-profile">Id</label>
+                                    <input type="number" class="form-control" id="id-titulo" formControlName="id">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-8 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-login">Login*</label>
+                                    <input type="text" class="form-control" id="id-login"
+                                        [ngClass]="{'is-invalid': submitted && f.login.errors}" formControlName="login">
+                                    <div *ngIf="submitted && f.login.errors" class="invalid-feedback">
+                                        <div *ngIf="f.login.errors['required']">Adicione um login
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-12 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-email">Email*</label>
+                                    <input type="email" class="form-control" id="id-email"
+                                        [ngClass]="{'is-invalid': submitted && f.email.errors}" formControlName="email">
+                                    <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                        <div *ngIf="f.email.errors['required']">Adicione um email
+                                        </div>
+                                        <div *ngIf="f.email.errors['email']">Adicione um email válido
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-first-name">Primeiro Nome*</label>
+                                    <input type="text" class="form-control" id="id-first-name"
+                                        [ngClass]="{'is-invalid': submitted && f.firstName.errors}"
+                                        formControlName="firstName">
+                                    <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                                        <div *ngIf="f.firstName.errors['required']">Adicione o primeiro Nome
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-6 div-field">
+                                <div class="form-group">
+                                    <label class="small mb-1" for="id-last-name">Último Nome</label>
+                                    <input type="text" class="form-control" id="id-last-name"
+                                        formControlName="lastName">
+                                </div>
+                            </div>
+
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label for="id-checkbox-usuario-desabilitado" class="small mb-1">Usuário Desabilitado?</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                            id="id-checkbox-usuario-desabilitado" formControlName="disabled">
+                                        <label class="form-check-label" for="id-checkbox-usuario-desabilitado">Usuário
+                                            não coseguirá logar na plataforma se ativado</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label for="id-checkbox-usuario-login-app" class="small mb-1">Logins</label>
+                                    <div>
+                                        <div class="form-check form-switch form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                id="id-checkbox-usuario-login-app" formControlName="singinByApp">
+                                            <label class="form-check-label" for="id-checkbox-usuario-login-app">Login
+                                                pelo APP</label>
+                                        </div>
+                                        <div class="form-check form-switch form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                id="id-checkbox-usuario-login-msft" formControlName="singinByMSF">
+                                            <label class="form-check-label" for="id-checkbox-usuario-login-msft">Login
+                                                pela Microsoft</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                            <div class="col-12 div-field">
+                                <div class="form-group">
+                                    <label for="idRoles" class="small mb-1">Roles de Acesso*</label>
+                                    <ng-select id="idRoles" [items]="roles" [multiple]="true" [closeOnSelect]="true"
+                                        [ngClass]="{'is-invalid': submitted && f.authorities.errors}"
+                                        [compareWith]="compareRoles" [searchable]="true" bindLabel="name"
+                                        formControlName="authorities" >
+
+                                 
+                                    </ng-select>
+                                    <div *ngIf="submitted && f.authorities.errors" class="invalid-feedback">
+                                        <div *ngIf="f.authorities.errors['required']">Adicione uma role de acesso
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin-top: 10px;margin-bottom: 10px;">
+
+                        </div>
+                    </form>
+
+                    <div class="row">
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block butao-acao"
+                                [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onSubmit()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">{{statusForm ===
+                                    2 ?
+                                    'Alterar' : 'Salvar'}}
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-outline-dark butao-acao" (click)="onClear()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

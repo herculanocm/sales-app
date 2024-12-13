@@ -1,0 +1,29 @@
+<div class="sidenav border-end bg-white shadow-right" id="sidebar-wrapper">
+  
+
+ 
+  <div class="sidenav-menu scrollbar">
+    
+    <div class="nav">
+
+      <ng-container *ngFor="let section of sideNavSections">
+        <div class="sidenav-menu-heading" *ngIf="section.text">{{ section.text }}</div>
+        <ng-container *ngFor="let item of section.items"><app-side-nav-item [sideNavItem]="sideNavItems[item]"></app-side-nav-item>
+        </ng-container>
+      </ng-container>
+
+
+      <ng-container *ngFor="let section of sideNavSectionDashboards">
+        <div class="sidenav-menu-heading" *ngIf="section.text">{{ section.text }}</div>
+        <ng-container *ngFor="let item of section.items"><app-side-nav-item [sideNavItem]="sideNavItemsDashboards[item]"></app-side-nav-item>
+        </ng-container>
+      </ng-container>
+
+      
+
+    </div>
+
+
+  </div>
+
+</div>

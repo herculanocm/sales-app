@@ -1,0 +1,64 @@
+<div class="div-print-content">
+  <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+    type="ball-spin-clockwise">
+    <p style="font-size: 20px; color: white">Processando, Aguarde...</p>
+  </ngx-spinner>
+
+  <div class="div-print-principal" style="margin-bottom: 30px;"
+    *ngIf="cheques !== null && !isUndefined(cheques) && isArray(cheques) && cheques.length > 0">
+
+    <br>
+    <br>
+    <div class="col-12 text-align-center-titulo">
+      <p>DATA IMPRESSÃO: {{dataImpressao | amDateFormat:'DD/MM/YYYY HH:mm:ss' }} - USUÁRIO: {{currentUserSalesApp.username}}</p>
+    </div>
+
+    <hr>
+
+    <div class="col-12 text-align-center-titulo">
+      <p style="margin-bottom: 0px;padding-bottom: 0px;">QTD CHEQUES: {{cheques.length}} - VALOR TOTAL: {{getValorTotal() | number:'1.2-2':'pt-BR'}}</p>
+    </div>
+
+    <hr>
+    <br>
+
+      <div>
+          <table class="table table-sm table-striped table-bordered">
+
+
+              <thead>
+                  <tr>
+
+                      <th>Id</th>
+                      <th>Data Inclusão</th>
+                      <th>Usuário Inclusão</th>
+                      <th>Data Recebimento</th>
+                      <th>Data Prog Baixa</th>
+                      <th>Rec. Financ.</th>
+                      <th>Valor</th>
+                      <th>Banco</th>
+                      <th>Cliente</th>
+                      <th>Comp</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let ch of cheques">
+
+                      <td class="align-left">{{ch.id}}</td>
+                      <td class="align-left">{{ch.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                      <td class="align-left">{{ch.usuarioInclusao}}</td>
+                      <td class="align-left">{{ch.dtaRecebimento | amDateFormat:'DD/MM/YYYY'}}</td>
+                      <td class="align-left">{{ch.dtaProgBaixaCheque | amDateFormat:'DD/MM/YYYY'}}</td>
+                      <td class="align-left">{{ch.usuarioFinanceiro !== null && ch.usuarioFinanceiro.length > 0 ? 'SIM' : 'NÃO'}}</td>
+                      <td class="align-left">{{ch.vlr | number:'1.2-2':'pt-BR'}}</td>
+                      <td class="align-left">{{ch.bancoFebrabanDTO.desBanco}}</td>
+                      <td class="align-left">{{ch.clienteDTO.nome}}</td>
+                      <td class="align-left">{{ch.compensado === true ? 'SIM' : 'NÃO'}}</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+
+  </div>
+</div>

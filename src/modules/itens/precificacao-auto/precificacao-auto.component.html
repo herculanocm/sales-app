@@ -1,0 +1,223 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+
+<div class="col-12" style="padding: 15px; margin: 0px">
+  <app-page-header
+    [pheading]="' Itens'"
+    [picon]="'fa-th'"
+    [heading]="'Precificação Automática Item'"
+    [icon]="'fa-th-list'"
+  >
+  </app-page-header>
+
+  <div class="card div-geral-page">
+    <ngx-spinner
+      class="spinner-full"
+      name="fullSpinner"
+      [fullScreen]="false"
+      bdColor="rgba(51,51,51,0.8)"
+      size="medium"
+      color="#fff"
+      type="ball-spin-clockwise"
+    >
+      <p style="font-size: 20px; color: white">
+        Comunicando com o Servidor, Aguarde...
+      </p>
+    </ngx-spinner>
+
+    <div class="margin-padding-0">
+      <div class="card bg-light mb-3">
+        <div class="card-body padding-5">
+          <form [formGroup]="precoAlx">
+            <div class="row">
+              <div class="col-sm-2 col-12 padding-5">
+                <div class="form-group">
+                  <label for="idCodItem">Item ID</label>
+
+                  <div class="input-group" ngbTooltip="Digite o Codigo do Item">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="idCodItem"
+                      name="nameCodItem"
+                      formControlName="itemId"
+                      (keydown.Tab)="selectedItemId(itemProcura!.id)"
+                      (keydown.enter)="selectedItemId(itemProcura!.id)"
+                    />
+                    <div class="input-group-append">
+                      <button
+                        class="btn btn-secondary"
+                        (click)="selectedItemId(itemProcura!.id)"
+                        type="button"
+                      >
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-10 col-12 padding-5">
+                <div class="form-group">
+                  <label for="typeaheadItem">Item Nome</label>
+                  <input
+                    id="typeaheadItem"
+                    [ngbTypeahead]="searchItem"
+                    formControlName="itemNome"
+                    [resultTemplate]="rt"
+                    (selectItem)="selectedItem($event)"
+                    name="typeaheadItem"
+                    type="text"
+                    class="form-control"
+                    [class.is-invalid]="searchFailedItem"
+                    placeholder="Busca de Item"
+                  />
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-sm-6 col-12 padding-5">
+                <div class="form-group">
+                  <label for="idEstAlx"
+                    >Almoxarifado para Média de Preço
+                  </label>
+                  <select
+                    class="form-control"
+                    ngbTooltip="Selecione o almoxarifado"
+                    [ngClass]="{
+                      'is-invalid': submitted && f['alxEntradaId'].errors
+                    }"
+                    formControlName="alxEntradaId"
+                    id="idEstAlx"
+                  >
+                    <option [ngValue]="null">SELECIONE</option>
+                    <option
+                      *ngFor="let ealxv of almoxarifados"
+                      [ngValue]="ealxv.id"
+                    >
+                      {{ ealxv.nome }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="submitted && f['alxEntradaId'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f['alxEntradaId'].errors['required']">
+                      Selecione um estoque para calculo de preço
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-sm-6 col-12 padding-5">
+                <div class="form-group">
+                  <label for="idEstAlxPrec"
+                    >Almoxarifado para Precificação
+                  </label>
+                  <select
+                    class="form-control"
+                    ngbTooltip="Selecione o almoxarifado"
+                    [ngClass]="{
+                      'is-invalid': submitted && f['alxPrecoId'].errors
+                    }"
+                    formControlName="alxPrecoId"
+                    id="idEstAlxPrec"
+                  >
+                    <option [ngValue]="null">SELECIONE</option>
+                    <option
+                      *ngFor="let ealxv of almoxarifados"
+                      [ngValue]="ealxv.id"
+                    >
+                      {{ ealxv.nome }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="submitted && f['alxPrecoId'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f['alxPrecoId'].errors['required']">
+                      Selecione um estoque para calculo de preço
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-4 col-12 padding-5">
+                <div class="form-group">
+                  <label for="idDtaPrevDebito">Data Inicial</label>
+                  <input
+                    type="date"
+                    [ngClass]="{
+                      'is-invalid': submitted && f.dtaInicial.errors
+                    }"
+                    class="form-control"
+                    id="idDtaPrevDebito"
+                    formControlName="dtaInicial"
+                  />
+                  <div
+                    *ngIf="submitted && f.dtaInicial.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f.dtaInicial.errors['required']">
+                      Selecione a data Inicial
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-4 col-12 padding-5">
+                <div class="form-group">
+                  <label for="idDtaFinal">Data Final</label>
+                  <input
+                    type="date"
+                    [ngClass]="{ 'is-invalid': submitted && f.dtaFinal.errors }"
+                    class="form-control"
+                    id="idDtaFinal"
+                    formControlName="dtaFinal"
+                  />
+                  <div
+                    *ngIf="submitted && f.dtaFinal.errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="f.dtaFinal.errors['required']">
+                      Selecione a data Final
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4 col-sm-4 col-12 padding-5" style="padding-left: 30px;">
+                <div class="form-group">
+                  <label for="idPeriodicidade">Periodicidade</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" formControlName="flgDiario" id="periodicidadeDiarioCheckbox">
+                    <label class="form-check-label" for="periodicidadeDiarioCheckbox">
+                      Diário
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" formControlName="flgSemanal" id="periodicidadeSemanalCheckbox">
+                    <label class="form-check-label" for="periodicidadeSemanalCheckbox">
+                      Semanal
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" formControlName="flgMensal" id="periodicidadeMensalCheckbox">
+                    <label class="form-check-label" for="periodicidadeMensalCheckbox">
+                      Mensal
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </form>
+          <hr>
+          
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

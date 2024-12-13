@@ -1,0 +1,313 @@
+<div class="modal-header">
+    <span>Analise de Titulos do Cliente: {{clienteDTO.id}} - {{clienteDTO.nome}}</span>
+
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+
+    <ngx-spinner [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+        type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Buscando os titulos, Aguarde...</p>
+    </ngx-spinner>
+
+    <div class="div-tabs">
+        <ul ngbNav #navtit="ngbNav" [(activeId)]="activeNavTit" class="nav-tabs">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>Abertos</a>
+                <ng-template ngbNavContent>
+
+                    <br>
+
+                    <div *ngIf="titulosAbertos.length === 0" class="text-center">
+                        <h6>Não existe titulos neste status para exibir</h6>
+                    </div>
+                    <div *ngIf="titulosAbertos.length > 0">
+
+                        <ngx-datatable class="material" [scrollbarH]="true" [rows]="titulosAbertos" appResizeWatcher
+                            [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="35"
+                            [rowClass]="getRowClass" [limit]="400" rowHeight="auto">
+
+                            <ngx-datatable-column name="Titulo Id" prop="id" [width]="60"></ngx-datatable-column>
+                            <ngx-datatable-column name="Venda Id" prop="vendaDTO_id"
+                                [width]="60"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Emissão" prop="dtaEmissao" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Vencimento" prop="dtaVencimento" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Original" prop="vlrOriginal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Total" prop="vlrTotal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dias Atraso" prop="diasLiquidacaoVencimento" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.0-0':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Espelho Pre-Venda" [width]="120"
+                                style="align-items: center;text-align: center;">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <button (click)="imprimeVenda(row)">
+                                        <span class="fa"
+                                            [ngClass]="flgPesqVenda !== 0 ? 'fa-refresh fa-spin fa-fw' : 'fa-print'"></span>
+                                    </button>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                    </div>
+
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Fechados</a>
+                <ng-template ngbNavContent>
+
+                    <br>
+
+                    <div *ngIf="titulosFechados.length === 0" class="text-center">
+                        <h6>Não existe titulos neste status para exibir</h6>
+                    </div>
+                    <div *ngIf="titulosFechados.length > 0">
+
+                        <ngx-datatable class="material" [scrollbarH]="true" [rows]="titulosFechados" appResizeWatcher
+                            [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="35"
+                            [rowClass]="getRowClass" [limit]="400" rowHeight="auto">
+
+                            <ngx-datatable-column name="Titulo Id" prop="id" [width]="60"></ngx-datatable-column>
+                            <ngx-datatable-column name="Venda Id" prop="vendaDTO_id"
+                                [width]="60"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Emissão" prop="dtaEmissao" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Vencimento" prop="dtaVencimento" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Original" prop="vlrOriginal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Total" prop="vlrTotal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Liquidação" prop="dtaLiquidacao" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Liquidado" prop="vlrLiquidado" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dias Atraso" prop="diasLiquidacaoVencimento" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.0-0':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Espelho Pre-Venda" [width]="120"
+                                style="align-items: center;text-align: center;">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <button (click)="imprimeVenda(row)">
+                                        <span class="fa"
+                                            [ngClass]="flgPesqVenda !== 0 ? 'fa-refresh fa-spin fa-fw' : 'fa-print'"></span>
+                                    </button>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+
+
+                    </div>
+
+
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+                <a ngbNavLink>Negociados</a>
+                <ng-template ngbNavContent>
+
+                    <br>
+
+                    <div *ngIf="titulosNegociados.length === 0" class="text-center">
+                        <h6>Não existe titulos neste status para exibir</h6>
+                    </div>
+                    <div *ngIf="titulosNegociados.length > 0">
+                        <ngx-datatable class="material" [scrollbarH]="true" [rows]="titulosNegociados" appResizeWatcher
+                            [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="35"
+                            [rowClass]="getRowClass" [limit]="400" rowHeight="auto">
+
+                            <ngx-datatable-column name="Titulo Id" prop="id" [width]="60"></ngx-datatable-column>
+                            <ngx-datatable-column name="Venda Id" prop="vendaDTO_id"
+                                [width]="60"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Emissão" prop="dtaEmissao" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Vencimento" prop="dtaVencimento" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Original" prop="vlrOriginal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Total" prop="vlrTotal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Liquidação" prop="dtaLiquidacao" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Liquidado" prop="vlrLiquidado" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dias Atraso" prop="diasLiquidacaoVencimento" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.0-0':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Espelho Pre-Venda" [width]="120"
+                                style="align-items: center;text-align: center;">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <button (click)="imprimeVenda(row)">
+                                        <span class="fa"
+                                            [ngClass]="flgPesqVenda !== 0 ? 'fa-refresh fa-spin fa-fw' : 'fa-print'"></span>
+                                    </button>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                    </div>
+
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="4">
+                <a ngbNavLink>Em Protesto</a>
+                <ng-template ngbNavContent>
+
+                    <br>
+
+                    <div *ngIf="titulosProtesto.length === 0" class="text-center">
+                        <h6>Não existe titulos neste status para exibir</h6>
+                    </div>
+                    <div *ngIf="titulosProtesto.length > 0">
+                        <ngx-datatable class="material" [scrollbarH]="true" [rows]="titulosProtesto" appResizeWatcher
+                            [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="35"
+                            [rowClass]="getRowClass" [limit]="400" rowHeight="auto">
+
+                            <ngx-datatable-column name="Titulo Id" prop="id" [width]="60"></ngx-datatable-column>
+                            <ngx-datatable-column name="Venda Id" prop="vendaDTO_id"
+                                [width]="60"></ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Emissão" prop="dtaEmissao" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Vencimento" prop="dtaVencimento" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Original" prop="vlrOriginal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Total" prop="vlrTotal" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dta Liquidação" prop="dtaLiquidacao" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | amDateFormat:'DD/MM/YYYY'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Valor Liquidado" prop="vlrLiquidado" [width]="90">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.2-2':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Dias Atraso" prop="diasLiquidacaoVencimento" [width]="80">
+                                <ng-template let-value="value" ngx-datatable-cell-template>
+                                    {{value | number:'1.0-0':'pt-BR'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Espelho Pre-Venda" [width]="120"
+                                style="align-items: center;text-align: center;">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <button (click)="imprimeVenda(row)">
+                                        <span class="fa"
+                                            [ngClass]="flgPesqVenda !== 0 ? 'fa-refresh fa-spin fa-fw' : 'fa-print'"></span>
+                                    </button>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                    </div>
+
+
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="navtit" class="mt-2"></div>
+    </div>
+
+</div>

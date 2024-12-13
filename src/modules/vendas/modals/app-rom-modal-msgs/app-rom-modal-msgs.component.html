@@ -1,0 +1,32 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">Status das vendas</h4>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">VENDAID</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">DESCRIÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let rep of checkVendas; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{rep.vendaId}}</td>
+                        <td>{{rep.status === true ? 'Adicionado' : 'Não adicionado'}}</td>
+                        <td>{{rep.msg}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

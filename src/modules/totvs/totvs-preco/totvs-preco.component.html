@@ -1,0 +1,171 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 venda-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' TOTVS Integração'" [picon]="'fa-plug'" [heading]="'Precificação Integração'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Buscar Preços
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idEstAlx">Estoque Almoxarifado</label>
+                                    <select class="form-control" ngbTooltip="Selecione o almoxarifado"
+                                        [ngClass]="{'is-invalid': submitted && f['estoqueAlmoxarifadoId'].errors}"
+                                        formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let ealxv of ealxs" [ngValue]="ealxv.id">{{ealxv.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['estoqueAlmoxarifadoId'].errors"
+                                        class="invalid-feedback">
+                                        <div *ngIf="f['estoqueAlmoxarifadoId'].errors['required']">Selecione um estoque
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card bg-light mb-3" *ngIf="itemsPrecos.length > 0">
+                <div class="card-body padding-5">
+
+                    <div class="col-12">
+                        <input type="text" style="padding:8px;margin:15px auto;width:100%;"
+                            placeholder="Digite o nome do item para procura" (keyup)="updateFilter($event)" />
+                    </div>
+
+                    <hr>
+
+                    <div class="card bg-light mb-3">
+                        <div class="card-body padding-5">
+                            <div class="row">
+
+                                <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                    <button type="button" class="btn btn-outline-dark butao-acao"
+                                        (click)="onTransferirSelecionados()">
+                                        <span class="fa fa-exclamation-triangle span-bt-icon"></span><span
+                                            class="span-bt-text">Transferir
+                                            Selecionados</span>
+                                    </button>
+                                </div>
+
+
+
+                                <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                    <button type="button" class="btn btn-outline-dark butao-acao"
+                                        (click)="onSelecionaTodos()">
+                                        <span class="fa fa-thumb-tack span-bt-icon"></span><span
+                                            class="span-bt-text">Seleciona Todos
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div class="col-lg-4 col-sm-4 col-6 div-mobile-buttons d-grid">
+                                    <button type="button" class="btn btn-outline-dark butao-acao"
+                                        (click)="onDesSelecionaTodos()">
+                                        <span class="fa fa-thumb-tack span-bt-icon"></span><span
+                                            class="span-bt-text">Desmarcar Todos
+                                        </span>
+                                    </button>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+
+                    <ngx-datatable class="material" #table [scrollbarH]="true" [rows]="itemsPrecosFiltered"
+                        appResizeWatcher [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70"
+                        rowHeight="auto" [selected]="selected" [selectionType]="selectionTypeSingle" [limit]="10000">
+
+                        <ngx-datatable-column name="TRANSF" [width]="80">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div style="padding: 0px; margin: 0px; text-align: center;">
+                                    <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                                        style="padding: 0px;margin: 0px" [(ngModel)]="row.acaoTransf">
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="ID SALES" prop="itemId" [width]="130"></ngx-datatable-column>
+                        <ngx-datatable-column name="ID WHINTHOR" prop="codprod" [width]="130"></ngx-datatable-column>
+                        <ngx-datatable-column name="NOME SALES" prop="itemNome" [width]="500"></ngx-datatable-column>
+
+                        <!--
+                        <ngx-datatable-column name="PREÇO SALES" [width]="130">
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                <div style="padding: 0px; margin: 0px; text-align: center;"
+                                    ngbTooltip="{{row.usuarioInclusao}} - {{ row.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}">
+                                    <input type="number" id="inputPrecoSalesId" name="inputPrecoSalesNm"
+                                        style="padding: 0px;margin: 0px;max-width: 100px;" [(ngModel)]="row.vlr">
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                    -->
+
+                    <ngx-datatable-column name="PREÇO SALES" [width]="130">
+                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                            <div style="padding: 0px; margin: 0px; text-align: center;"
+                                ngbTooltip="{{row.usuarioInclusao}} - {{ row.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}">
+                                <input type="number" id="inputPrecoSalesId" name="inputPrecoSalesNm"
+                                    style="padding: 0px;margin: 0px;max-width: 100px;" [(ngModel)]="row.vlr" disabled>
+                            </div>
+                        </ng-template>
+                    </ngx-datatable-column>
+
+
+                        <ngx-datatable-column name="PREÇO WINTHOR" prop="pvenda" [width]="130"></ngx-datatable-column>
+                        <ngx-datatable-column name="NOME WINTHOR" prop="descricao" [width]="500"></ngx-datatable-column>
+
+                    </ngx-datatable>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

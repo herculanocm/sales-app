@@ -1,0 +1,55 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">Resultado da tentativa de faturamento em lote</h4>
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="printAllSelected()">
+                    <span class="fa fa-print span-acao"></span> Imprimir selecionados
+                </button>
+            </div>
+
+            <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                    (click)="selecionarTodasAsVendas()">
+                    <span class="fa fa-check span-acao"></span>Selecionar todas
+                </button>
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">SEL</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">DESCRIÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let rep of faturarVendaReturn.faturarVendaItemReturns; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>
+                            <div style="padding: 0px; margin: 0px; text-align: center;">
+                                <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                                    style="padding: 0px;margin: 0px" [(ngModel)]="rep.imprimir">
+                            </div>
+                        </td>
+                        <td>{{rep.vendaId}}</td>
+                        <td>{{rep.status === true ? 'Faturado' : 'Não Faturado'}}</td>
+                        <td>{{rep.mensagem}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

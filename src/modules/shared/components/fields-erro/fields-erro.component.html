@@ -1,0 +1,24 @@
+<div *ngIf="(servererror !== null && servererror.message !== null && isString(servererror.message) && servererror.message.length > 0) || (servererror !== null && servererror.fieldErrors !== null && isArray(servererror.fieldErrors) && servererror.fieldErrors.length > 0)" class="container content-error" >
+    <p>Foram encontrado erros no envio das informações, corriga os campos.</p><br>
+    <p>Mensaguem : {{servererror.message}}</p>
+    <table st-table="rowCollection" class="table table-erros">
+        <thead>
+            <tr>
+                
+                <th>Mensaguem</th>
+                <th>Campo</th>
+                <th>Code</th>
+                <th>Objeto</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let field of servererror.fieldErrors">
+                    <td>{{field.message}}</td>
+                <td>{{field.field}}</td>
+                <td>{{field.code}}</td>
+                <td>{{field.objectName}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

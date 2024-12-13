@@ -1,0 +1,152 @@
+<div class="div-print-content">
+
+
+    <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+        type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Processando, Aguarde...</p>
+    </ngx-spinner>
+
+
+    <div *ngIf="hst === null || isUndefined(hst) || hst.historicos === null || hst.historicos.length === 0">
+        <h3>Impressão foi acionada fora de um contexto da aplicação, não existe nada aqui para imprimir, feche esta
+            janela
+        </h3>
+    </div>
+
+    <div class="div-print-principal" *ngIf="hst !== null && !isUndefined(hst) && hst.historicos.length > 0" style="margin-bottom: 30px;">
+        <div style="margin: 0px;padding: 0px;border: 1.5px solid black;margin-bottom: 30px;" *ngFor="let h of hst.historicos">
+            <br>
+            <br>
+            <div class="col-12 text-align-center-titulo">
+                <p>ROMANEIO ID : {{h.id}}</p>
+            </div>
+
+            <div class="col-12 div-margin-padding-0">
+                <hr>
+
+                <div class="row">
+                    <div class="col-12">MOTORISTA:
+                        {{h.motoristaDTO !== null && h.motoristaDTO.nome !== null ?
+                        h.motoristaDTO.nome:''}}
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-12">VEICULO:
+                        {{h.veiculoDTO !== null && h.veiculoDTO.nome !== null ? h.veiculoDTO.nome:''}} -
+                        {{h.veiculoDTO !== null && h.veiculoDTO.placa !== null ? h.veiculoDTO.placa:''}}
+                        -
+                        {{h.veiculoDTO !== null && h.veiculoDTO.marca !== null ? h.veiculoDTO.marca:''}}
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-6">DTA ENTREGA: {{h.dtaEntrega | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+                    <div class="col-6">DTA CAIXA: {{h.dtaCaixa | amDateFormat:'DD/MM/YYYY'}}</div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-3">DTA INCLUSÃO: {{h.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+                    <div class="col-3">USUÁRIO INCLUSÃO: {{h.usuarioInclusao}}</div>
+                    <div class="col-3">DTA ABERTURA: {{h.dtaAbertura | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+                    <div class="col-3">USUÁRIO ABERTURA: {{h.usuarioAbertura}}</div>
+                </div>
+
+                <hr>
+            </div>
+
+            <br>
+
+            <div class="col-12 text-align-center-div-titulo">
+                <p>AGRUPAMENTOS</p>
+            </div>
+            
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2 col-2 div-block-center" *ngFor="let ag of agrupamentos(h.vendas.vendas)"> {{ag.qtd}} -
+                        {{ag.nome}}
+                    </div>
+                </div>
+            </div>
+   
+
+            <br>
+            <hr>
+            <br>
+            <div class="col-12 text-align-center-div-titulo">
+                <p>ITENS</p>
+            </div>
+
+            <table class="table table-sm table-valores">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>St</th>
+                        <th>Cliente</th>
+                        <th>Endereço-Bairro-Cidade</th>
+                        <th>Condição</th>
+                        <th>Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let vd of h.vendas.vendas">
+                        <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px;">
+                            {{vd.id}}</td>
+                        <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px;">
+                            {{vd.vendaStatusAtualDTO.vendaStatusLabelDTO.sigla}}</td>
+                        <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px;">
+                            {{vd.clienteDTO.nome}}</td>
+                        <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px;">
+                            {{getEnderecoBairroCidade(vd)}}</td>
+                        <td class="align-left td-mod" style="border-right: 1px solid rgb(15, 15, 15);font-size: 8px;">
+                            {{vd.condicaoPagamentoDTO.nome}}</td>
+                        <td class="align-right td-mod">{{vd.vlrTotal | number:'1.2-2':'pt-BR'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <br>
+            <hr>
+            <br>
+            <div class="col-12 text-align-center-div-titulo">
+                <p>CONDIÇÕES</p>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-3 col-3 div-block-center" *ngFor="let cv of valoresECondicoes(h.vendas.vendas)"> {{cv.nome}} -
+                        {{cv.vlr | number:'1.2-2':'pt-BR'}}
+                    </div>
+                </div>
+            </div>
+
+
+            <br>
+            <br>
+
+
+            <div class="col-12 div-margin-padding-0">
+                <hr>
+                <div class="col-12 div-margin-padding-0">TOTAL DA ENTREGA: <span
+                        style="font-weight: bold;margin-left: 10px;font-size: 14px;">{{h.vlrTotal |
+                        number:'1.2-2':'pt-BR'}}
+                    </span></div>
+
+                <hr>
+                <div class="row">
+                    <div class="col-4">PARA TROCO OU DESPESA: {{h.vlrTrocoDespesa | number:'1.2-2':'pt-BR'}}</div>
+                    <div class="col-4">DIÁRIA: {{h.vlrDiaria | number:'1.2-2':'pt-BR'}}</div>
+                    <div class="col-4">D. ACESSÓRIA: {{h.vlrAcessoria | number:'1.2-2':'pt-BR'}}</div>
+                </div>
+                
+            </div>
+
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,427 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 venda-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Vendas Representante'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoInicial">Data Emissão Inicial</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoInicial"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoInicial'].errors}"
+                                        formControlName="dtaEmissaoInicial"
+                                        ngbTooltip="Digite a data de Emissão Inicial">
+                                    <div *ngIf="submitted && f['dtaEmissaoInicial'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoInicial'].errors['required']">Data de emissão inicial é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoFinal">Data Emissão Final</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoFinal"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissaoFinal'].errors}"
+                                        formControlName="dtaEmissaoFinal" ngbTooltip="Digite a data de Emissão Final">
+                                    <div *ngIf="submitted && f['dtaEmissaoFinal'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissaoFinal'].errors['required']">Data de emissão final é
+                                            obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idEstAlx">Estoque Almoxarifado</label>
+                                    <select class="form-control" ngbTooltip="Selecione o almoxarifado"
+                                        [ngClass]="{'is-invalid': submitted && f['estoqueAlmoxarifadoId'].errors}"
+                                        formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let ealxv of ealxs" [ngValue]="ealxv.id">{{ealxv.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['estoqueAlmoxarifadoId'].errors"
+                                        class="invalid-feedback">
+                                        <div *ngIf="f['estoqueAlmoxarifadoId'].errors['required']">Selecione um estoque
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top: 20px; margin-bottom: 20px;">
+                <h4>Valor Total: {{valorTotal() | number:'1.2-2':'pt-BR'}}</h4>
+            </div>
+
+
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+
+                    <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink>FA</a>
+                            <ng-template ngbNavContent>
+
+                                <div *ngIf="vendasRepreFA.length === 0">
+                                    <p>Não existe dados pra apresentar</p>
+                                </div>
+                                <div *ngIf="vendasRepreFA.length > 0">
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Geral : {{getValueArray(vendasRepreFA) | number:'1.2-2':'pt-BR' }}</h5>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Totais por Supervisor</h5>
+                                    </div>
+
+                                    <table class="table table-bordered table-status">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-status">SUPERVISOR</th>
+                                                <th class="th-status">Qtd</th>
+                                                <th class="th-status">Vlr</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let retFA of vendasRepreFA">
+                                                <td class="align-left td-status">{{retFA.supervisor_nome}}</td>
+                                                <td class="align-right td-status number-aling">{{retFA.qtd_pedido |
+                                                    number:'1.0-0':'pt-BR' }}
+                                                </td>
+                                                <td class="align-right td-status number-aling">{{retFA.val_total |
+                                                    number:'1.2-2':'pt-BR' }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Supervisor e Representantes</h5>
+                                    </div>
+
+                                    <div *ngFor="let retFA2 of vendasRepreFA">
+                                        <div class="separa-sup">
+                                            <h6>{{retFA2.supervisor_nome}}</h6>
+
+                                            <table class="table table-bordered table-status">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="th-status">SUPERVISOR</th>
+                                                        <th class="th-status">Qtd</th>
+                                                        <th class="th-status">Vlr</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let retFAv of retFA2.vendedores_array">
+                                                        <td class="align-left td-status">{{retFAv.vendedor_nome}}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retFAv.qtd_pedido | number:'1.0-0':'pt-BR' }}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retFAv.val_total | number:'1.2-2':'pt-BR' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink>AG</a>
+                            <ng-template ngbNavContent>
+
+
+                                <div *ngIf="vendasRepreAP.length === 0">
+                                    <p>Não existe dados pra apresentar</p>
+                                </div>
+                                <div *ngIf="vendasRepreAP.length > 0">
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Geral : {{getValueArray(vendasRepreAP) | number:'1.2-2':'pt-BR' }}</h5>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Totais por Supervisor</h5>
+                                    </div>
+
+                                    <table class="table table-bordered table-status">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-status">SUPERVISOR</th>
+                                                <th class="th-status">Qtd</th>
+                                                <th class="th-status">Vlr</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let retAP of vendasRepreAP">
+                                                <td class="align-left td-status">{{retAP.supervisor_nome}}</td>
+                                                <td class="align-right td-status number-aling">{{retAP.qtd_pedido |
+                                                    number:'1.0-0':'pt-BR' }}
+                                                </td>
+                                                <td class="align-right td-status number-aling">{{retAP.val_total |
+                                                    number:'1.2-2':'pt-BR' }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Supervisor e Representantes</h5>
+                                    </div>
+
+                                    <div *ngFor="let retAP2 of vendasRepreAP">
+                                        <div class="separa-sup">
+                                            <h6>{{retAP2.supervisor_nome}}</h6>
+
+                                            <table class="table table-bordered table-status">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="th-status">SUPERVISOR</th>
+                                                        <th class="th-status">Qtd</th>
+                                                        <th class="th-status">Vlr</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let retAP2v of retAP2.vendedores_array">
+                                                        <td class="align-left td-status">{{retAP2v.vendedor_nome}}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retAP2v.qtd_pedido | number:'1.0-0':'pt-BR' }}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retAP2v.val_total | number:'1.2-2':'pt-BR' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="3">
+                            <a ngbNavLink>AB</a>
+                            <ng-template ngbNavContent>
+
+
+                                <div *ngIf="vendasRepreAB.length === 0">
+                                    <p>Não existe dados pra apresentar</p>
+                                </div>
+                                <div *ngIf="vendasRepreAB.length > 0">
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Geral : {{getValueArray(vendasRepreAB) | number:'1.2-2':'pt-BR' }}</h5>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Totais por Supervisor</h5>
+                                    </div>
+
+
+                                    <table class="table table-bordered table-status">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-status">SUPERVISOR</th>
+                                                <th class="th-status">Qtd</th>
+                                                <th class="th-status">Vlr</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let retAB of vendasRepreAB">
+                                                <td class="align-left td-status">{{retAB.supervisor_nome}}</td>
+                                                <td class="align-right td-status number-aling">{{retAB.qtd_pedido |
+                                                    number:'1.0-0':'pt-BR' }}
+                                                </td>
+                                                <td class="align-right td-status number-aling">{{retAB.val_total |
+                                                    number:'1.2-2':'pt-BR' }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Supervisor e Representantes</h5>
+                                    </div>
+
+                                    <div *ngFor="let retAB2 of vendasRepreAB">
+                                        <div class="separa-sup">
+                                            <h6>{{retAB2.supervisor_nome}}</h6>
+
+                                            <table class="table table-bordered table-status">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="th-status">SUPERVISOR</th>
+                                                        <th class="th-status">Qtd</th>
+                                                        <th class="th-status">Vlr</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let retABv of retAB2.vendedores_array">
+                                                        <td class="align-left td-status">{{retABv.vendedor_nome}}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retABv.qtd_pedido | number:'1.0-0':'pt-BR' }}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retABv.val_total | number:'1.2-2':'pt-BR' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </ng-template>
+                        </li>
+
+                        <li [ngbNavItem]="4">
+                            <a ngbNavLink>CC</a>
+                            <ng-template ngbNavContent>
+
+
+                                <div *ngIf="vendasRepreCC.length === 0">
+                                    <p>Não existe dados pra apresentar</p>
+                                </div>
+                                <div *ngIf="vendasRepreCC.length > 0">
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Geral : {{getValueArray(vendasRepreCC) | number:'1.2-2':'pt-BR' }}</h5>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Totais por Supervisor</h5>
+                                    </div>
+
+                                    <table class="table table-bordered table-status">
+                                        <thead>
+                                            <tr>
+                                                <th class="th-status">SUPERVISOR</th>
+                                                <th class="th-status">Qtd</th>
+                                                <th class="th-status">Vlr</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let retCC of vendasRepreCC">
+                                                <td class="align-left td-status">{{retCC.supervisor_nome}}</td>
+                                                <td class="align-right td-status number-aling">{{retCC.qtd_pedido |
+                                                    number:'1.0-0':'pt-BR' }}
+                                                </td>
+                                                <td class="align-right td-status number-aling">{{retCC.val_total |
+                                                    number:'1.2-2':'pt-BR' }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                    <hr>
+
+                                    <div class="center-text text-center div-titulo">
+                                        <h5>Supervisor e Representantes</h5>
+                                    </div>
+
+                                    <div *ngFor="let retCC2 of vendasRepreCC">
+                                        <div class="separa-sup">
+                                            <h6>{{retCC2.supervisor_nome}}</h6>
+
+                                            <table class="table table-bordered table-status">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="th-status">SUPERVISOR</th>
+                                                        <th class="th-status">Qtd</th>
+                                                        <th class="th-status">Vlr</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let retCCv of retCC2.vendedores_array">
+                                                        <td class="align-left td-status">{{retCCv.vendedor_nome}}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retCCv.qtd_pedido | number:'1.0-0':'pt-BR' }}</td>
+                                                        <td class="align-right td-status number-aling">
+                                                            {{retCCv.val_total | number:'1.2-2':'pt-BR' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

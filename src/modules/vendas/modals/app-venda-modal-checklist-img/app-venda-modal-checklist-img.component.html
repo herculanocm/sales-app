@@ -1,0 +1,54 @@
+<div>
+
+    <ngx-spinner class="spinner-full" name="uploadSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+        size="medium" color="#fff" type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Enviando imagem, Aguarde...</p>
+    </ngx-spinner>
+
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+
+        <div>
+            <img [src]="itemImg.getStrImg()" class="rounded mx-auto d-block img-max-lenght" [alt]="itemImg.fileName"
+                [title]="itemImg.fileName">
+        </div>
+
+        <div class="col-12 padding-5">
+            <div class="form-group">
+                <label for="idFileNameIMG">Nome da IMG</label>
+                <input type="text" class="form-control" [(ngModel)]="itemImg.nome"
+                    [ngModelOptions]="{ standalone: true }" id="idFileNameIMG">
+            </div>
+        </div>
+
+
+
+        <div class="col-12 padding-5">
+            <div class="form-group">
+                <label for="idImgDescricao">Descrição/Comentário da IMG</label>
+                <textarea class="form-control" [(ngModel)]="itemImg.descricao" [ngModelOptions]="{ standalone: true }"
+                    id="idImgDescricao"></textarea>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-danger" (click)="activeModal.close({ resposta: 1 })">Cancelar</button>
+                </div>
+
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-primary" ngbAutofocus (click)="enviarImg()">Enviar Imagem
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

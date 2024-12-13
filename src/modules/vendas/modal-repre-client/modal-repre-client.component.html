@@ -1,0 +1,33 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">Estes são os representantes configurados para o Cliente</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let rep of representantes; index as i">
+                        <td>{{i + 1}}</td>
+                        <td>{{rep.funcionarioDTO!.nome}}</td>
+                        <td>
+                            <button type="button" class="btn btn-warning btn-table"
+                                (click)="activeModal.close(rep)">
+                                <span class="fa fa-edit"></span><span
+                                    class="span-table">Selecionar</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>

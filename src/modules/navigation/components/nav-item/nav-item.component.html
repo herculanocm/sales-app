@@ -1,0 +1,16 @@
+<a class="nav-link" (click)="toggle()" (keydown)="toggle()" role="button" tabindex="0" [ngClass]="{active: isActive, collapsed: collapsed}">
+    <div class="nav-link-icon" *ngIf="sideNavItem!.icon">
+        <i [ngClass]="sideNavItem!.icon"></i> 
+    </div>
+    {{sideNavItem!.text}}
+    <div class="sidenav-collapse-arrow" *ngIf="sideNavItem!.submenu"><fa-icon class="ms-auto" [icon]="['fas', 'angle-down']"></fa-icon></div>
+</a>
+<nav class="sidenav-menu-nested nav" #collapsibleSection [ngClass]="{collapsed: collapsed}">
+    
+    <app-side-nav-item class="submenu" *ngFor="let submenuItem of sideNavItem!.submenu" 
+    [sideNavItem]="submenuItem" [ngClass]="{collapsed: collapsed}" 
+    [hierarchy]="hierarchyExtension"
+    >
+
+    </app-side-nav-item>
+</nav>

@@ -1,0 +1,683 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Titulos'" [picon]="'fa-money'" [heading]="'Titulo Despesa'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div *ngIf="statusForm === 1 || statusForm === 2" class="margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button class="btn btn-block butao-acao"
+                                [ngClass]="statusForm === 2 ? 'btn-warning':'btn-primary'" (click)="onCadastra()">
+                                <span class="fa fa-save span-bt-icon"></span><span class="span-bt-text">{{statusForm ===
+                                    2 ? 'Alterar' : 'Salvar'}}</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-default butao-acao" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onLeftArray()">
+                                <span class="fa fa-arrow-circle-left span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onRightArray()">
+                                <span class="fa fa-arrow-circle-right span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-1 col-4 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-info butao-acao" (click)="onTable()">
+                                <span class="fa fa-table span-bt-icon"></span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-danger butao-acao" (click)="onDeleta()">
+                                <span class="fa fa-trash span-bt-icon"></span><span class="span-bt-text">Deletar</span>
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-bt-icon"></span><span
+                                    class="span-bt-text">Pesquisar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="tituloForm" (ngSubmit)="onCadastra()">
+
+                        <div ngbAccordion>
+                            <div ngbAccordionItem [collapsed]="true">
+                                <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton>CAMPOS DE PESQUISA ADICIONAIS</button>
+                                </h2>
+              
+                                <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody>
+                                        <ng-template ngbPanelContent>
+
+                                            <div class="row">
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaEmissaoInicial">Data Emissão Inicial</label>
+                                                        <input type="date" class="form-control" id="idInputDtaEmissaoInicial"
+                                                            name="nmInputDtaEmissaoInicial"
+                                                            ngbTooltip="Busca de pela data de emissão, data inicial"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaEmissaoInicial"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaEmissaoFinal">Data Emissão Final</label>
+                                                        <input type="date" class="form-control" id="idInputDtaEmissaoFinal"
+                                                            name="nmInputDtaEmissaoFinal"
+                                                            ngbTooltip="Busca de pela data de emissão, data final"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaEmissaoFinal"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaVencimentoInicial">Data Vencimento Inicial</label>
+                                                        <input type="date" class="form-control" id="idInputDtaVencimentoInicial"
+                                                            name="nmInputDtaVencimentoInicial"
+                                                            ngbTooltip="Busca de pela data de vencimento, data inicial"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaVencimentoInicial"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaVencimentoFinal">Data Vencimento Final</label>
+                                                        <input type="date" class="form-control" id="idInputDtaVencimentoFinal"
+                                                            name="nmInputDtaVencimentoFinal"
+                                                            ngbTooltip="Busca de pela data de vencimento, data final"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaVencimentoFinal"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaLiquidacaoInicial">Data Liquidação Inicial</label>
+                                                        <input type="date" class="form-control" id="idInputDtaLiquidacaoInicial"
+                                                            name="nmInputDtaLiquidacaoInicial"
+                                                            ngbTooltip="Busca de pela data de liquidação, data inicial"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaLiquidacaoInicial"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                                <div class="col-6 padding-5">
+                                                    <div class="form-group">
+                                                        <label for="idInputDtaLiquidacaoFinal">Data Liquidação Final</label>
+                                                        <input type="date" class="form-control" id="idInputDtaLiquidacaoFinal"
+                                                            name="nmInputDtaLiquidacaoFinal"
+                                                            ngbTooltip="Busca de pela data de liquidação, data final"
+                                                            [(ngModel)]="tituloDespesaPesquisaDTO.dtaLiquidacaoFinal"
+                                                            [ngModelOptions]="{ standalone: true }">
+                                                    </div>
+                                                </div>
+        
+                                            </div>
+        
+                                        </ng-template>
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+
+                            <div class="col-sm-2 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idTitulo">Id</label>
+                                    <input type="number" class="form-control" (keydown.enter)="onPesquisa()"
+                                        id="idTitulo" formControlName="id">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idNumTitulo">Num Titulo</label>
+                                    <input type="text" class="form-control" id="idNumTitulo"
+                                        formControlName="numTitulo">
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-sm-4 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idTituloTipoDTO">Tipo</label>
+
+                                    <select class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['tituloTipoDTO'].errors}"
+                                        [compareWith]="compareTituloTipo" id="idTituloTipoDTO"
+                                        formControlName="tituloTipoDTO">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let tt of tituloTipos" [ngValue]="tt">{{tt.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['tituloTipoDTO'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['tituloTipoDTO'].errors['required']">Selecione tipo de titulo
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idTituloStatus">Status</label>
+
+                                    <select class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['indStatus'].errors}"
+                                        [compareWith]="compareTituloStatus" id="idTituloStatus"
+                                        formControlName="indStatus">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let fts of tituloStatus" [ngValue]="fts.sigla">{{fts.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['indStatus'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['indStatus'].errors['required']">Selecione o status do titulo
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Data/hr Inclusão</label>
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{tituloDespesaDTO.dtaInclusao | amDateFormat:'DD/MM/YYYY
+                                        HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Usuário Inclusão</label>
+                                    <span class="form-control span-disable" name="nameUserInclusao"
+                                        id="idUserInclusao">{{tituloDespesaDTO.usuarioInclusao}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Data/hr Ult Alteração</label>
+                                    <span class="form-control span-disable" name="nameDtaInclusao"
+                                        id="idDtaInclusao">{{tituloDespesaDTO.dtaUltAlteracao | amDateFormat:'DD/MM/YYYY
+                                        HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissao">Usuário Ult Alteração</label>
+                                    <span class="form-control span-disable" name="nameUserInclusao"
+                                        id="idUserInclusao">{{tituloDespesaDTO.usuarioUltAlteracao}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idUserBaixa">Data Baixa</label>
+                                    <span class="form-control span-disable" name="nmUserBaixa"
+                                        id="idUserBaixa">{{tituloDespesaDTO.dtaBaixa | amDateFormat:'DD/MM/YYYY
+                                        HH:mm:ss'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idUserBaixa">Usuário Baixa</label>
+                                    <span class="form-control span-disable" name="nmUserBaixa"
+                                        id="idUserBaixa">{{tituloDespesaDTO.usuarioBaixa}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+
+                        <div class="row">
+
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSubGrupoDesp">Sub Grupo de Despesa</label>
+
+                                    <select class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['subGrupoDespesaDTO'].errors}"
+                                        [compareWith]="compareSubGruposDespesas" id="idSubGrupoDesp"
+                                        (change)="bancoSelecionado()" formControlName="subGrupoDespesaDTO">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let bf of subGruposDespesas" [ngValue]="bf">{{bf.nome}}</option>
+                                    </select>
+                                    <div *ngIf="submitted && f['subGrupoDespesaDTO'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['subGrupoDespesaDTO'].errors['required']">Selecione o Sug Grupo de
+                                            despesa
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-12" *ngIf="flgPesquisandoFornecedor === 1">
+                                <span class="fa fa-refresh fa-spin fa-fw span-pesq"></span><span
+                                    class="span-pesq">Buscando
+                                    dados do fornecedor, aguarde...</span>
+                            </div>
+
+                            <div class="col-sm-2 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idInputCodFor">Cod Fornecedor</label>
+                                    <div class="input-group" ngbTooltip="Digite o Codigo do Fornecedor">
+                                        <input type="number" class="form-control" id="idInputCodFor"
+                                            formControlName="codFornecedor" (keydown.Tab)="findFornecedorById()"
+                                            (keydown.enter)="findFornecedorById()">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-secondary" (click)="findFornecedorById()"
+                                                type="button"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-10 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="typeaheadFornecedorId">Nome Fornecedor</label>
+                                    <input id="typeaheadFornecedorId" type="text" class="form-control"
+                                        formControlName="fornecedorDTO" [ngbTypeahead]="searchFornecedor"
+                                        (selectItem)="typeaHeadSelectFornecedor($event)" [resultTemplate]="rt"
+                                        [placement]="'top-left'" [inputFormatter]="formatterFornecedor"
+                                        placeholder="Busca Nome do Fornecedor">
+                                    <span class="col-sm-2 col-form-label"
+                                        *ngIf="searchingFornecedor">procurando...</span>
+                                    <span class="col-sm-12 col-form-label" *ngIf="searchingFornecedor">Não
+                                        foi
+                                        encontrado nada</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrOriginal">Valor Original</label>
+                                    <input type="number" [ngClass]="{'is-invalid': submitted && f['vlrOriginal'].errors}"
+                                        class="form-control" id="idVlrOriginal" formControlName="vlrOriginal">
+                                    <div *ngIf="submitted && f['vlrOriginal'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrOriginal'].errors['required']">Digite o valor original
+                                        </div>
+                                        <div *ngIf="f['vlrOriginal'].errors['min']">Valor deve ser acima de 0
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrJuros">Valor Juros</label>
+                                    <input type="number" class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['vlrJuros'].errors}" id="idVlrJuros"
+                                        formControlName="vlrJuros">
+
+                                    <div *ngIf="submitted && f['vlrJuros'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrJuros'].errors['required']">Digite o valor original
+                                        </div>
+                                        <div *ngIf="f['vlrJuros'].errors['min']">Valor deve ser maior ou igual a 0
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrMulta">Valor Multa</label>
+                                    <input type="number" class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['vlrMulta'].errors}" id="idVlrMulta"
+                                        formControlName="vlrMulta">
+
+                                    <div *ngIf="submitted && f['vlrMulta'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrMulta'].errors['required']">Digite o valor original
+                                        </div>
+                                        <div *ngIf="f['vlrMulta'].errors['min']">Valor deve ser maior ou igual a 0
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrTaxaCobranca">Valor Taxa Cobrança</label>
+                                    <input type="number" class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['vlrTaxaCobranca'].errors}"
+                                        id="idVlrTaxaCobranca" formControlName="vlrTaxaCobranca">
+
+                                    <div *ngIf="submitted && f['vlrTaxaCobranca'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrTaxaCobranca'].errors['required']">Digite o valor original
+                                        </div>
+                                        <div *ngIf="f['vlrTaxaCobranca'].errors['min']">Valor deve ser maior ou igual a 0
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-6 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrDespesaAcessoria">Valor Despesa Acessoria</label>
+                                    <input type="number" class="form-control"
+                                        [ngClass]="{'is-invalid': submitted && f['vlrDespesaAcessoria'].errors}"
+                                        id="idVlrDespesaAcessoria" formControlName="vlrDespesaAcessoria">
+
+                                    <div *ngIf="submitted && f['vlrDespesaAcessoria'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrDespesaAcessoria'].errors['required']">Digite o valor original
+                                        </div>
+                                        <div *ngIf="f['vlrDespesaAcessoria'].errors['min']">Valor deve ser maior ou igual a 0
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idDtaEmissao">Data Emissão</label>
+                                    <input type="date" [ngClass]="{'is-invalid': submitted && f['dtaEmissao'].errors}"
+                                        class="form-control" id="idDtaEmissao" formControlName="dtaEmissao">
+                                    <div *ngIf="submitted && f['dtaEmissao'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissao'].errors['required']">Selecione a data de emissão
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idDtaVencimento">Data Vencimento</label>
+                                    <input type="date" [ngClass]="{'is-invalid': submitted && f['dtaVencimento'].errors}"
+                                        class="form-control" id="idDtaVencimento" formControlName="dtaVencimento">
+                                    <div *ngIf="submitted && f['dtaVencimento'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaVencimento'].errors['required']">Selecione a data de Vencimento
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 padding-5"
+                                ngbTooltip="Campo calculado automaticamente, data do vencimento - data emissão">
+                                <div class="form-group">
+                                    <label for="id" >Dias Venc - Emissão</label>
+                                    <span class="form-control span-disable">{{daysFromVencEmissao()}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idDtaLiquidacao">Data Liquidação</label>
+                                    <input type="date" [ngClass]="{'is-invalid': submitted && f['dtaLiquidacao'].errors}"
+                                        class="form-control" id="idDtaLiquidacao" formControlName="dtaLiquidacao">
+                                    <div *ngIf="submitted && f['dtaLiquidacao'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaLiquidacao'].errors['required']">Selecione a data da liquidação
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 padding-5"
+                                ngbTooltip="Campo calculado automaticamente, data da liquidação - data emissão">
+                                <div class="form-group">
+                                    <label for="id" >Dias Liqui - Emissão</label>
+                                    <span class="form-control span-disable">{{daysFromLiquiEmissao()}}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="row">
+
+                            <div class="col-sm-5 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrTotal">Valor Total Titulo</label>
+                                    <div class="input-group">
+                                        <span class="form-control span-disable" name="nmVlrTotal"
+                                            ngbTooltip="Campo calculado automaticamente, valor total do titulo"
+                                            id="idVlrTotal">{{ getVlrTotal() | number:'1.2-2':'pt-BR' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-5 col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idVlrLiquidado">Valor Liquidado</label>
+                                    <input type="number" [ngClass]="{'is-invalid': submitted && f['vlrLiquidado'].errors}"
+                                        class="form-control" id="idVlrLiquidado" formControlName="vlrLiquidado">
+                                    <div *ngIf="submitted && f['vlrLiquidado'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vlrLiquidado'].errors['required']">Digite o valor liquidado
+                                        </div>
+                                        <div *ngIf="f['vlrLiquidado'].errors['min']">Valor deve ser maior ou igual a 0
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2 col-12 padding-5"
+                                ngbTooltip="Campo calculado automaticamente, apenas para ajudar nos valores lançados, representa valor liquidado - valor total do titulo">
+                                <div class="form-group">
+                                    <label for="id" >Dif</label>
+                                    <span class="form-control span-disable">{{vlrLiquidadoValor() |
+                                        number:'1.2-2':'pt-BR'}}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="nameInputDescricao">Descrição</label>
+                                    <textarea class="form-control" formControlName="descricao"
+                                        id="nameInputDescricao"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div *ngIf="statusForm === 3">
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-header">Ações</div>
+                <div class="card-body card-buttons">
+                    <div class="row">
+                        <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-primary butao-acao" (click)="voltar()">
+                                <span class="fa fa-arrow-left"></span> Voltar
+                            </button>
+                        </div>
+
+                        <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao"
+                                [disabled]="selected.length === 0" (click)="editando()">
+                                <span class="fa fa-edit"></span> Editar
+                            </button>
+                        </div>
+
+                        <!--
+                        <div class="col-sm-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" (click)="geraCSV()">
+                                <span class="fa"
+                                    [ngClass]="botaoGeraCSV != 'Gerar CSV' ? 'fa-refresh fa-spin fa-fw' : ''"></span>
+                                {{botaoGeraCSV}}
+                            </button>
+                        </div>
+
+
+                      
+                        <div class="col-lg-3 col-xl-3">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" (click)="geraCSV()">
+                                <span class="fa"
+                                    [ngClass]="botaoGeraCSV != 'Gerar CSV' ? 'fa-refresh fa-spin fa-fw' : ''"></span>
+                                {{botaoGeraCSV}}
+                            </button>
+                        </div>
+                    -->
+
+
+                    </div>
+                </div>
+            </div>
+
+
+            <ngx-datatable class="material" [scrollbarH]="true" [rows]="pageTituloDespesa.content" appResizeWatcher
+                [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                [rowClass]="getRowClass" [selected]="selected" [selectionType]="selectionTypeSingle"
+                (activate)="onActivate($event)" [externalPaging]="true" [count]="pageTituloDespesa.totalElements"
+                [offset]="pageTituloDespesa.pageable.pageNumber" [limit]="pageTituloDespesa.size"
+                (page)='setPage($event)'>
+                <ngx-datatable-column name="ID" prop="id" [width]="50"></ngx-datatable-column>
+                <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+                <ngx-datatable-column name="DATA INCLUSÃO" prop="dtaInclusao" [width]="170">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="USUÁRIO INCLUSÃO" prop="usuarioInclusao"
+                    [width]="140"></ngx-datatable-column>
+                <ngx-datatable-column name="TIPO" prop="tituloTipoDTO.nome" [width]="140"></ngx-datatable-column>
+                <ngx-datatable-column name="STATUS" prop="indStatus" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{ getStatusTitulo(value) }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="SUBGRUPO DESPESA" prop="subGrupoDespesaDTO.nome" [width]="250">
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="FORNEC ID" prop="fornecedorDTO.id" [width]="90">
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="FORNECEDOR" prop="fornecedorDTO.nome" [width]="400">
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="DATA EMISSÃO" prop="dtaEmissao" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="DATA VENCIMENTO" prop="dtaVencimento" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="DATA LIQUIDAÇÃO" prop="dtaLiquidacao" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="VALOR ORIGINAL" prop="vlrOriginal" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR JUROS" prop="vlrJuros" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR MULTA" prop="vlrMulta" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR TAXA COBRANÇA" prop="vlrTaxaCobranca" [width]="160">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR DESPESA ACESSORIA" prop="vlrDespesaAcessoria" [width]="180">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR TOTAL" prop="vlrTotal" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR LIQUIDADO" prop="vlrLiquidado" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

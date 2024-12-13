@@ -1,0 +1,141 @@
+<div>
+    <div class="modal-header">
+        TOP ITENS
+        <button type="button" class="btn-close" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+
+            <div class="col-lg-8 col-6 ">
+                <select class="form-control" [compareWith]="compareMesAno" [(ngModel)]="mesAnoProcura"
+                (change)="onChangeMes($event)"
+                    [ngModelOptions]="{ standalone: true }">
+                    <option [ngValue]="null">SELECIONE</option>
+                    <option *ngFor="let vd of mesAnoFiltros" [ngValue]="vd">{{vd.mes}}-{{vd.ano}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-lg-4 col-6 div-mobile-buttons d-grid">
+                <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                    <span class="fa fa-search span-bt-icon" *ngIf="flgPesquisando === 0"></span>
+                    <span class="fa span-btn2 fa-refresh fa-spin fa-fw" *ngIf="flgPesquisando === 1"></span>
+                    <span class="span-bt-text">Pesquisar</span>
+                   
+                </button>
+            </div>
+
+
+        </div>
+
+        <br>
+
+        <p>Cliente - {{cliente.nome}}</p>
+        <p *ngIf="vendedor !== null && !isUndefined(vendedor)">Repr - {{vendedor.nome}}</p>
+
+        <div *ngIf="topItensCliente !== null && isArray(topItensCliente)">
+            <div *ngFor="let tp of topItensCliente" class="col-12">
+
+                <div class="row div-block-cli">
+
+                    <div class="col-6 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label  for="id" class="label-titulo">RANK</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.posicaoRank}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id" class="label-titulo">ID ITEM</label>
+                            </div>
+                            <div class="input-group div-input-group" (click)="activeModal.close(tp.item_id)" (keydown.enter)="activeModal.close(tp.item_id)" tabindex={0}>
+                                <span>{{tp.item_id}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-12 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id"  class="label-titulo">NOME ITEM</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.item_nome}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-4 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id"  class="label-titulo">AGRUP</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.item_unidade_nome}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id"  class="label-titulo">QTD TOTAL</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.qtd_compra_total | number:'1.0-0':'pt-BR'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-4 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id"  class="label-titulo">MÉDIA COMPRA</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.qtd_compra_media | number:'1.0-0':'pt-BR'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-8 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id"  class="label-titulo">DTA ULTIMA COMPRA</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.dta_ultima_compra | amDateFormat:'DD/MM/YYYY'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4 div-block-in">
+                        <div class="form-group div-form-group">
+                            <div class="div-label-titulo">
+                                <label for="id" class="label-titulo">ULT COMPRA</label>
+                            </div>
+                            <div class="input-group div-input-group">
+                                <span>{{tp.qtd_ultima_compra | number:'1.0-0':'pt-BR'}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

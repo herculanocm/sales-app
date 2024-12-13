@@ -1,0 +1,86 @@
+<div>
+
+    <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium"
+        color="#fff" type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+    </ngx-spinner>
+
+
+    <div class="modal-header">
+        <span>LatLong</span>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+
+
+        <div class="col-sm-12 row">
+
+            <div class="col-sm-5 col-12 padding-5">
+                <div class="form-group">
+                    <label for="inputLatAtual">Latitude Atual</label>
+                    <span class="form-control span-disable" name="nminputLatAtual" id="inputLatAtual">{{lat}}</span>
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-12 padding-5">
+                <div class="form-group">
+                    <label for="inputLngAtual">Longitude Atual</label>
+                    <span class="form-control span-disable" name="nminputLngAtual" id="inputLngAtual">{{lng}}</span>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-sm-12 row">
+
+            <div class="col-sm-5 col-12 padding-5">
+                <div class="form-group">
+                    <label for="inputLatNova">Latitude Nova</label>
+                    <input type="number" class="form-control" id="inputLatNova" name="nminputLatNova" [(ngModel)]="latn"
+                        [ngModelOptions]="{ standalone: true }">
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-12 padding-5">
+                <div class="form-group">
+                    <label for="inputLngNova">Longitude Nova</label>
+                    <input type="number" class="form-control" id="inputLngNova" name="nminputLngNova" [(ngModel)]="lngn"
+                        [ngModelOptions]="{ standalone: true }">
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-12 padding-5">
+                <div class="form-group">
+                    <label for="inputLngNova">Ação</label>
+                    <div class="col-12 div-mobile-buttons d-grid">
+                        <button class="btn btn-block butao-acao btn-outline-dark" style="margin: 0px;"
+                            (click)="addNewLatLng()">
+                            <span class="fa fa-plus span-bt-icon span-acao"></span><span class="span-bt-text">Add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <hr>
+
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons" style="padding: 0px;">
+                <div style="height: 200px;" #mapContainerChild id="mapChild" class="iframe-container"></div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12 text-center">
+            <button class="btn btn-md btn-primary" ngbAutofocus (click)="fecharAlterar()">Alterar no Cadastro
+            </button>
+        </div>
+    </div>
+</div>

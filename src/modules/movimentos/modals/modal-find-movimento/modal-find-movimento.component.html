@@ -1,0 +1,212 @@
+<ngx-spinner
+[fullScreen]="false"
+bdColor="rgba(51,51,51,0.8)"
+size="medium"
+color="#fff"
+type="ball-spin-clockwise"
+name="modalSpinner"
+>
+<p style="font-size: 20px; color: white">
+  Comunicando com o Servidor, Aguarde...
+</p>
+</ngx-spinner>
+
+<div class="modal-header">
+<h4 class="modal-title" id="modal-basic-title">Pesquisa de Movimento</h4>
+<button
+  type="button"
+  class="btn-close"
+  aria-label="Close"
+  (click)="modal.dismiss('Cross click')"
+></button>
+</div>
+<div class="modal-body">
+<form [formGroup]="modalForm">
+  <div class="row">
+    <div class="col-12 div-line">
+
+      <div class="form-group">
+        <label for="inputId">Id Movimento</label>
+
+        <div class="input-group">
+          <input 
+          type="number"
+          class="form-control"
+          formControlName="movimentoId"
+          id="inputId"
+          (keydown.enter)="onPesquisa()"
+          ngbTooltip="Id Movimento"
+          [ngClass]="{
+            'is-invalid': submitted && f.movimentoId.errors
+          }"/>
+
+          <div class="input-group-append">
+            <button
+              class="btn btn-secondary"
+              (click)="onPesquisa()"
+              type="button"
+            >
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+
+            <div
+            *ngIf="submitted && f.movimentoId.errors"
+            class="invalid-feedback">
+            <div *ngIf="f.movimentoId.errors['required']">
+              Digite um valor válido
+            </div>
+          </div>
+
+
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</form>
+
+<div *ngIf="movs.length > 0">
+  <br />
+  <hr />
+
+  <div class="row">
+
+    <div class="col-3">
+      <label for="selectGeraEstoqueId">Gera Estoque</label>
+      <select id="selectGeraEstoqueId"
+        class="form-control"
+        (change)="geraEstoque($event)"
+      >
+        <option value="null">Selecione</option>
+        <option value="true">Sim</option>
+        <option value="false">Não</option>
+      </select>
+    </div>
+
+    <div class="col-3">
+      <label for="selectGeraPrecoId">Gera Preço</label>
+      <select id="selectGeraPrecoId"
+        class="form-control"
+        (change)="geraPreco($event)"
+      >
+      <option value="null">Selecione</option>
+      <option value="true">Sim</option>
+      <option value="false">Não</option>
+      </select>
+    </div>
+
+
+    </div>
+
+  <hr />
+
+  <br />
+  <div class="table-responsive">
+  <table class="table table-sm table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">ItemId</th>
+        <th scope="col">ItemNome</th>
+        <th scope="col">Agrupamentos</th>
+        <th scope="col">Qtd</th>
+        <th scope="col">Gera Estoque</th>
+        <th scope="col">Preço UN</th>
+        <th scope="col">Preço</th>
+        <th scope="col">Gera Preço</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rr of movs; index as i">
+        <td style="max-width: 100px;">{{ i + 1 }}</td>
+        <td style="max-width: 100px;">{{ rr.itemDTO.id }}</td>
+        <td>{{ rr.itemDTO.nome }}</td>
+        <td>
+          <select
+            class="form-control"
+            [compareWith]="compareUnidade"
+            [(ngModel)]="rr.itemUnidadeDTO"
+          >
+            <option [ngValue]="null">Selecione</option>
+            <option
+              *ngFor="let un of rr.itemDTO.itemUnidadeDTOs"
+              [ngValue]="un"
+            >
+              {{ un.nome }}
+            </option>
+          </select>
+        </td>
+        <td style="max-width: 100px;">
+        <input
+          type="number"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (rr.indGeraEstoque === true && rr.qtd < 1)
+          }"
+          [(ngModel)]="rr.qtd"
+          />
+        </td>
+
+        <td>
+          <select
+            class="form-control"
+            [compareWith]="compareBoolean"
+            [(ngModel)]="rr.indGeraEstoque"
+          >
+            <option [ngValue]="true">Sim</option>
+            <option [ngValue]="false">Não</option>
+          </select>
+        </td>
+
+        <td>
+          <input style="max-width: 100px;"
+            type="number"
+            class="form-control"
+            (change)="valorUntoValor(rr)"
+            [ngClass]="{
+              'is-invalid': (rr.indGeraPreco === true && rr.valorUnitario < 1)
+            }"
+  
+            [(ngModel)]="rr.valorUnitario"
+            />
+          </td>
+
+        <td>
+        <input style="max-width: 100px;"
+          type="number"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (rr.indGeraPreco === true && rr.valor < 1)
+          }"
+
+          [(ngModel)]="rr.valor"
+          />
+        </td>
+
+        <td>
+          <select
+            class="form-control"
+            [compareWith]="compareBoolean"
+            [(ngModel)]="rr.indGeraPreco"
+          >
+            <option [ngValue]="true">Sim</option>
+            <option [ngValue]="false">Não</option>
+          </select>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div class="modal-footer">
+  <div class="col-12">
+    <div class="col-12 text-center">
+      <button class="btn btn-md btn-primary" (click)="fechar()">
+        Enviar valores
+      </button>
+    </div>
+  </div>
+</div>
+</div>

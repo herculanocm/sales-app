@@ -1,0 +1,91 @@
+.sidenav {
+    .sidenav-menu {
+        padding-bottom: 5px;
+
+
+        .nav {
+            flex-direction: column;
+            flex-wrap: nowrap;
+
+
+            overflow: hidden;
+            transition: height .2s ease-out;
+
+
+            .sidenav-menu-heading {
+                padding: 1.75rem 1rem 0.75rem;
+                font-size: 0.7rem;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                line-height: normal;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                position: relative;
+                color: #212832;
+                cursor: pointer;
+                border-bottom: 1px solid #edf1f7;
+
+                .nav-link-icon {
+                    font-size: 0.9rem;
+                    padding-right: 0.5rem;
+                    display: inline-flex;
+                    color: #a7aeb8;
+
+                    .feather {
+                        width: 1rem;
+                        height: 1rem;
+                    }
+                }
+
+                &:hover {
+                    color: $primary-blue;
+                }
+
+                &.active {
+                    font-weight: 600;
+                    color: $primary-blue;
+
+                    .nav-icon {
+                        color: $primary;
+                    }
+
+                    .nav-link-icon {
+                        color: $primary-blue;
+                    }
+                }
+
+                .sidenav-collapse-arrow {
+                    display: inline-block;
+                    margin-left: auto;
+                    transition: transform 0.15s ease;
+                    color: #a7aeb8;
+                }
+
+                &.collapsed {
+                    .sidenav-collapse-arrow {
+                        transform: rotate(-90deg);
+                    }
+                }
+
+                .badge {
+                    padding: 0.125rem 0.25rem;
+                }
+            }
+
+            .sidenav-menu-nested {
+                flex-direction: column;
+                margin-left: 1.4rem;
+                border-left-style: solid;
+                border-left-width: thin;
+                border-left-color: #d4dae3;
+                padding-left: 0.5625rem;
+            }
+        }
+    }
+}

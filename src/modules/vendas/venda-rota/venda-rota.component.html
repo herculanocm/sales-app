@@ -1,0 +1,230 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12 venda-div-principal" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Status Venda'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                            <button type="button" class="btn btn-block btn-outline-dark butao-acao"
+                                ngbTooltip="Limpa todos os campos de procura" (click)="onLimpa()">
+                                <span class="fa fa-eraser span-acao"></span> Limpar
+                            </button>
+                        </div>
+                        <div class="col-lg-2 col-xl-2 col-6 d-grid" ngbTooltip="Pesquisa com os campos selecionados">
+                            <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                                <span class="fa fa-search span-acao"></span> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <form [formGroup]="buscaForm" (ngSubmit)="onPesquisa()">
+                        <div class="row">
+
+                            <div class="col-12 padding-5" *ngIf="flgSupervisor === true">
+                                <p class="text-center">Acesso via Supervisor</p>
+                            </div>
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="inputDtaEmissaoInicial">Data Emissão</label>
+                                    <input type="date" class="form-control" id="inputDtaEmissaoInicial"
+                                        [ngClass]="{'is-invalid': submitted && f['dtaEmissao'].errors}"
+                                        formControlName="dtaEmissao" ngbTooltip="Digite a data de Emissão Inicial">
+                                    <div *ngIf="submitted && f['dtaEmissao'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['dtaEmissao'].errors['required']">Data de emissão é obrigatoria</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 padding-5">
+                                <div class="form-group">
+                                    <label for="idSelectRepresentante">Representante</label>
+                                    <select class="form-control" [compareWith]="compareVendedor"
+                                        [ngClass]="{'is-invalid': submitted && f['vendedor'].errors}"
+                                        formControlName="vendedor" id="idSelectRepresentante">
+                                        <option [ngValue]="null">SELECIONE</option>
+                                        <option *ngFor="let vd of vendedores" [ngValue]="vd">{{vd.nome}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="submitted && f['vendedor'].errors" class="invalid-feedback">
+                                        <div *ngIf="f['vendedor'].errors['required']">Selecione um vendedor
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <div class="aling-center text-center">
+                        <h6>Pedidos</h6>
+                        <p *ngIf="vendaRotaStatuss.length === 0">Não existe dados para exibir</p>
+                    </div>
+
+                    <div class="col-12" style="margin: 0px; padding: 0px" *ngIf="vendaRotaStatuss.length > 0">
+
+                        <div class="row" style="margin: 0px; padding: 0px" *ngFor="let rets of vendaRotaStatuss"
+                        (keydown.enter)="imprimeVenda(rets.venda_id)" tabindex={0}
+                            (click)="imprimeVenda(rets.venda_id)">
+
+                            <div class="col-12 row div-principal">
+
+                                <div class="col-4 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">VENDA ID</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.venda_id}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-8 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">STATUS</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.venda_status}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-6 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">DTA EMISSÃO</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.dta_emissao | amDateFormat:'DD/MM/YYYY'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">DTA INCLUSÃO</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.dta_inclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-9 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label  for="id" class="label-titulo">CLIENTE NOME</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.cliente_nome}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-3 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label  for="id" class="label-titulo">VALOR TOTAL</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.val_total | number:'1.2-2':'pt-BR'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-4 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">ROTA ID</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.rota_id}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-8 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id"  class="label-titulo">ROTA DTA INC</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.rota_dta_inclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label  for="id" class="label-titulo">VEICULO</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.veiculo_nome}} - {{rets.veiculo_placa}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 div-block-in">
+                                    <div class="form-group div-form-group">
+                                        <div class="div-label-titulo">
+                                            <label for="id" class="label-titulo">MOTORISTA</label>
+                                        </div>
+                                        <div class="input-group div-input-group">
+                                            <span>{{rets.motorista_nome === null ? 'NÃO INFORMADO' :
+                                                rets.motorista_nome}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin: 15px 0px 15px 0px;">
+                                <hr>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

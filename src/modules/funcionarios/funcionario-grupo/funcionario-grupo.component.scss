@@ -1,0 +1,23 @@
+button {
+    border: 1px solid #ced4da;
+}
+.span-disable {
+    background-color: #E9ECEF;
+}
+:host ::ng-deep .datatable-body-cell {
+    padding: 5px !important;
+    margin: 0px !important;
+}
+:host ::ng-deep .datatable-header-cell {
+      padding: 5px !important;
+      margin: 0px !important;
+}
+.div-mobile-buttons {
+    padding: 0px 2px 0px 2px;
+}
+.card-header {
+    background-color: white;
+}
+.card-body {
+    background-color: white;
+}

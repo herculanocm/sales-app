@@ -1,0 +1,259 @@
+<div class="div-print-content">
+
+
+  <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+    type="ball-spin-clockwise">
+    <p style="font-size: 20px; color: white">Processando, Aguarde...</p>
+  </ngx-spinner>
+
+  <div class="div-print-principal" style="margin-bottom: 30px;"
+    *ngIf="caixa !== null && !isUndefined(caixa) && caixa.id !== null && !isUndefined(caixa.id) && caixa.id > 0">
+
+    <br>
+    <br>
+    <div class="col-12 text-align-center-titulo">
+      <p>CAIXA ID: {{caixa.id}} - DATA REF: {{caixa.dtaReferencia | amDateFormat:'DD/MM/YYYY' }}</p>
+    </div>
+
+    <div class="col-12 div-margin-padding-0">
+      <hr>
+
+      <div class="row">
+        <div class="col-3">USU INCLUSÃO: {{caixa.usuarioInclusao}}</div>
+        <div class="col-3">DTA INCLUSÃO: {{caixa.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+
+        <div class="col-3">USU ULT ALT: {{caixa.usuarioUltAlteracao}}</div>
+        <div class="col-3">DTA ULT ALT: {{caixa.dtaUltAlteracao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</div>
+
+      </div>
+      <hr>
+
+      <br>
+
+      <div class="col-12" style="margin: 0px;padding: 0px">
+
+        <div class="form-group">
+          <label for="nameInputDescricaof">Descrição</label>
+          <textarea class="form-control" name="nameInputDescricao"
+            id="idNameInputDescricao">{{caixa.descricao}}</textarea>
+        </div>
+
+      </div>
+      <div class="col-12" style="margin: 0px;padding: 0px">
+
+        <div class="col-12 text-align-center-div-titulo">
+          <p>TOTAIS POR CONDIÇÃO - ATIVOS</p>
+        </div>
+
+
+        <table class="table table-sm table-striped table-bordered">
+          <thead>
+            <tr>
+
+              <th>Condição</th>
+              <th>Entrada</th>
+              <th>Saída</th>
+              <th>Dif</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cr of caixa.caixaResultado.caixaResultado">
+
+              <td class="align-left">{{cr.condicao}}</td>
+              <td class="align-left">{{cr.vlrEntrada | number:'1.2-2':'pt-BR'}}</td>
+              <td class="align-left">{{cr.vlrSaida | number:'1.2-2':'pt-BR'}}</td>
+              <td class="align-left">{{cr.vlrDif | number:'1.2-2':'pt-BR'}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <table class="table table-sm table-striped table-bordered">
+          <thead>
+            <tr>
+
+              <th>Resumo</th>
+              <th>Soma Entrada</th>
+              <th>Soma Saída</th>
+              <th>Soma Dif</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+
+              <td class="align-left">TOTAIS CONDIÇÃO</td>
+              <td class="align-left">{{getValorTotalEntradaTable(caixa) | number:'1.2-2':'pt-BR'}}</td>
+              <td class="align-left">{{getValorTotalSaidaTable(caixa) | number:'1.2-2':'pt-BR'}}</td>
+              <td class="align-left">{{getValorTotalDifTable(caixa) | number:'1.2-2':'pt-BR'}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br>
+        <div class="table-responsive ">
+          <table class="table table-sm table-striped table-bordered">
+
+              <thead>
+                  <tr>
+
+                      <th>Validação</th>
+                      <th>Valor</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+
+                      <td class="align-left">Soma de todos os cheque recebidos por romaneioId</td>
+                      <td class="align-left">{{caixa.totalCheques |
+                          number:'1.2-2':'pt-BR'}}</td>
+                  </tr>
+              </tbody>
+          </table>
+        </div>
+
+
+
+      </div>
+
+      <br>
+
+      <div class="col-12" style="margin: 0px;padding: 0px">
+
+        <div class="col-12 text-align-center-div-titulo">
+          <p>MOVIMENTOS</p>
+        </div>
+
+        <div class="col-12" style="margin: 0px;padding: 0px" *ngFor="let cm of caixa.caixaMovDTOs">
+
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>IDM</th>
+                <th>Tipo</th>
+                <th>SubTipo</th>
+                <th>Movimento</th>
+                <th>Usuario Caixa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-left">{{cm.id}}</td>
+                <td class="align-left">{{cm.caixaTipoMovDTO.caixaSubTipoMovDTO.sigla}}</td>
+                <td class="align-left">{{cm.caixaTipoMovDTO.caixaSubTipoMovDTO.nome}}</td>
+                <td class="align-left">{{cm.caixaTipoMovDTO.nome}}</td>
+                <td class="align-left">{{cm.usuarioCaixa !== null && cm.usuarioCaixa.length > 0 ? cm.usuarioCaixa : ''}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+
+                <th>Usuário Inclusão</th>
+                <th>Data Inclusão</th>
+                <th>Ativo?</th>
+                <th>Data Ref</th>
+                <th>Qtd</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+
+                <td class="align-left">{{cm.usuarioInclusao}}</td>
+                <td class="align-left">{{cm.dtaInclusao | amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                <td class="align-left">{{cm.ativo === true ? 'ATIVO' : 'DESATIVADO'}}</td>
+                <td class="align-left">{{cm.dtaRef | amDateFormat:'DD/MM/YYYY'}}</td>
+                <td class="align-left">{{cm.qtd}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table table-bordered"
+          *ngIf="cm.referencia !== null && !isUndefined(cm.referencia) && cm.referencia.estoqueNome !== null && !isUndefined(cm.referencia.estoqueNome) && cm.referencia.estoqueNome.length > 0"
+          >
+            <thead>
+              <tr>
+
+                <th>ALMOXARIFADO</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-left">{{cm.referencia.estoqueNome}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+
+                <th>DINHEIRO</th>
+                <th>BOLETO</th>
+                <th>CHEQUE</th>
+                <th>CARTÃO</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+
+                <td class="align-left">{{cm.vlrDinheiro | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrBoleto | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrCheque | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrCartao | number:'1.2-2':'pt-BR'}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+
+                <th>PIX</th>
+                <th>NOTA</th>
+                <th>BONIFICAÇÃO</th>
+                <th>OUTROS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+
+                <td class="align-left">{{cm.vlrPix | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrNota | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrBonificacao | number:'1.2-2':'pt-BR'}}</td>
+                <td class="align-left">{{cm.vlrOutros | number:'1.2-2':'pt-BR'}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table table-bordered"
+          *ngIf="cm.descricao !== null && cm.descricao.length > 0"
+          >
+            <thead>
+              <tr>
+
+                <th>DESCRIÇÃO</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="align-left">{{cm.descricao}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+
+          <br><br>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

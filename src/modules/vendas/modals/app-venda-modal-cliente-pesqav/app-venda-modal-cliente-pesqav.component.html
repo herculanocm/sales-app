@@ -1,0 +1,240 @@
+
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="pesqAvForm">
+
+            <div class="col-sm-12 row div-form-princ">
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Representante</label>
+                        <select class="form-control" [compareWith]="compareVendedor" formControlName="vendedor"
+                            id="idSelectRepresentante">
+                            <option [ngValue]="null">Selecione</option>
+                            <option *ngFor="let vd of vendedoresVisiveis" [ngValue]="vd">{{vd.nome}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Dia Semana</label>
+                        <select class="form-control" [compareWith]="compareDias" formControlName="diaSemana"
+                            id="idSelectDias">
+                            <option [ngValue]="null">Selecione</option>
+                            <option *ngFor="let dia of diasSemana" [ngValue]="dia">{{dia.nome}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Dta Inc. Ini.</label>
+                        <input type="date" class="form-control" id="idDtaIncIni" formControlName="dtaIncInicial">
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Dta Inc. Fin.</label>
+                        <input type="date" class="form-control" id="idDtaIncFim" formControlName="dtaIncFinal">
+                    </div>
+                </div>
+
+                <div class="col-12 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Nome</label>
+                        <input type="text" (keydown.enter)="onPesquisa()" class="form-control" id="idNomeCli"
+                            formControlName="nome">
+                    </div>
+                </div>
+
+                <div class="col-12 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Fantasia</label>
+                        <input type="text" (keydown.enter)="onPesquisa()" class="form-control" id="idNomeFant"
+                            formControlName="fantasia">
+                    </div>
+                </div>
+
+                <div class="col-12" *ngIf="flgPesquisando === 1">
+                    <span class="fa fa-refresh fa-spin fa-fw span-pesq"></span><span class="span-pesq">Pesquisando
+                        Aguarde...</span>
+                </div>
+                <br *ngIf="flgPesquisando === 1">
+
+                <div class="col-6 div-form-group d-grid">
+                    <button type="button" class="btn btn-block btn-outline-dark butao-acao" (click)="onLimpa()">
+                        <span class="fa fa-eraser span-bt span-btn2">Limpar</span>
+                    </button>
+                </div>
+
+                <div class="col-6 div-form-group d-grid">
+                    <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                        <span class="fa fa-search span-bt span-btn2">Pesquisar</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <br *ngIf="clientes.length > 0">
+        <hr *ngIf="clientes.length > 0">
+
+
+        <div *ngIf="clientes.length > 0" class="col-12">
+            <div class="text-center">
+                <h5>Qtd Clientes: {{clientes.length}}</h5>
+            </div>
+        </div>
+
+
+        <hr *ngIf="clientes.length > 0">
+        <br *ngIf="clientes.length > 0">
+
+        <div *ngFor="let climodalc of clientes" class="col-12">
+
+            <div class="row div-block-cli">
+
+                <div class="col-3 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label for="id"  class="label-titulo">ID</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.id}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-9 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id" class="label-titulo">CGC</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.cgc}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id" class="label-titulo">NOME</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.nome}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id" class="label-titulo">FANTASIA</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.fantasia}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-3 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label for="id"  class="label-titulo">LIMITE</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.limite | number:'1.2-2':'pt-BR'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-3 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id" class="label-titulo">COMPRO.</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.comprometido | number:'1.2-2':'pt-BR'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-3 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label for="id"  class="label-titulo">DIVIDA</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.divida | number:'1.2-2':'pt-BR'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-3 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label for="id"  class="label-titulo">SALDO</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.saldo | number:'1.2-2':'pt-BR'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id" class="label-titulo">STATUS</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.cliente_status_label}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label for="id"  class="label-titulo">BLOQ VENDA?</label>
+                        </div>
+                        <div class="input-group div-input-group">
+                            <span>{{climodalc.is_venda_bloqueada ? 'SIM':'NÃO'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 div-block-in">
+                    <div class="form-group div-form-group">
+                        <div class="div-label-titulo">
+                            <label  for="id"  class="label-titulo">ENDERECOS</label>
+                        </div>
+                        <div class="input-group div-input-group" *ngFor="let cliEnd of climodalc.enderecos">
+                            <span>{{cliEnd.logradouro}}, {{cliEnd.num_logradouro}} - {{cliEnd.bairro}} -
+                                {{cliEnd.municipio_nome}}</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-12 div-block-in d-grid">
+                    <button class="btn btn-block btn-primary" (click)="activeModal.close(climodalc)">Selecionar</button>
+                </div>
+
+
+
+            </div>
+
+            <hr>
+
+        </div>
+    </div>

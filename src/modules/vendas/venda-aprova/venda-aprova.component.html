@@ -1,0 +1,143 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Vendas'" [picon]="'fa-shopping-cart'" [heading]="'Aprovação de Vendas'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+    <div class="card div-geral-page">
+
+        <ngx-spinner class="spinner-full" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff"
+            type="ball-spin-clockwise">
+            <p class="p-margin-padding-0" style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...
+            </p>
+        </ngx-spinner>
+
+        <div class="col-md-12 margin-padding-0">
+
+
+            <div class="card bg-light mb-3">
+                <div class="card-body card-status">
+
+                    <div *ngIf="vendas.length > 0" class="aling-center text-center" style="margin-bottom: 30px;">
+                        <h6>Vendas Aguardando Aprovação</h6>
+                    </div>
+
+                    <div *ngIf="vendas.length === 0" class="aling-center text-center">
+                        <h6>Nenhuma Venda para Aprovar</h6>
+                    </div>
+
+
+                    <div *ngFor="let vd of vendas" class="row border-div"
+                        style="background-color: white;font-size: 10px;margin-bottom: 30px;">
+
+                        <div class="col-3 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">ID VENDA</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{vd.id}}</span></p>
+                        </div>
+
+                        <div class="col-9 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">CLIENTE</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{vd.clienteDTO!.nome}}</span></p>
+                        </div>
+
+                        <div class="col-3 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">CONDICAO</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{vd.condicaoPagamentoDTO!.nome}}</span></p>
+                        </div>
+
+                        <div class="col-9 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">VENDEDOR</label>
+                            </p>
+                            <p class="p-margin-padding-0"><span>{{vd.vendedorDTO!.nome}}</span></p>
+                        </div>
+
+                        <div class="col-6 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">DESCONTO
+                                    TOTAL</label></p>
+                            <p class="p-margin-padding-0"><span>{{vd.vlrDescontoProdutos | number:'1.2-2':'pt-BR'
+                                    }}</span></p>
+                        </div>
+
+                        <div class="col-6 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label for="id"  class="label-margin-padding-0">VALOR
+                                    TOTAL</label></p>
+                            <p class="p-margin-padding-0"><span>{{vd.vlrTotal | number:'1.2-2':'pt-BR' }}</span></p>
+                        </div>
+
+                        <div class="col-6 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label for="id"  class="label-margin-padding-0">ITEM</label></p>
+                        </div>
+
+                        <div class="col-2 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label for="id"  class="label-margin-padding-0">QTD</label></p>
+                        </div>
+
+                        <div class="col-2 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id" class="label-margin-padding-0">DESC</label></p>
+                        </div>
+
+                        <div class="col-2 margin-padding-0 border-div">
+                            <p class="p-titulo-margin-padding-0"><label  for="id"  class="label-margin-padding-0">VALOR</label></p>
+                        </div>
+
+                        <div class="col-12 row margin-padding-0" *ngFor="let vi of vd.vendaItemDTOs">
+
+                            <div class="col-6 margin-padding-0 border-div">
+                                <p class="p-margin-padding-0"><span>{{vi.itemDTO.nome}}</span></p>
+                            </div>
+
+                            <div class="col-2 margin-padding-0 border-div">
+                                <p class="p-margin-padding-0"><span>{{vi.qtd}}</span></p>
+                            </div>
+
+                            <div class="col-2 margin-padding-0 border-div">
+                                <p class="p-margin-padding-0"><span>{{vi.vlrDesconto | number:'1.2-2':'pt-BR'}}</span>
+                                </p>
+                            </div>
+
+                            <div class="col-2 margin-padding-0 border-div">
+                                <p class="p-margin-padding-0"><span>{{vi.vlr | number:'1.2-2':'pt-BR'}}</span></p>
+                            </div>
+
+                        </div>
+
+                        <div class="col-12 row margin-padding-0"
+                            *ngFor="let alerta of getAlertas(vd.vendaStatusAtualDTO.descricao)">
+
+                            <div class="col-12 margin-padding-0 border-div">
+                                <p class="p-titulo-margin-padding-0"><label  for="id" 
+                                        class="label-margin-padding-0">ALERTA</label></p>
+                                <p class="p-margin-padding-0"><span>{{alerta}}</span></p>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6 div-mobile-buttons">
+                            <button type="button" class="btn btn-block btn-danger butao-acao"
+                                (click)="aprovaVenda(vd.id!)">
+                                <span class="fa fa-gavel span-bt-icon"></span><span class="span-bt-text">Aprova</span>
+                            </button>
+                        </div>
+
+                        <div class="col-6 div-mobile-buttons">
+                            <button type="button" class="btn btn-block btn-success butao-acao"
+                                (click)="desconfirmarVenda(vd.id!)">
+                                <span class="fa fa-ban span-bt-icon"></span><span
+                                    class="span-bt-text">Desconfirma</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

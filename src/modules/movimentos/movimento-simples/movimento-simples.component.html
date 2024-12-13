@@ -1,0 +1,552 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+
+<div class="col-12" style="padding: 15px; margin: 0px">
+  <app-page-header
+    [pheading]="' Movimentos'"
+    [picon]="'fa-retweet'"
+    [heading]="'Movimento Simples'"
+    [icon]="'fa-th-list'"
+  >
+  </app-page-header>
+
+  <div class="card div-geral-page">
+    <ngx-spinner
+      [fullScreen]="false"
+      bdColor="rgba(51,51,51,0.8)"
+      size="medium"
+      color="#fff"
+      type="ball-spin-clockwise"
+    >
+      <p style="font-size: 20px; color: white">
+        Comunicando com o Servidor, Aguarde...
+      </p>
+    </ngx-spinner>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-3 col-xl-3 col-6 d-grid">
+                <button
+                  class="btn btn-block butao-acao"
+                  [ngClass]="statusForm === 2 ? 'btn-warning' : 'btn-primary'"
+                  (click)="onCadastra()"
+                >
+                  <span class="fa fa-save span-acao"></span>
+                  {{ statusForm === 2 ? "Alterar" : "Salvar" }}
+                </button>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-6 d-grid">
+                <button
+                  type="button"
+                  class="btn btn-block btn-outline-dark butao-acao"
+                  (click)="onLimpa()"
+                >
+                  <span class="fa fa-eraser span-acao"></span> Limpar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-2 col-xl-2 col-sm-2 col-12 d-grid">
+                <button
+                  type="button"
+                  class="btn btn-outline-dark"
+                  (click)="findMovimentoItens()"
+                >
+                  <span class="fa fa-search span-acao"></span>Busca movimento
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+          <div class="card-header">Movimento Simples</div>
+          <div class="card-body">
+            <app-fields-erro-directive
+              *ngIf="serverIsError()"
+              [servererror]="errorForm"
+            >
+            </app-fields-erro-directive>
+
+            <hr *ngIf="serverIsError()" />
+
+            <input
+              type="hidden"
+              class="form-control"
+              name="inputId"
+              [(ngModel)]="movimento.id"
+              [disabled]="statusForm === 2"
+              id="inputId"
+              placeholder="Id"
+            />
+
+            <div class="form-group row">
+              <label for="movTipoId" class="col-sm-2 col-form-label"
+                >Tipo</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="movTipoId"
+                  id="movTipoId"
+                  [compareWith]="compareMovimentoTipo"
+                  [(ngModel)]="movimento.movimentoTipoDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let mov of movimentoTipos" [ngValue]="mov">
+                    {{ mov.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaMovimentoTipo()"
+                >
+                  <span class="fa fa-refresh span-acao"></span> Refresh
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="almoxarifadoId" class="col-sm-2 col-form-label"
+                >Almoxarifado</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="almoxarifadoId"
+                  id="almoxarifadoName"
+                  [compareWith]="compareAlmoxarifado"
+                  [(ngModel)]="movimento.estoqueAlmoxarifadoDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let al of almoxarifados" [ngValue]="al">
+                    {{ al.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaAlmoxarifados()"
+                >
+                  <span class="fa fa-refresh span-acao"></span> Refresh
+                </button>
+              </div>
+            </div>
+
+            <hr />
+
+            <div ngbAccordion>
+              <div ngbAccordionItem [collapsed]="false">
+                  <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton>ITENS</button>
+                  </h2>
+
+                  <div ngbAccordionCollapse>
+                      <div ngbAccordionBody>
+
+                        <ng-template>
+                  
+                          <div class="form-group row">
+                            <label for="typeaheadItem" class="col-sm-1 col-form-label"
+                              >Item</label
+                            >
+                            <div class="col-sm-2">
+                              <input
+                                type="number"
+                                class="form-control"
+                                #inputIdCodItem
+                                [(ngModel)]="codItemProcura"
+                                (keydown.Tab)="selectedItemId($event, codItemProcura!)"
+                                (keydown.enter)="
+                                  selectedItemId($event, codItemProcura!)
+                                "
+                              />
+                            </div>
+                            <div class="col-sm-7">
+                              <input
+                                id="typeaheadItem"
+                                [ngbTypeahead]="searchItem"
+                                [inputFormatter]="formatterItem"
+                                [resultTemplate]="rt"
+                                (selectItem)="selectedItem($event)"
+                                name="typeaheadItem"
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="searchFailedItem"
+                                [(ngModel)]="movimentoItem.itemDTO"
+                                placeholder="Busca de Item"
+                              />
+                            </div>
+                            <span class="col-sm-2 col-form-label" *ngIf="searchingItem"
+                              >procurando...</span
+                            >
+                            <span
+                              class="col-sm-2 col-form-label"
+                              *ngIf="searchFailedItem"
+                              >Não encontrado</span
+                            >
+                          </div>
+        
+                          <hr
+                            *ngIf="itemProcura !== null && !isUndefined(itemProcura)"
+                          />
+        
+                          <div
+                            *ngIf="itemProcura !== null && !isUndefined(itemProcura)"
+                          >
+                            <div class="form-group row">
+                              <label
+                                for="idSaldoEstoque"
+                                class="col-sm-2 col-form-label"
+                                >Saldo Estoque</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  name="nameSaldoEstoque"
+                                  id="idSaldoEstoque"
+                                  [ngModel]="itemProcura!.qtdSaldo"
+                                  disabled
+                                />
+                              </div>
+                              <div class="col-sm-8" class="div-table">
+                                <span
+                                  class="fa fa-sync-alt fa-spin fa-fw spin-upload-image"
+                                  *ngIf="itemEstoqueStatus.flgBuscando === 1"
+                                ></span>
+                                <span class="span-midle">{{
+                                  itemEstoqueStatus.msg
+                                }}</span>
+                              </div>
+                            </div>
+        
+                            <div class="form-group row" style="margin-top: 10px;">
+                              <label for="idUnidade" class="col-sm-2 col-form-label"
+                                >Unidade</label
+                              >
+                              <div class="col-sm-6">
+                                <select
+                                  class="form-control"
+                                  name="idUnidade"
+                                  id="idUnidade"
+                                  (change)="alteraValoresItem()"
+                              
+                                  [compareWith]="compareUnidade"
+                                  [(ngModel)]="movimentoItem.itemUnidadeDTO"
+                                >
+                                  <option [ngValue]="null">Selecione</option>
+                                  <option
+                                    *ngFor="let un of itemProcura!.itemUnidadeDTOs"
+                                    [ngValue]="un"
+                                  >
+                                    {{ un.nome }}
+                                  </option>
+                                </select>
+                              </div>
+                              <label for="idQtd" class="col-sm-2 col-form-label"
+                                >Qtd</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="idQtd"
+                                  name="idQtd"
+                                  (change)="alteraValoresItem()"
+                                  (keydown)="alteraValoresItem()"
+                                  [(ngModel)]="movimentoItem.qtd"
+                                  ngbTooltip="Digite a Quantidade do Item segundo o seu agrupamento, se colocar 2 então é 2 vezes o fator da unidade."
+                                />
+                              </div>
+                            </div>
+        
+                            <div class="form-group row" style="margin-top: 10px;">
+                              <label for="valor" class="col-sm-2 control-label"
+                                >Valor Un</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="valor"
+                                  name="valor"
+                                  [(ngModel)]="movimentoItem.valorUnitario"
+                                  (change)="alteraValoresItem()"
+                                  (keydown)="alteraValoresItem()"
+                                  ngbTooltip="Digite o preço unitário do item segundo seu agrupamento e quantidade"
+                                />
+                              </div>
+
+                              <label for="valor" class="col-sm-2 control-label"
+                                >Valor</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                type="number"
+                                  class="form-control"
+                                  id="valor"
+                                  name="valor"
+                                  [(ngModel)]="movimentoItem.valor"
+                                  (keydown)="inputValorToVlrUnitario()"
+                                  (change)="inputValorToVlrUnitario()"
+                                  ngbTooltip="Digite o preço do item segundo seu agrupamento e quantidade"
+                                />
+                              </div>
+                              <label for="dtaValidade" class="col-sm-2 control-label"
+                                >Data Validade</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                  type="date"
+                                  class="form-control"
+                                  name="dtaValidade"
+                                  [(ngModel)]="movimentoItem.dtaValidade"
+                                  id="dtaValidade"
+                                  ngbTooltip="Digite a data de validade do item"
+                                />
+                              </div>
+                            </div>
+        
+                            <div class="form-group row" style="margin-top: 10px;">
+                              <label for="valor" class="col-sm-3 control-label"
+                                >Média Valor Unitário</label
+                              >
+                              <div class="col-sm-3">
+                                <span
+                                  class="form-control span-disable"
+                                  name="nameVlrMedio"
+                                  id="idVlrMedio"
+                                  >{{
+                                    getVlrMedio() | number : "1.2-6" : "pt-BR"
+                                  }}</span
+                                >
+                              </div>
+                            </div>
+        
+                            <div class="form-group row" style="margin-top: 10px;">
+                              <label for="id" class="col-sm-2 control-label"
+                                >Conf.</label
+                              >
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraPrecoCusto"
+                                  name="nameIndGeraPrecoCusto"
+                                  [(ngModel)]="movimentoItem.indGeraPreco"
+                                />Gera Preço
+                              </label>
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraEstoque"
+                                  name="nameIndGeraEstoque"
+                                  [(ngModel)]="movimentoItem.indGeraEstoque"
+                                />Gera Estoque
+                              </label>
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraValidade"
+                                  name="nameIndGeraValidade"
+                                  [(ngModel)]="movimentoItem.indGeraValidade"
+                                />Gera Validade
+                              </label>
+                            </div>
+                          </div>
+        
+                          <hr />
+        
+                          <div class="row">
+                            <div class="col-sm-3 col-12 d-grid">
+                              <button
+                                class="btn btn-block butao-acao"
+                                [ngClass]="
+                                  movimentoItem.status === 'novo'
+                                    ? 'btn-warning'
+                                    : 'btn-primary'
+                                "
+                                (click)="addMovimentoItem()"
+                                ngbTooltip="Clique aqui para adicionar o item do movimento"
+                              >
+                                <span
+                                  class="fa fa-plus span-buttons-body span-acao"
+                                ></span>
+                                {{
+                                  movimentoItem.status === null
+                                    ? "Adicionar Item"
+                                    : "Alterar Item"
+                                }}
+                              </button>
+                            </div>
+                            <div class="col-sm-3 col-12 d-grid">
+                              <button
+                                class="btn btn-block btn-outline-dark butao-acao"
+                                (click)="onLimpaMovimentoItem()"
+                              >
+                                <span
+                                  class="fa fa-eraser span-buttons-body span-acao"
+                                ></span>
+                                Limpar Item
+                              </button>
+                            </div>
+                            <div class="col-sm-3 col-12 d-grid">
+                              <button
+                                class="btn btn-block btn-danger butao-acao"
+                                (click)="onDeletaMovimentoItem()"
+                                [disabled]="selectedItemMovimento.status !== 'novo'"
+                              >
+                                <span
+                                  class="fa fa-trash span-buttons-body span-acao"
+                                ></span>
+                                Deletar Item
+                              </button>
+                            </div>
+                          </div>
+        
+                          <div *ngIf="movimento.movimentoItemDTOs.length > 0">
+                            <hr />
+                            <ngx-datatable
+                              class="material striped"
+                              [scrollbarH]="true"
+                              appResizeWatcher
+                              [rows]="movimento.movimentoItemDTOs"
+                              [columnMode]="'force'"
+                              [rowClass]="getRowClass"
+                              [headerHeight]="35"
+                              [footerHeight]="70"
+                              rowHeight="auto"
+                              [limit]="200"
+                              [selected]="selected"
+                              [selectionType]="selectionTypeSingle"
+                              (select)="onSelectMovimentoItem($event)"
+                            >
+                              <ngx-datatable-column
+                                name="ITEM ID"
+                                prop="itemDTO.id"
+                                [width]="70"
+                              ></ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="STATUS"
+                                prop="status"
+                                [width]="70"
+                              ></ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="ITEM"
+                                prop="itemDTO.nome"
+                                [width]="500"
+                              ></ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="UNIDADE"
+                                prop="itemUnidadeDTO.nome"
+                                [width]="250"
+                              >
+                              </ngx-datatable-column>
+                              <ngx-datatable-column name="QTD" prop="qtd" [width]="120">
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value | number : "1.2-2" : "pt-BR" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+        
+                              <ngx-datatable-column
+                                name="QTD UN"
+                                prop="qtdConvertido"
+                                [width]="120"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value | number : "1.2-2" : "pt-BR" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="VALOR"
+                                prop="valor"
+                                [width]="70"
+                              ></ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="VALOR UN"
+                                prop="valorUnitario"
+                                [width]="120"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value | number : "1.2-2" : "pt-BR" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="GERA ESTOQUE"
+                                prop="indGeraEstoque"
+                                [width]="120"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value === true ? "Sim" : "Não" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              
+                              <ngx-datatable-column
+                                name="GERA PREÇO"
+                                prop="indGeraPreco"
+                                [width]="120"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value === true ? "Sim" : "Não" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                            </ngx-datatable>
+                          </div>
+                        </ng-template>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+
+            <hr />
+
+            <div class="form-group row">
+              <label for="inputDescricao" class="col-sm-2 col-form-label"
+                >Descrição</label
+              >
+              <div class="col-sm-10">
+                <textarea
+                  class="form-control"
+                  name="inputDescricao"
+                  [(ngModel)]="movimento.descricao"
+                  id="inputDescricao"
+                  >{{ movimento.descricao }}</textarea
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

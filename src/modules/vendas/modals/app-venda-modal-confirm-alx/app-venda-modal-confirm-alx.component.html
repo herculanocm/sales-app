@@ -1,0 +1,44 @@
+<div>
+    <div class="modal-header">
+        <span>Atenção - Selecione</span>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <h4>{{modalContent}}</h4><br><br>
+        <form [formGroup]="movForm">
+
+            <div class="form-group">
+                <label for="idEstAlx">Estoque Almoxarifado</label>
+                <select class="form-control" ngbTooltip="Selecione o almoxarifado onde será aplicado o pedido"
+                    [ngClass]="{'is-invalid': submitted && f['estoqueAlmoxarifadoId'].errors}"
+                    formControlName="estoqueAlmoxarifadoId" id="idEstAlx">
+                    <option [ngValue]="null">SELECIONE</option>
+                    <option *ngFor="let ealxv of estoqueAlmoxarifados" [ngValue]="ealxv.id">{{ealxv.nome}}
+                    </option>
+                </select>
+                <div *ngIf="submitted && f['estoqueAlmoxarifadoId'].errors" class="invalid-feedback">
+                    <div *ngIf="f['estoqueAlmoxarifadoId'].errors['required']">Selecione um
+                        estoque
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6 text-center confirm d-grid">
+                    <button class="btn btn-md btn-danger" (click)="fechar(1)">Gerar Movimento</button>
+                </div>
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-primary" ngbAutofocus (click)="fechar(0)">Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

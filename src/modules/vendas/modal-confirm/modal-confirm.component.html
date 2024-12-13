@@ -1,0 +1,25 @@
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">{{ modalHeader }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        {{ modalContent }}
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div 
+                    class="col-6 text-center d-grid confirm">
+                    <button class="btn btn-md btn-danger" ngbAutofocus
+                        (click)="activeModal.close('yes')">{{textButtonYes}}</button>
+                </div>
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-primary" 
+                        (click)="activeModal.close('no')">{{textButtonNo}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

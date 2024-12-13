@@ -1,0 +1,18 @@
+.content-error{
+    background-color: #f2dede;
+    margin-bottom: 30px;
+    padding: 10px 10px 10px 10px;
+    border-radius: 0.375rem;
+    font-size: 12px;
+}
+
+.content-error p{
+    margin: 0px 0px 0px 0px;
+}
+
+
+
+.table th, .table td{
+    padding: 0px;
+    border: 1px solid rgb(189, 187, 187);
+}

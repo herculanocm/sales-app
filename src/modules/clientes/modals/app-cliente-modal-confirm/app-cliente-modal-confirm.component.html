@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <span>{{ modalHeader }}</span>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+    {{ modalContent }}
+
+    <div *ngIf="modalType === 'remove-image'">
+        <img [src]="img.srcImg" class="rounded mx-auto d-block img-max-lenght" [alt]="img.fileName"
+            [title]="img.fileName">
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="col-12">
+        <div class="row">
+            <div *ngIf="modalType === 'confirm' || modalType === 'remove-image'" class="col-6 text-center d-grid">
+                <button class="btn btn-md btn-danger" (click)="activeModal.close('confirm')">{{confirmLabel}}</button>
+            </div>
+            <div
+                [ngClass]="modalType === 'confirm' || modalType === 'remove-image' ? 'col-6 text-center d-grid':' d-grid'">
+                <button class="btn btn-md" ngbAutofocus [ngClass]="modalType === 'error' ? 'btn-danger':'btn-primary'"
+                    (click)="activeModal.close('default')">{{defaultLabel}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

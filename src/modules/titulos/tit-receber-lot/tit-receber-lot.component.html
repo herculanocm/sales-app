@@ -1,0 +1,328 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' Titulos'" [picon]="'fa-money'" [heading]="'Processar Lote'" [icon]="'fa-th-list'">
+    </app-page-header>
+
+
+    <div class="card col-md-12">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+                <div class="row">
+
+                    <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                        <button type="button" class="btn btn-block btn-default butao-acao" (click)="onLimpa()">
+                            <span class="fa fa-eraser span-bt-icon"></span><span class="span-bt-text">Limpar</span>
+                        </button>
+                    </div>
+
+                    <div class="col-lg-2 col-6 div-mobile-buttons d-grid">
+                        <button type="button" class="btn btn-block btn-success butao-acao" (click)="onPesquisa()">
+                            <span class="fa fa-search span-bt-icon"></span><span class="span-bt-text">Pesquisar</span>
+                        </button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body padding-5">
+                <form [formGroup]="pesqForm" (ngSubmit)="onPesquisa()">
+
+                    <div class="row" style="margin: 0px; padding: 0px">
+
+                        <div class="col-sm-3 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idTituloTipoDTO">Tipo</label>
+
+                                <select class="form-control"
+                                    [ngClass]="{'is-invalid': submitted && f.tituloTipoDTO.errors}"
+                                    [compareWith]="compareTituloTipo" id="idTituloTipoDTO"
+                                    formControlName="tituloTipoDTO">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let tt of tituloTipos" [ngValue]="tt">{{tt.nome}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.tituloTipoDTO.errors" class="invalid-feedback">
+                                    <div *ngIf="f.tituloTipoDTO.errors['required']">Selecione tipo de titulo
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idTituloStatus">Status</label>
+
+                                <select class="form-control" [ngClass]="{'is-invalid': submitted && f.indStatus.errors}"
+                                    [compareWith]="compareTituloStatus" id="idTituloStatus" formControlName="indStatus">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let fts of tituloStatus" [ngValue]="fts.sigla">{{fts.nome}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.indStatus.errors" class="invalid-feedback">
+                                    <div *ngIf="f.indStatus.errors['required']">Selecione o status do titulo
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idDtaEmissao">Data Emissão</label>
+                                <input type="date" [ngClass]="{'is-invalid': submitted && f.dtaEmissao.errors}"
+                                    class="form-control" id="idDtaEmissao" formControlName="dtaEmissao">
+                                <div *ngIf="submitted && f.dtaEmissao.errors" class="invalid-feedback">
+                                    <div *ngIf="f.dtaEmissao.errors['required']">Selecione a data de emissão
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idDtaVencimento">Data Vencimento</label>
+                                <input type="date" [ngClass]="{'is-invalid': submitted && f.dtaVencimento.errors}"
+                                    class="form-control" id="idDtaVencimento" formControlName="dtaVencimento">
+                                <div *ngIf="submitted && f.dtaVencimento.errors" class="invalid-feedback">
+                                    <div *ngIf="f.dtaVencimento.errors['required']">Selecione a data de Vencimento
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idCodBanco">Cod Banco</label>
+                                <input type="number" class="form-control" (keydown.Tab)="selectBancoByCod()"
+                                    (keydown.enter)="selectBancoByCod()" id="idCodBanco" formControlName="codBanco">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idBancoFebrabans">Banco Febraban</label>
+
+                                <select class="form-control"
+                                    [ngClass]="{'is-invalid': submitted && f.bancoFebrabanDTO.errors}"
+                                    [compareWith]="compareBancoFebrabans" id="idBancoFebrabans"
+                                    (change)="bancoSelecionado()" formControlName="bancoFebrabanDTO">
+                                    <option [ngValue]="null">SELECIONE</option>
+                                    <option *ngFor="let bf of bancoFebrabans" [ngValue]="bf">{{bf.codBanco}} -
+                                        {{bf.desBanco}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submitted && f.bancoFebrabanDTO.errors" class="invalid-feedback">
+                                    <div *ngIf="f.bancoFebrabanDTO.errors['required']">Selecione o Banco do titulo
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-12" *ngIf="flgPesquisandoCliente === 1">
+                            <span class="fa fa-refresh fa-spin fa-fw span-pesq"></span><span class="span-pesq">Buscando
+                                dados do cliente, aguarde...</span>
+                        </div>
+
+                        <div class="col-sm-2 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="idInputCodCli">Cod Cliente</label>
+                                <div class="input-group" ngbTooltip="Digite o Codigo do Cliente">
+                                    <input type="number" class="form-control" id="idInputCodCli"
+                                        formControlName="clienteId" (keydown.Tab)="findClienteById()"
+                                        (keydown.enter)="findClienteById()">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" (click)="findClienteById()" type="button"><i
+                                                class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-10 col-12 padding-5">
+                            <div class="form-group">
+                                <label for="typeaheadCliente">Nome Cliente</label>
+                                <input id="typeaheadCliente" type="text" class="form-control"
+                                    [class.is-invalid]="searchFailedCliente" formControlName="clienteDTO"
+                                    [ngClass]="{'is-invalid': submitted && f.clienteDTO.errors}"
+                                    [ngbTypeahead]="searchCliente" (selectItem)="typeaHeadSelectCliente($event)"
+                                    [inputFormatter]="formatterCliente" [resultTemplate]="rt" [placement]="'top-left'"
+                                    placeholder="Busca Nome do Cliente">
+                                <span class="col-sm-2 col-form-label" *ngIf="searchingCliente">procurando...</span>
+                                <span class="col-sm-12 col-form-label" *ngIf="searchFailedCliente">Não
+                                    foi
+                                    encontrado nada</span>
+                                <div *ngIf="submitted && f.clienteDTO.errors" class="invalid-feedback">
+                                    <div *ngIf="f.clienteDTO.errors['required']">Selecione o Cliente para o Titulo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12" style="margin: 0px; padding: 0px" *ngIf="tituloReceberCheques.length > 0">
+
+            <div class="card bg-light mb-3">
+                <div class="card-body padding-5">
+                    <div class="row">
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Baixa todos os Titulos selecionados"
+                                class="btn btn-block btn-default butao-acao" (click)="onBaixarSelecionados()">
+                                <span class="fa fa-exclamation-triangle span-bt-icon"></span><span
+                                    class="span-bt-text">Baixar
+                                    Selecionados</span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button"
+                                ngbTooltip="Busca todos os cheques que haja relação com os titulos buscados (Ciente id, data vencimento com a programada para baixa, e valores)"
+                                class="btn btn-block btn-default butao-acao" (click)="onBuscaChequesCompensados()">
+                                <span class="fa fa-search span-bt-icon"></span><span class="span-bt-text">Busca Cheques
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Seleciona todos os titulos para baixar no lote"
+                                class="btn btn-block btn-default butao-acao" (click)="onSelecionaTodos()">
+                                <span class="fa fa-thumb-tack span-bt-icon"></span><span class="span-bt-text">Seleciona
+                                    Todos
+                                </span>
+                            </button>
+                        </div>
+
+                        <div class="col-lg-3 col-6 div-mobile-buttons d-grid">
+                            <button type="button" ngbTooltip="Seta a data e valor para os titulos"
+                                class="btn btn-block btn-default butao-acao" (click)="onSetaDataEValor()">
+                                <span class="fa fa-arrow-right span-bt-icon"></span><span class="span-bt-text">Seta data
+                                    e valor
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ngx-datatable class="material" [scrollbarH]="true" [rows]="tituloReceberCheques" appResizeWatcher
+                [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                [rowClass]="getRowClass" [selected]="selected" [selectionType]="selectionTypeSingle">
+
+                <ngx-datatable-column name="TITULO RECEBER ID" prop="id" [width]="130"></ngx-datatable-column>
+                <!--<ngx-datatable-column name="COD" prop="codPreVenda" [width]="110"></ngx-datatable-column>-->
+
+                <ngx-datatable-column name="DATA EMISSÃO" prop="dtaEmissao" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="DATA VENCIMENTO" prop="dtaVencimento" [width]="120">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="TIPO" prop="tituloTipoDTO.nome" [width]="100"></ngx-datatable-column>
+                <ngx-datatable-column name="STATUS" prop="indStatus" [width]="100">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{ getStatusTitulo(value) }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="VALOR ORIGINAL" prop="vlrOriginal" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="VALOR TOTAL" prop="vlrTotal" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="VALOR LIQUIDADO" prop="vlrLiquidado" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | number:'1.2-2':'pt-BR' }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Baixar" [width]="80">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <div style="padding: 0px; margin: 0px; text-align: center;">
+                            <input type="checkbox" id="checkIndBaixarId" name="checkIndBaixarNm"
+                                style="padding: 0px;margin: 0px" [(ngModel)]="row.indBaixar"
+                                [disabled]="row.indStatus === 'F' || row.indStatus === 'N'">
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Valor da Baixa" [width]="150">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <input type="number" class="form-control input-nosso-num" style="padding: 0px;margin: 0px"
+                            [(ngModel)]="row.vlrBaixar" [disabled]="row.indStatus === 'F' || row.indStatus === 'N'">
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Data da Baixa" [width]="210">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <input type="date" class="form-control input-nosso-num" style="padding: 0px;margin: 0px"
+                            [(ngModel)]="row.dtaBaixar" [disabled]="row.indStatus === 'F' || row.indStatus === 'N'">
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Cheque id Baixa" prop="chequeRecebidoId" [width]="120">
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="CLIENTE" prop="clienteDTO.nome" [width]="420"></ngx-datatable-column>
+
+                <ngx-datatable-column name="VENDA ID" prop="vendaDTO_id" [width]="80"></ngx-datatable-column>
+
+
+
+                <ngx-datatable-column name="DATA LIQUIDAÇÃO" prop="dtaLiquidacao" [width]="130">
+                    <ng-template let-value="value" ngx-datatable-cell-template>
+                        {{value | amDateFormat:'DD/MM/YYYY'}}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="DIAS ATRASO" [width]="100">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        {{ getDiasAtraso(row) }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+
+                <ngx-datatable-column name="BANCO" prop="bancoFebrabanDTO.desBanco"
+                    [width]="450"></ngx-datatable-column>
+
+
+            </ngx-datatable>
+
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+<ng-template #rt let-r="result" let-t="term">
+    {{ r.nome}}
+</ng-template>
+
+<div class="col-12" style="padding: 15px;margin: 0px">
+    <app-page-header [pheading]="' TOTVS Integração'" [picon]="'fa-plug'" [heading]="'Integração Sales e Totvs - Itens'"
+        [icon]="'fa-th-list'">
+    </app-page-header>
+
+
+    <div class="card col-md-12">
+
+        <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)"
+            size="medium" color="#fff" type="ball-spin-clockwise">
+            <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+        </ngx-spinner>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body card-buttons">
+                <div class="row">
+
+
+                    <!--
+                <div class="col-lg-2 col-6 div-mobile-buttons">
+                    <button type="button" class="btn btn-block btn-danger butao-acao" (click)="updateItens()">
+                        <span class="fa fa-bolt span-bt-icon"></span><span class="span-bt-text">Atualizar
+                            Itens</span>
+                    </button>
+                </div>
+            -->
+
+                    <div class="col-lg-2 col-6 div-mobile-buttons d-grid" *ngIf="itemPcProduts!.length > 0">
+                        <button type="button" class="btn btn-block btn-primary butao-acao" ngbTooltip="Download CSV"
+                            (click)="onDownloadCSV()">
+                            <span class="fa fa-download span-bt-icon"></span> Download CSV
+                        </button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body padding-5">
+
+                <div class="col-12">
+                    <input type="text" style="padding:8px;margin:15px auto;width:100%;"
+                        placeholder="Digite o nome do cliente para procura" (keyup)="updateFilter($event)" />
+                </div>
+
+
+                <ngx-datatable class="material" #table [scrollbarH]="true" [rows]="rows" appResizeWatcher
+                    [columnMode]="ColumnMode.standard" [headerHeight]="35" [footerHeight]="70" rowHeight="auto"
+                    [selected]="selected" [selectionType]="selectionTypeSingle" [limit]="50">
+
+                    <ngx-datatable-column name="ID SALES" prop="id" [width]="130"></ngx-datatable-column>
+                    <ngx-datatable-column name="ID AUX" prop="idAux" [width]="130"></ngx-datatable-column>
+
+                    <ngx-datatable-column name="NOME SALES" prop="nome" [width]="300"></ngx-datatable-column>
+                    <ngx-datatable-column name="CODBARRAS SALES" prop="codigoBarras"
+                        [width]="300"></ngx-datatable-column>
+                    <ngx-datatable-column name="CODPROD TOTVS" prop="codProd" [width]="120"></ngx-datatable-column>
+                    <ngx-datatable-column name="DESCRICAO TOTVS" prop="descricao" [width]="300"></ngx-datatable-column>
+                    <ngx-datatable-column name="CODBARRAS TOTVS" prop="codBarrasTotvs"
+                        [width]="300"></ngx-datatable-column>
+                    <ngx-datatable-column name="EMBALAGEM TOTVS" prop="embalagem" [width]="300"></ngx-datatable-column>
+                    <ngx-datatable-column name="UNIDADE TOTVS" prop="unidade" [width]="200"></ngx-datatable-column>
+
+                    <ngx-datatable-column name="QTUNIT TOTVS" prop="qtunit" [width]="130"></ngx-datatable-column>
+                    <ngx-datatable-column name="QTUNITCX TOTVS" prop="qtUnitcx" [width]="130"></ngx-datatable-column>
+
+
+                    <ngx-datatable-column name="DTCADASTRO TOTVS" prop="dtCadastro" [width]="120">
+                        <ng-template let-value="value" ngx-datatable-cell-template>
+                            {{value | amDateFormat:'DD/MM/YYYY'}}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                </ngx-datatable>
+
+
+            </div>
+        </div>
+    </div>
+</div>

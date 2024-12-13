@@ -1,0 +1,121 @@
+<div>
+
+    <ngx-spinner class="spinner-full" name="fullSpinner" [fullScreen]="false" bdColor="rgba(51,51,51,0.8)" size="medium"
+        color="#fff" type="ball-spin-clockwise">
+        <p style="font-size: 20px; color: white">Comunicando com o Servidor, Aguarde...</p>
+    </ngx-spinner>
+
+
+    <div class="modal-header">
+        <span>ATENÇÃO - O Romaneio será transmitido</span>
+        <button class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+
+
+        <form [formGroup]="rotaForm">
+
+            <div class="col-sm-12 row">
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label for="id">Data Começo</label>
+                        <input type="datetime-local"
+                            [ngClass]="{'is-invalid': submitted && f['date_time_start'].errors}" class="form-control"
+                            id="idDtaIncIni" formControlName="date_time_start">
+                        <div *ngIf="submitted && f['date_time_start'].errors" class="invalid-feedback">
+                            <div *ngIf="f['date_time_start'].errors['required']">Selecione uma Data/Hora de Começo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label  for="id" >Data Termino</label>
+                        <input type="datetime-local" class="form-control"
+                            [ngClass]="{'is-invalid': submitted && f['date_time_end'].errors}" id="idDtaIncFinal"
+                            formControlName="date_time_end">
+                        <div *ngIf="submitted && f['date_time_end'].errors" class="invalid-feedback">
+                            <div *ngIf="f['date_time_end'].errors['required']">Selecione uma Data/Hora de Termino
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label  for="id" >Placa do Veiculo</label>
+                        <input type="text" class="form-control" id="idVeiculo" formControlName="vehicle_plate">
+                    </div>
+                </div>
+
+                <div class="col-6 div-form-group">
+                    <div class="form-group">
+                        <label  for="id" >Documento Motorista</label>
+                        <input type="text" class="form-control" id="idDocumento" formControlName="document_number">
+                    </div>
+                </div>
+
+
+                <div class="col-12 div-form-group">
+                    <div class="form-group">
+                        <label  for="id" >Código Externo</label>
+                        <input type="text" [ngClass]="{'is-invalid': submitted && f['external_code'].errors}"
+                            class="form-control" id="idCodigo Externo" formControlName="external_code">
+                        <div *ngIf="submitted && f['external_code'].errors" class="invalid-feedback">
+                            <div *ngIf="f['external_code'].errors['required']">Código externo não pode ser nulo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-12 div-form-group" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <p style="font-size: large;">Quantidade de vendas/paradas: {{route_points.length - 2}}</p>
+                    </div>
+                </div>
+
+                <div class="col-12 div-form-group" style="margin-top: 20px;"
+                    *ngIf="msgErro !== null && isArray(msgErro) && msgErro.length > 0">
+                    <div class="form-group" style="background-color: #f7dccc;">
+                        <p style="font-size: large;">Print do Erro</p>
+                        <p style="font-size: large;">{{msgErro}}</p>
+                    </div>
+                </div>
+
+                <div class="col-12 div-form-group" style="margin-top: 20px;"
+                    *ngIf="msgPayload !== null && isArray(msgPayload) && msgPayload.length > 0">
+                    <div class="form-group" style="background-color: #d7f3d3;">
+                        <p style="font-size: large;">Payload</p>
+                        <p style="font-size: large;">{{msgPayload}}</p>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </form>
+
+
+
+    </div>
+    <div class="modal-footer">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-danger" (click)="enviaWebRota()">Sim Enviar</button>
+                </div>
+                <div class="col-6 text-center d-grid">
+                    <button class="btn btn-md btn-primary" ngbAutofocus (click)="activeModal.close('default')">Não
+                        Enviar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

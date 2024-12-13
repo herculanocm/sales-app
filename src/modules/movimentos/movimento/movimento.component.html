@@ -1,0 +1,1234 @@
+<ng-template #rt let-r="result" let-t="term">
+  {{ r.nome }}
+</ng-template>
+
+<div class="col-12" style="padding: 15px; margin: 0px">
+  <app-page-header
+    [pheading]="' Movimentos'"
+    [picon]="'fa-retweet'"
+    [heading]="'Movimento'"
+    [icon]="'fa-th-list'"
+  >
+  </app-page-header>
+
+  <div class="card div-geral-page">
+    <ngx-spinner
+      [fullScreen]="false"
+      bdColor="rgba(51,51,51,0.8)"
+      size="medium"
+      color="#fff"
+      type="ball-spin-clockwise"
+    >
+      <p style="font-size: 20px; color: white">
+        Comunicando com o Servidor, Aguarde...
+      </p>
+    </ngx-spinner>
+
+    <div *ngIf="statusForm === 1 || statusForm === 2" class="row">
+      <div class="col-md-12">
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <div class="row">
+              <div
+                class="col-lg-3 col-xl-3 col-6 d-grid"
+                [ngbTooltip]="tooltipBtnSalvar()"
+              >
+                <button
+                  class="btn btn-block butao-acao"
+                  [ngClass]="statusForm === 2 ? 'btn-warning' : 'btn-primary'"
+                  [disabled]="isDisableSalvaAtualiza()"
+                  (click)="onCadastra()"
+                >
+                  <span class="fa fa-save span-acao"></span>
+                  {{ statusForm === 2 ? "Alterar" : "Salvar" }}
+                </button>
+              </div>
+              <div
+                class="col-lg-2 col-xl-2 col-6 d-grid"
+                ngbTooltip="Botão de limpar todos os campos"
+              >
+                <button
+                  type="button"
+                  class="btn btn-block btn-outline-dark butao-acao"
+                  (click)="onLimpa()"
+                >
+                  <span class="fa fa-eraser span-acao"></span> Limpar
+                </button>
+              </div>
+              <div
+                class="col-lg-1 col-xl-1 col-4 d-grid"
+                ngbTooltip="Botão de movimentar a pesquisa para esquerda"
+              >
+                <button
+                  type="button"
+                  class="btn btn-block btn-info butao-acao"
+                  (click)="onLeftArray()"
+                >
+                  <span class="fa fa-arrow-circle-left span-acao"></span>
+                </button>
+              </div>
+              <div
+                class="col-lg-1 col-xl-1 col-4 d-grid"
+                ngbTooltip="Botão de movimentar a pesquisa para direita"
+              >
+                <button
+                  type="button"
+                  class="btn btn-block btn-info butao-acao"
+                  (click)="onRightArray()"
+                >
+                  <span class="fa fa-arrow-circle-right span-acao"></span>
+                </button>
+              </div>
+              <div
+                class="col-lg-1 col-xl-1 col-4 d-grid"
+                ngbTooltip="Botão de alternar para visão de tabela de pesquisa"
+              >
+                <button
+                  type="button"
+                  class="btn btn-block btn-info butao-acao"
+                  (click)="onTable()"
+                >
+                  <span class="fa fa-table span-acao"></span>
+                </button>
+              </div>
+              <div
+                class="col-lg-2 col-xl-2 col-6 d-grid"
+                [ngbTooltip]="tooltipBtnDeletar()"
+              >
+                <button
+                  type="button"
+                  [disabled]="!isValidDelete()"
+                  class="btn btn-block btn-danger butao-acao"
+                  (click)="onDeleta(movimento.id)"
+                >
+                  <span class="fa fa-trash span-acao"></span> Deletar
+                </button>
+              </div>
+              <div
+                class="col-lg-2 col-xl-2 col-6 d-grid"
+                ngbTooltip="Botão de pesquisar movimentos salvos"
+              >
+                <button
+                  type="button"
+                  class="btn btn-block btn-success butao-acao"
+                  (click)="onPesquisa()"
+                >
+                  <span class="fa fa-search span-acao"></span> Pesq
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+          <div class="card-header">Movimentos</div>
+          <div class="card-body">
+            <app-fields-erro-directive
+              *ngIf="serverIsError()"
+              [servererror]="errorForm"
+            >
+            </app-fields-erro-directive>
+
+
+            <div ngbAccordion>
+              <div ngbAccordionItem [collapsed]="true">
+                  <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton>CAMPOS DE PESQUISA ADICIONAIS</button>
+                  </h2>
+
+                  <div ngbAccordionCollapse>
+                      <div ngbAccordionBody>
+                        <ng-template ngbPanelContent>
+                          <div class="form-group row">
+                            <label for="dtInicialPesq" class="col-sm-2 col-form-label"
+                              >Data Inclusão Inicial</label
+                            >
+                            <div class="col-sm-4">
+                              <input
+                                type="date"
+                                class="form-control"
+                                id="dtInicialPesq"
+                                name="dtInicialPesq"
+                                [(ngModel)]="movimentoPesquisaDTO.dtaInicialPesquisa"
+                              />
+                            </div>
+                            <label
+                              for="inputDtFinalPesq"
+                              class="col-sm-2 col-form-label"
+                              >Data Inclusão Final</label
+                            >
+                            <div class="col-sm-4">
+                              <input
+                                type="date"
+                                class="form-control"
+                                id="inputDtFinalPesq"
+                                name="inputDtFinalPesq"
+                                [(ngModel)]="movimentoPesquisaDTO.dtaFinalPesquisa"
+                              />
+                            </div>
+                          </div>
+                          <div class="form-group row">
+                            <label for="usuarioSelect" class="col-sm-2 col-form-label"
+                              >Usuário Inclusão</label
+                            >
+                            <div class="col-sm-4">
+                              <select
+                                class="form-control"
+                                name="usuarioSelect"
+                                id="usuarioSelect"
+                                [compareWith]="compareUsuarios"
+                                [(ngModel)]="movimento.usuarioInclusao"
+                              >
+                                <option [ngValue]="null">Selecione</option>
+                                <option
+                                  *ngFor="let us of usuarios"
+                                  [ngValue]="us.login"
+                                >
+                                  {{ us.login }}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        </ng-template>
+                        
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+            <hr />
+            <div class="form-group row" *ngIf="statusForm === 2">
+              <div class="col-sm-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-dark"
+                  (click)="openPrintPage()"
+                >
+                  <span class="fa fa-print span-acao"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="inputNome" class="col-sm-2 col-form-label">Id</label>
+              <div class="col-sm-2">
+                <input
+                  type="number"
+                  class="form-control"
+                  name="inputId"
+                  [(ngModel)]="movimento.id"
+                  (keydown.enter)="onPesquisa()"
+                  [disabled]="statusForm === 2"
+                  id="inputId"
+                  placeholder="Id"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="dtaInclusao" class="col-sm-2 col-form-label"
+                >Dta Inclusão</label
+              >
+              <div class="col-sm-4">
+                <span
+                  class="form-control span-disable"
+                  name="nameDtaInclusao"
+                  id="idDtaInclusao"
+                  >{{
+                    movimento.dtaInclusao | amDateFormat : "DD/MM/YYYY HH:mm:ss"
+                  }}</span
+                >
+              </div>
+              <label for="usuarioInclusao" class="col-sm-2 col-form-label"
+                >Usuário Inclusão</label
+              >
+              <div class="col-sm-4">
+                <span
+                  class="form-control span-disable"
+                  name="nameUsuarioInclusao"
+                  id="idUsuarioInclusao"
+                  >{{ movimento.usuarioInclusao }}</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="form-group row"
+              ngbTooltip="Será selecionado automaticamente"
+            >
+              <label for="usuarioSelect" class="col-sm-2 col-form-label"
+                >Origem</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="nameOrigemMov"
+                  id="idOrigemMov"
+                  #origemId
+                  [compareWith]="compareMovimentoOrigem"
+                  [(ngModel)]="movimento.movimentoOrigemDTO"
+                  [disabled]="statusForm === 2"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let mos of movimentoOrigens" [ngValue]="mos">
+                    {{ mos.nome }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="almoxarifadoId" class="col-sm-2 col-form-label"
+                >Almoxarifado</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="almoxarifadoId"
+                  id="almoxarifadoName"
+                  [compareWith]="compareAlmoxarifado"
+                  (ngModelChange)="onChangeAlmoxarifado($event)"
+                  [(ngModel)]="movimento.estoqueAlmoxarifadoDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let al of almoxarifados" [ngValue]="al">
+                    {{ al.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaAlmoxarifados()"
+                >
+                  <i class="fa fa-refresh span-acao2" aria-hidden="true">
+                    Refresh</i
+                  >
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="movTipoId" class="col-sm-2 col-form-label"
+                >Tipo</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="movTipoId"
+                  id="movTipoId"
+                  [compareWith]="compareMovimentoTipo"
+                  [(ngModel)]="movimento.movimentoTipoDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let mov of movimentoTipos" [ngValue]="mov">
+                    {{ mov.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaMovimentoTipo()"
+                >
+                  <i class="fa fa-refresh span-acao2" aria-hidden="true">
+                    Refresh</i
+                  >
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="veiculoId" class="col-sm-2 col-form-label"
+                >Veiculo</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="veiculoId"
+                  id="veiculoId"
+                  [compareWith]="compareVeiculo"
+                  [(ngModel)]="movimento.veiculoDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let v of veiculos" [ngValue]="v">
+                    NOME: {{ v.nome }} | PLACA:
+                    {{ v.placa }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaVeiculo()"
+                >
+                  <i class="fa fa-refresh span-acao2" aria-hidden="true">
+                    Refresh</i
+                  >
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="form-group row"
+              *ngIf="
+                isMovimentoTipo() && movimento.movimentoTipoDTO!.indTipo === 'S'
+              "
+            >
+              <label for="typeaheadCliente" class="col-sm-2 col-form-label"
+                >Cliente</label
+              >
+              <div class="col-sm-2">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="clienteSelecionado.id"
+                  (keydown.Tab)="selectClienteByCod(clienteSelecionado.id)"
+                  (keydown.enter)="selectClienteByCod(clienteSelecionado.id)"
+                />
+              </div>
+              <div class="col-sm-6">
+                <input
+                  id="typeaheadCliente"
+                  name="typeaheadCliente"
+                  type="text"
+                  class="form-control"
+                  [class.is-invalid]="searchFailedCliente"
+                  (blur)="verificaCliente()"
+                  (selectItem)="typeaHeadSelectCliente($event)"
+                  [(ngModel)]="clienteSelecionado.nome"
+                  [ngbTypeahead]="searchCliente"
+                  [resultTemplate]="rt"
+                  placeholder="Busca de Cliente"
+                />
+              </div>
+              <span class="col-sm-2 col-form-label" *ngIf="searchingCliente"
+                >procurando...</span
+              >
+              <span class="col-sm-12 col-form-label" *ngIf="searchFailedCliente"
+                >Não foi encontrado nada</span
+              >
+              <br />
+              <div *ngIf="isCliente()" class="col-sm-12">
+                <div class="col-sm-12 div-info">
+                  <span>Cliente Configurado</span>
+                </div>
+                <table class="table table-bordered table-object-selected">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Nome</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="align-left">{{ movimento.clienteDTO!.id }}</td>
+                      <td class="align-left">
+                        {{ movimento.clienteDTO!.nome }}
+                      </td>
+                      <td class="align-center">
+                        <button
+                          class="btn btn-danger"
+                          (click)="resetaCliente()"
+                          (keydown)="resetaCliente()"
+                          tabindex="0"
+                        >
+                          <fa-icon
+                            class="ms-auto"
+                            [icon]="['fas', 'trash']"
+                          ></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div
+              class="form-group row"
+              *ngIf="
+                isMovimentoTipo() && movimento.movimentoTipoDTO!.indTipo === 'E'
+              "
+            >
+              <label for="typeaheadFornecedor" class="col-sm-2 col-form-label"
+                >Fornecedor</label
+              >
+              <div class="col-sm-2">
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="fornecedorSelecionado.id"
+                  (keydown.Tab)="
+                    selectFornecedorByCod(fornecedorSelecionado.id)
+                  "
+                  (keydown.enter)="
+                    selectFornecedorByCod(fornecedorSelecionado.id)
+                  "
+                />
+              </div>
+              <div class="col-sm-6">
+                <input
+                  id="typeaheadFornecedor"
+                  name="typeaheadFornecedor"
+                  type="text"
+                  class="form-control"
+                  [class.is-invalid]="searchFailedFornecedor"
+                  (blur)="verificaFornecedor()"
+                  (selectItem)="selectedFornecedor($event)"
+                  [(ngModel)]="fornecedorSelecionado.nome"
+                  [ngbTypeahead]="searchFornecedor"
+                  [resultTemplate]="rt"
+                  placeholder="Busca de Fornecedor"
+                />
+              </div>
+              <span class="col-sm-2 col-form-label" *ngIf="searchingFornecedor"
+                >procurando...</span
+              >
+              <span
+                class="col-sm-12 col-form-label"
+                *ngIf="searchFailedFornecedor"
+                >Não foi encontrado nada
+              </span>
+              <br />
+              <div *ngIf="isFornecedor()" class="col-sm-12">
+                <div class="col-sm-12 div-info">
+                  <span>Fornecedor Configurado</span>
+                </div>
+                <table class="table table-bordered table-object-selected">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Nome</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="align-left">
+                        {{ movimento.fornecedorDTO!.id }}
+                      </td>
+                      <td class="align-left">
+                        {{ movimento.fornecedorDTO!.nome }}
+                      </td>
+                      <td class="align-center">
+                        <button
+                          class="btn btn-danger"
+                          (click)="resetaFornecedor()"
+                          (keydown)="resetaFornecedor()"
+                          tabindex="0"
+                        >
+                          <fa-icon
+                            class="ms-auto"
+                            [icon]="['fas', 'trash']"
+                          ></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="idSelectMotoristas" class="col-sm-2 col-form-label"
+                >Motorista</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="nameSelectMotoristas"
+                  id="idSelectMotoristas"
+                  [compareWith]="compareFuncionario"
+                  [(ngModel)]="movimento.motoristaDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let m of motoristas" [ngValue]="m">
+                    {{ m.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaMotoristas()"
+                >
+                  <i class="fa fa-refresh span-acao2" aria-hidden="true">
+                    Refresh</i
+                  >
+                </button>
+              </div>
+
+              <br />
+              <div *ngIf="isMotorista()" class="col-sm-12">
+                <div class="col-sm-12 div-info">
+                  <span>Motorista Configurado</span>
+                </div>
+                <table class="table table-bordered table-object-selected">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Nome</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="align-left">
+                        {{ movimento.motoristaDTO!.id }}
+                      </td>
+                      <td class="align-left">
+                        {{ movimento.motoristaDTO!.nome }}
+                      </td>
+                      <td class="align-center">
+                        <button
+                          class="btn btn-danger"
+                          (click)="resetaMotorista()"
+                          (keydown)="resetaMotorista()"
+                          tabindex="0"
+                        >
+                          <fa-icon
+                            class="ms-auto"
+                            [icon]="['fas', 'trash']"
+                          ></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="idSelectConferente" class="col-sm-2 col-form-label"
+                >Conferente</label
+              >
+              <div class="col-sm-8">
+                <select
+                  class="form-control"
+                  name="nameSelectConferente"
+                  id="idSelectConferente"
+                  [compareWith]="compareFuncionario"
+                  [(ngModel)]="movimento.conferenteDTO"
+                >
+                  <option [ngValue]="null">Selecione</option>
+                  <option *ngFor="let c of conferentes" [ngValue]="c">
+                    {{ c.nome }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-lg-2 col-xl-2 col-12 d-grid">
+                <button
+                  class="btn btn-block btn-warning butao-acao"
+                  (click)="atualizaConferentes()"
+                >
+                  <i class="fa fa-refresh span-acao2" aria-hidden="true">
+                    Refresh</i
+                  >
+                </button>
+              </div>
+              <br />
+              <div *ngIf="isConferente()" class="col-sm-12">
+                <div class="col-sm-12 div-info">
+                  <span>Conferente Configurado</span>
+                </div>
+                <table class="table table-bordered table-object-selected">
+                  <thead>
+                    <tr>
+                      <th>Id</th>
+                      <th>Nome</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="align-left">
+                        {{ movimento.conferenteDTO!.id }}
+                      </td>
+                      <td class="align-left">
+                        {{ movimento.conferenteDTO!.nome }}
+                      </td>
+                      <td class="align-center">
+                        <button
+                          class="btn btn-danger"
+                          (click)="resetaConferente()"
+                          (keydown)="resetaConferente()"
+                          tabindex="0"
+                        >
+                          <fa-icon
+                            class="ms-auto"
+                            [icon]="['fas', 'trash']"
+                          ></fa-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="numNotaNF" class="col-sm-2 col-form-label"
+                >Num nota NF</label
+              >
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="numNotaNF"
+                  id="numNotaNF"
+                  [(ngModel)]="movimento.numNotaFiscal"
+                  placeholder="Num nota Fiscal"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="preVendaId" class="col-sm-2 col-form-label"
+                >Pre Venda Id</label
+              >
+              <div class="col-sm-2">
+                <input
+                  type="number"
+                  class="form-control"
+                  name="preVendaId"
+                  id="preVendaId"
+                  [(ngModel)]="movimento.preVendaId"
+                  disabled
+                />
+              </div>
+
+              <label for="rotaId" class="col-sm-2 col-form-label"
+                >Rota Id</label
+              >
+              <div class="col-sm-2">
+                <input
+                  type="number"
+                  class="form-control"
+                  name="rotaId"
+                  id="rotaId"
+                  [(ngModel)]="movimento.rotaId"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group row">
+              <label for="IdOptIndAtivo" class="col-sm-2 col-form-label"
+                >Status</label
+              >
+              <div class="col-sm-10">
+                <fieldset class="form-group">
+                  <label class="radio-inline rinline">
+                    <input
+                      type="radio"
+                      [(ngModel)]="movimento.indAtivo"
+                      name="nameOptIndAtivo"
+                      id="IdOptIndAtivo"
+                      [value]="true"
+                    />Ativo
+                  </label>
+                  <label class="radio-inline rinline">
+                    <input
+                      type="radio"
+                      [(ngModel)]="movimento.indAtivo"
+                      name="nameOptIndAtivo"
+                      id="IdOptIndAtivo"
+                      [value]="false"
+                    />Desativado
+                  </label>
+                </fieldset>
+              </div>
+            </div>
+
+            <hr />
+
+            <div ngbAccordion>
+              <div ngbAccordionItem [collapsed]="true">
+                  <h2 ngbAccordionHeader>
+                      <button ngbAccordionButton>ITENS</button>
+                  </h2>
+
+                  <div ngbAccordionCollapse>
+                      <div ngbAccordionBody>
+
+                        <ng-template >
+                          <div class="form-group row">
+                            <label for="typeaheadItem" class="col-sm-1 col-form-label"
+                              >Item</label
+                            >
+                            <div class="col-sm-2">
+                              <input
+                                type="number"
+                                class="form-control"
+                                #inputIdCodItem
+                                [(ngModel)]="itemProcura.id"
+                                (keydown.Tab)="selectedItemId($event, itemProcura.id)"
+                                (keydown.enter)="selectedItemId($event, itemProcura.id)"
+                              />
+                            </div>
+                            <div class="col-sm-7">
+                              <input
+                                id="typeaheadItem"
+                                [ngbTypeahead]="searchItem"
+                                [resultTemplate]="rt"
+                                (selectItem)="selectedItem($event)"
+                                name="typeaheadItem"
+                                type="text"
+                                class="form-control"
+                                [class.is-invalid]="searchFailedItem"
+                                [(ngModel)]="itemProcura.nome"
+                                placeholder="Busca de Item"
+                              />
+                            </div>
+                            <span class="col-sm-2 col-form-label" *ngIf="searchingItem"
+                              >procurando...</span
+                            >
+                            <span
+                              class="col-sm-2 col-form-label"
+                              *ngIf="searchFailedItem"
+                              >Não encontrado</span
+                            >
+                          </div>
+        
+                          <hr *ngIf="isItemProcura()" />
+        
+                          <div *ngIf="isItemProcura()">
+                            <div class="form-group row">
+                              <label
+                                for="idSaldoEstoque"
+                                class="col-sm-2 col-form-label"
+                                >Saldo Estoque</label
+                              >
+                              <div class="col-sm-2">
+                                <span
+                                  class="form-control span-disable"
+                                  name="idSaldoEstoque"
+                                  id="idSaldoEstoque"
+                                  >{{ itemProcura.qtdSaldo }}</span
+                                >
+                              </div>
+                              <div class="col-sm-8" class="div-table">
+                                <span
+                                  class="fa fa-sync-alt fa-spin fa-fw spin-upload-image"
+                                  *ngIf="itemEstoqueStatus.flgBuscando === 1"
+                                ></span>
+                                <span class="span-midle">{{
+                                  itemEstoqueStatus.msg
+                                }}</span>
+                              </div>
+                            </div>
+        
+                            <div class="form-group row">
+                              <label for="idUnidade" class="col-sm-2 col-form-label"
+                                >Unidade</label
+                              >
+                              <div class="col-sm-6">
+                                <select
+                                  class="form-control"
+                                  name="idUnidade"
+                                  id="idUnidade"
+                                  [compareWith]="compareUnidade"
+                                  [(ngModel)]="movimentoItem.itemUnidadeDTO"
+                                >
+                                  <option [ngValue]="null">Selecione</option>
+                                  <option
+                                    *ngFor="let un of itemProcura.itemUnidadeDTOs"
+                                    [ngValue]="un"
+                                  >
+                                    {{ un.nome }}
+                                  </option>
+                                </select>
+                              </div>
+                              <label for="idQtd" class="col-sm-2 col-form-label"
+                                >Qtd</label
+                              >
+                              <div class="col-sm-2">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  id="idQtd"
+                                  name="idQtd"
+                                  [(ngModel)]="movimentoItem.qtd"
+                                  ngbTooltip="Digite a Quantidade do Item segundo o seu agrupamento, se colocar 2 então é 2 vezes o fator da unidade."
+                                />
+                              </div>
+                            </div>
+        
+                            <div class="form-group row">
+                              <label for="valor" class="col-sm-2 control-label"
+                                >Valor</label
+                              >
+                              <div class="col-sm-4">
+                                <input
+                                  currencyMask
+                                  class="form-control"
+                                  id="valor"
+                                  name="valor"
+                                  [(ngModel)]="movimentoItem.valor"
+                                  [options]="{
+                                    prefix: 'R$ ',
+                                    thousands: '.',
+                                    decimal: ','
+                                  }"
+                                  ngbTooltip="Digite o preço do item segundo seu agrupamento e quantidade"
+                                />
+                              </div>
+                              <label for="dtaValidade" class="col-sm-2 control-label"
+                                >Data Validade</label
+                              >
+                              <div class="col-sm-4">
+                                <input
+                                  type="date"
+                                  class="form-control"
+                                  name="dtaValidade"
+                                  [(ngModel)]="movimentoItem.dtaValidade"
+                                  id="dtaValidade"
+                                  ngbTooltip="Digite a data de validade do item"
+                                />
+                              </div>
+                            </div>
+        
+                            <div class="form-group row">
+                              <label for="valor" class="col-sm-3 control-label"
+                                >Média Valor Unitário</label
+                              >
+                              <div class="col-sm-3">
+                                <span
+                                  class="form-control span-disable"
+                                  name="nameVlrMedio"
+                                  id="idVlrMedio"
+                                  >{{
+                                    getVlrMedio() | number : "1.2-6" : "pt-BR"
+                                  }}</span
+                                >
+                              </div>
+                            </div>
+        
+                            <div class="form-group row">
+                              <label for="id" class="col-sm-2 control-label"
+                                >Conf.</label
+                              >
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraPrecoCusto"
+                                  name="nameIndGeraPrecoCusto"
+                                  [(ngModel)]="movimentoItem.indGeraPreco"
+                                />Gera Preço
+                              </label>
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraEstoque"
+                                  name="nameIndGeraEstoque"
+                                  [(ngModel)]="movimentoItem.indGeraEstoque"
+                                />Gera Estoque
+                              </label>
+                              <label class="checkbox-inline chbox">
+                                <input
+                                  type="checkbox"
+                                  id="idIndGeraValidade"
+                                  name="nameIndGeraValidade"
+                                  [(ngModel)]="movimentoItem.indGeraValidade"
+                                />Gera Validade
+                              </label>
+                            </div>
+                          </div>
+        
+                          <hr />
+        
+                          <div class="row">
+                            <div class="col-sm-3 col-6 d-grid">
+                              <button
+                                class="btn btn-block butao-acao"
+                                [ngClass]="
+                                  movimentoItem.status === 'novo'
+                                    ? 'btn-warning'
+                                    : 'btn-primary'
+                                "
+                                (click)="addMovimentoItem()"
+                                ngbTooltip="Clique aqui para adicionar o item do movimento"
+                              >
+                                <span
+                                  class="fa fa-plus span-buttons-body span-acao2"
+                                ></span>
+                                {{
+                                  movimentoItem.status === null
+                                    ? "Adicionar Item"
+                                    : "Alterar Item"
+                                }}
+                              </button>
+                            </div>
+                            <div class="col-sm-3 col-6 d-grid">
+                              <button
+                                class="btn btn-block btn-outline-dark butao-acao"
+                                (click)="onLimpaMovimentoItem()"
+                              >
+                                <span
+                                  class="fa fa-eraser span-buttons-body span-acao2"
+                                ></span>
+                                Limpar Item
+                              </button>
+                            </div>
+                            <div class="col-sm-3 col-12 d-grid">
+                              <button
+                                class="btn btn-block btn-danger butao-acao"
+                                (click)="onDeletaMovimentoItem()"
+                                [disabled]="isDisableDeleteMovimentoItem()"
+                              >
+                                <span
+                                  class="fa fa-trash span-buttons-body span-acao2"
+                                ></span>
+                                Deletar Item
+                              </button>
+                            </div>
+                          </div>
+        
+                          <div *ngIf="movimento.movimentoItemDTOs.length > 0">
+                            <hr />
+                            <ngx-datatable
+                              class="material"
+                              [scrollbarH]="true"
+                              appResizeWatcher
+                              [rows]="movimento.movimentoItemDTOs"
+                              [columnMode]="'force'"
+                              [rowClass]="getRowClass"
+                              [headerHeight]="35"
+                              [footerHeight]="70"
+                              rowHeight="auto"
+                              [limit]="200"
+                              [selected]="selectedMovItem"
+                              [selectionType]="selectionTypeSingle"
+                              (select)="onSelectMovimentoItem($event)"
+                            >
+                              <ngx-datatable-column
+                                name="ITEM ID"
+                                prop="itemDTO.id"
+                                [width]="50"
+                              >
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="STATUS"
+                                prop="status"
+                                [width]="70"
+                              >
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="ITEM"
+                                prop="itemDTO.nome"
+                                [width]="150"
+                              >
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="UNIDADE"
+                                prop="itemUnidadeDTO.nome"
+                                [width]="150"
+                              >
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="QTD"
+                                prop="qtd"
+                                [width]="50"
+                              ></ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="VALOR"
+                                prop="valor"
+                                [width]="70"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value | number : "1.2-2" : "pt-BR" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="GERA ESTOQUE"
+                                prop="indGeraEstoque"
+                                [width]="100"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value === true ? "Sim" : "Não" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="GERA VALIDADE"
+                                prop="indGeraValidade"
+                                [width]="100"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value === true ? "Sim" : "Não" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column
+                                name="GERA PREÇO"
+                                prop="indGeraPreco"
+                                [width]="100"
+                              >
+                                <ng-template
+                                  let-value="value"
+                                  ngx-datatable-cell-template
+                                >
+                                  {{ value === true ? "Sim" : "Não" }}
+                                </ng-template>
+                              </ngx-datatable-column>
+                            </ngx-datatable>
+                          </div>
+                        </ng-template>
+
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+            <hr />
+
+            <div class="form-group row">
+              <label for="inputDescricao" class="col-sm-2 col-form-label"
+                >Descrição</label
+              >
+              <div class="col-sm-10">
+                <textarea
+                  class="form-control"
+                  name="inputDescricao"
+                  [(ngModel)]="movimento.descricao"
+                  id="inputDescricao"
+                  >{{ movimento.descricao }}</textarea
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="statusForm === 3">
+      <div class="card bg-light mb-3">
+        <div class="card-header">Ações</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-3 col-xl-3 col-6 d-grid">
+              <button
+                type="button"
+                class="btn btn-block btn-primary butao-acao"
+                (click)="voltar()"
+              >
+                <span class="fa fa-arrow-left span-acao"></span> Voltar
+              </button>
+            </div>
+
+            <div class="col-lg-3 col-xl-3 col-6 d-grid">
+              <button
+                type="button"
+                class="btn btn-block btn-warning butao-acao"
+                [disabled]="selected.length === 0"
+                (click)="editando()"
+              >
+                <span class="fa fa-edit span-acao"></span> Editar
+              </button>
+            </div>
+
+            <!-- <div class="col-lg-3 col-xl-3 col-12 d-grid">
+                            <button type="button" class="btn btn-block btn-warning butao-acao" (click)="geraCSV()">
+                                <span class="span-acao fa"
+                                    [ngClass]="botaoGeraCSV !== 'Gerar CSV' ? 'fa-refresh fa-spin fa-fw' : ''"></span>
+                                {{botaoGeraCSV}}
+                            </button>
+                        </div> -->
+          </div>
+        </div>
+      </div>
+
+      <ngx-datatable
+        class="material striped"
+        [scrollbarH]="true"
+        [rows]="pageMovimento.content"
+        appResizeWatcher
+        [columnMode]="ColumnMode.standard"
+        [rowClass]="getRowClass"
+        [headerHeight]="35"
+        [footerHeight]="70"
+        rowHeight="auto"
+        [selected]="selected"
+        [selectionType]="selectionTypeSingle"
+        (activate)="onActivate($event)"
+        [externalPaging]="true"
+        [count]="pageMovimento.totalElements"
+        [offset]="pageMovimento.pageable.pageNumber"
+        [limit]="pageMovimento.size"
+        (page)="setPage($event)"
+      >
+        <ngx-datatable-column
+          name="ID MOV"
+          prop="id"
+          [width]="90"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="TIPO"
+          prop="movimentoTipoDTO.nome"
+          [width]="350"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="ORIGEM"
+          prop="movimentoOrigemDTO.nome"
+          [width]="300"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="DATA INCLUSÃO"
+          prop="dtaInclusao"
+          [width]="200"
+        >
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value | amDateFormat : "DD/MM/YYYY HH:mm:ss" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="USUÁRIO INCLUSÃO"
+          prop="usuarioInclusao"
+          [width]="150"
+        ></ngx-datatable-column>
+        <ngx-datatable-column name="STATUS" prop="indAtivo" [width]="90">
+          <ng-template let-value="value" ngx-datatable-cell-template>
+            {{ value === true ? "Ativo" : "Desativado" }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="CLIENTE"
+          prop="clienteDTO.nome"
+          [width]="400"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="FORNECEDOR"
+          prop="fornecedorDTO.nome"
+          [width]="500"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="VEICULO"
+          prop="veiculoDTO.nome"
+          [width]="250"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="MOTORISTA"
+          prop="motoristaDTO.nome"
+          [width]="300"
+        ></ngx-datatable-column>
+        <ngx-datatable-column
+          name="CONFERENTE"
+          prop="conferenteDTO.nome"
+          [width]="300"
+        ></ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</div>
