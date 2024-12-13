@@ -7,7 +7,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { AuthUtilsService } from '@modules/auth-utils/auth-utils.service';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { registerLocaleData } from '@angular/common';
 import localePtBr from '@angular/common/locales/br';
 import { AppService } from './app.service';
@@ -32,7 +31,6 @@ import { TokenInterceptor } from './app.interceptor';
   providers: [
     AppService,
     AuthUtilsService,
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

@@ -18,7 +18,7 @@ const routes: Routes = [
   },
   { path: 'print', loadChildren: () => import('modules/print/print.module').then(pr => pr.PrintModule) },
   {
-    path: 'login',
+    path: 'auth',
     loadChildren: () =>
       import('modules/login/login.module').then(
         (m) => m.LoginModule

@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = (route, state) => {
         return true;
     } else {
         // alert('sem acesso a rota, realize o login novamente erro: canActivate');
-        router.navigate(['login', 'logout']);
+        router.navigate(['auth', 'logout']);
         return false;
     }
 };
